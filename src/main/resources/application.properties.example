@@ -1,24 +1,24 @@
 server:
-    port: 0
+  port: 0
 spring:
-    application:
-        name: fountation-user-service
-    main:
-        web-application-type: reactive
-    security:
-        oauth2:
-            resourceserver:
-                jwt:
-                    jwk-set-uri: http://localhost:9000/oauth2/jwks
+  application:
+    name: fountation-user-service
+  main:
+    web-application-type: reactive
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: lb://fountation-authorization-service/oauth2/jwks
 eureka:
-    client:
-        serviceUrl:
-            defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
-    instance:
-        preferIpAddress: true
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
 logging:
-    level:
-        org:
-            springframework:
-                security:
-                    oauth2: TRACE
+  level:
+    org:
+      springframework:
+        security:
+          oauth2: TRACE

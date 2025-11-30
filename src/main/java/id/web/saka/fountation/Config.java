@@ -3,7 +3,6 @@ package id.web.saka.fountation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.server.resource.web.reactive.function.client.ServerBearerExchangeFilterFunction;
@@ -16,7 +15,11 @@ public class Config {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        http.authorizeExchange(auth -> auth.pathMatchers("/health").permitAll())
+        http.authorizeExchange(
+                auth -> auth
+                        .pathMatchers("/user/health").permitAll()
+                        .pathMatchers("/user/**").permitAll()
+                )
                 .authorizeExchange(auth -> auth.anyExchange().authenticated())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));
         http.csrf(ServerHttpSecurity.CsrfSpec::disable);

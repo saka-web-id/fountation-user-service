@@ -39,9 +39,9 @@ public class UserController {
         return Mono.just(new User(userId, "testuser@email.com", "Joe", "Bloggs", Collections.emptyList()));
     }
 
-    @GetMapping("/health")
+    @GetMapping("/user/health")
     public Mono<String> health() {
-        return Mono.just("UP");
+        return Mono.just("User Service UP");
     }
 
 }
