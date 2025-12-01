@@ -13,10 +13,14 @@ spring:
                         - https://dev-XXXXXXXXXXXXXX.us.auth0.com/api/v2/
                     issuer-uri: https://dev-XXXXXXXXXXX.us.auth0.com/
                     jwk-set-uri: https://dev-XXXXXXXXXXXXXX.us.auth0.com/.well-known/jwks.json
+    r2dbc:
+        url: r2dbc:postgresql://XXXXXXX:1111111111/XXXXXXXXXXXXXXXX
+        username: XXXXXXXXXXXXXXX
+        password: 111111111111111
 eureka:
     client:
         serviceUrl:
-            defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+            defaultZone: ${EUREKA_URI:http://XXXXXXXXXXX:11111111111/XXXXXXXXXXXXXX}
     instance:
         preferIpAddress: true
 logging:
