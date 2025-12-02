@@ -1,4 +1,4 @@
-package id.web.saka.fountation;
+package id.web.saka.fountation.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

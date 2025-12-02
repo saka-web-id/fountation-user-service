@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping("/user/{userId}/accounts")
-    public Mono<User> accountsForUser(@AuthenticationPrincipal Jwt jwt, @PathVariable String userId) {
+    public Mono<User> accountsForUser(@AuthenticationPrincipal Jwt jwt, @PathVariable Long userId) {
         log.info("Retrieving accounts for user {}", userId);
 
         return webClient.get()
@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @GetMapping("/user/{userId}")
-    public Mono<User> getUser(@AuthenticationPrincipal Jwt jwt, @PathVariable String userId) {
+    public Mono<User> getUser(@AuthenticationPrincipal Jwt jwt, @PathVariable Long userId) {
         log.info("Retrieving accounts for user {}", userId);
         return Mono.just(new User(userId, "testuser@email.com", "Joe", "Bloggs", Collections.emptyList()));
     }
