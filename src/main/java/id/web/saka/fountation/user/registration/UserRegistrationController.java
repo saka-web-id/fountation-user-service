@@ -1,27 +1,48 @@
 package id.web.saka.fountation.user.registration;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
+import id.web.saka.fountation.oauth0.Auth0UserService;
+import id.web.saka.fountation.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.util.Locale;
 
 @RestController
 @RequestMapping("user/registration")
 public class UserRegistrationController {
 
+    @Autowired
+    private UserRegistrationService userRegistrationService;
 
+    @Autowired
+    private Auth0UserService auth0UserService;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @RequestMapping("/new")
-    public Mono<String> registerUser(@AuthenticationPrincipal Jwt jwt) {
+    public Mono<User> registerUser(@RequestBody Mono<User> userMono) {
 
-        /*TODO : Check Username and password are already use or not*/
-
-        /*TODO : If no exist in database Insert new Username to database*/
-
-        /*TODO : IF Exist send Error notification, user already exist */
-        return Mono.just("User Registration Endpoint");
+        return userRegistrationService.save(userMono);
     }
 
+    @RequestMapping("/validation/{userName}/{email}")
+    public Mono<String> validationUser(ServerWebExchange exchange, @PathVariable String userName, @PathVariable String email) {
+        Locale locale = exchange.getLocaleContext().getLocale();
+
+        if(userRegistrationService.isUserNameExist(userName)) {
+            return Mono.just(messageSource.getMessage("notification.error.user.exist", null, locale));
+        } else if (userRegistrationService.isEmailExist(email)) {
+            return Mono.just(messageSource.getMessage("notification.error.user.email.exist", null, locale));
+        } else {
+            return Mono.just("");
+        }
+    }
 
 }

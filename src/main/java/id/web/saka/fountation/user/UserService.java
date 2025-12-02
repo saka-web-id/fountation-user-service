@@ -1,6 +1,7 @@
 package id.web.saka.fountation.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -10,6 +11,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private MessageSource messageSource;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
