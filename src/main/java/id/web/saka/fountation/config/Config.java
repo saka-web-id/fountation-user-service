@@ -28,6 +28,7 @@ public class Config {
         http.authorizeExchange(
                 auth -> auth
                         .pathMatchers("/user/health").permitAll()
+                        .pathMatchers("/user/registration/**").permitAll()
                 )
                 .authorizeExchange(auth -> auth.anyExchange().authenticated())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));
