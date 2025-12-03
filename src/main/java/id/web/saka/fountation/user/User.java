@@ -12,7 +12,7 @@ import java.util.List;
 public class User {
 
     @Id
-    private Long id;
+    private long id;
 
     private String email;
 
@@ -30,24 +30,24 @@ public class User {
 
     private OffsetDateTime updateAt;
 
-    private Long accountId;
+    private long accountId;
 
-    private Long organizationId;
+    private long organizationId;
 
-    private Long departmentId;
+    private long departmentId;
 
     private String note;
 
     List<Account> accounts;
 
-    public <T> User(Long userId, String email, String fullName, String status, List<Account> accounts) {
+    public <T> User(long userId, String email, String fullName, String status, List<Account> accounts) {
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -115,27 +115,27 @@ public class User {
         this.updateAt = updateAt;
     }
 
-    public Long getAccountId() {
+    public long getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Long accountId) {
+    public void setAccountId(long accountId) {
         this.accountId = accountId;
     }
 
-    public Long getOrganizationId() {
+    public long getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(long organizationId) {
         this.organizationId = organizationId;
     }
 
-    public Long getDepartmentId() {
+    public long getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(Long departmentId) {
+    public void setDepartmentId(long departmentId) {
         this.departmentId = departmentId;
     }
 
