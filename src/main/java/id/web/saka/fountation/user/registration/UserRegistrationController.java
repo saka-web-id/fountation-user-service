@@ -1,6 +1,5 @@
 package id.web.saka.fountation.user.registration;
 
-import id.web.saka.fountation.oauth0.Auth0UserService;
 import id.web.saka.fountation.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -19,9 +18,6 @@ public class UserRegistrationController {
 
     @Autowired
     private UserRegistrationService userRegistrationService;
-
-    @Autowired
-    private Auth0UserService auth0UserService;
 
     @Autowired
     private MessageSource messageSource;

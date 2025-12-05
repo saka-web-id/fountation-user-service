@@ -13,6 +13,7 @@ import java.util.Map;
 @Service
 public class Auth0UserService {
 
+    /*
     private final WebClient webClient;
     private final String managementApiToken;
 
@@ -37,6 +38,6 @@ public class Auth0UserService {
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(String.class); // return full user JSON
-    }
+    }*/
 
 }

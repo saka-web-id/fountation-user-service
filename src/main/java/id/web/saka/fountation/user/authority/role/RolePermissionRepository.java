@@ -4,5 +4,5 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RolePermissionRepository extends ReactiveCrudRepository<RolePermission, long> {
+public interface RolePermissionRepository extends ReactiveCrudRepository<RolePermission, Long> {
 }

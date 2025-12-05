@@ -17,9 +17,11 @@ public class UserRegistrationService {
     private MessageSource messageSource;
 
     public boolean isUserNameExist(String userName) {
+        return false;
     }
 
     public boolean isEmailExist(String email) {
+        return false;
     }
 
     public Mono<User> save(Mono<User> userMono) {

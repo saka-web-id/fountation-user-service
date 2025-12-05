@@ -30,7 +30,7 @@ public class WebFluxCookieLocaleContextResolver implements LocaleContextResolver
                                 exchange.getRequest().getHeaders().getFirst("Accept-Language")
                 );
 
-        Locale locale = Locale.lookup(ranges, Locale.getAvailableLocales());
+        Locale locale = Locale.lookup(ranges, List.of(Locale.getAvailableLocales()));
         return () -> locale != null ? locale : Locale.ENGLISH;
     }
 
