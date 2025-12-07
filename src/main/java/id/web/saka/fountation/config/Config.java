@@ -42,8 +42,10 @@ public class Config {
     WebClient webClient() {
         return WebClient.builder()
                 .filter(new ServerBearerExchangeFilterFunction())
-                .baseUrl("http://localhost:8083")
+                .baseUrl("http://www.myproject.local:8083")
                 .build();
     }
+
+
 
 }

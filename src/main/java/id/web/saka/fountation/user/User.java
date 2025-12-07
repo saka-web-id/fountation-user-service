@@ -42,6 +42,10 @@ public class User {
     public <T> User(long userId, String email, String fullName, String status, List<Account> accounts) {
     }
 
+    public User() {
+
+    }
+
     public long getId() {
         return id;
     }

@@ -7,4 +7,5 @@ public interface UserRepository extends ReactiveCrudRepository<User, Long> {
 
     Flux<User> findByName(String name);
 
+    User getUsersByEmail(String email);
 }
