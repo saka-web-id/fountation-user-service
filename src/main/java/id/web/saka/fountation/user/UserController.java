@@ -40,7 +40,7 @@ public class UserController {
     @GetMapping("/user/{userId}")
     public Mono<User> getUser(@AuthenticationPrincipal Jwt jwt, @PathVariable Long userId) {
         log.info("Retrieving accounts for user {}", userId);
-        return Mono.just(new User(userId, "testuser@email.com", "Joe", "Bloggs", Collections.emptyList()));
+        return null;
     }
 
     @GetMapping("/user/login")
@@ -59,7 +59,7 @@ public class UserController {
     @GetMapping("/user/detail")
     public Mono<UserAccountDTO> getUser(@AuthenticationPrincipal Jwt jwt) {
 
-        return userService.getUserAccountDTOByEmail(jwt.getClaimAsString("https://example.com/email"));
+        return userService.getUserAccountDTOByEmail(jwt.getTokenValue(), jwt.getClaimAsString("https://example.com/email"));
     }
 
     @GetMapping("/user/health")

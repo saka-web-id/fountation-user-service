@@ -1,27 +1,33 @@
 package id.web.saka.fountation.user.authority.permission;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table("permission")
+@Table(value = "permission", schema = "users")
 public class Permission {
 
     @Id
-    private long id;
+    @Column("id")
+    private Long id;
 
+    @Column("permission_code")
     private String permissionCode;
 
+    @Column("resource")
     private String resource;
 
+    @Column("action")
     private String action;
 
+    @Column("description")
     private String description;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

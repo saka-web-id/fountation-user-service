@@ -1,23 +1,27 @@
 package id.web.saka.fountation.user.authority.role;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table("role")
+@Table(value = "role", schema = "users")
 public class Role {
 
     @Id
-    private long id;
+    @Column("id")
+    private Long id;
 
+    @Column("role_name")
     private String roleName;
 
+    @Column("description")
     private String description;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -1,54 +1,61 @@
 package id.web.saka.fountation.user;
 
-import id.web.saka.fountation.account.Account;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-@Table("user")
+@Table(value = "users", schema = "users")
 public class User {
 
     @Id
-    private long id;
+    @Column("id")
+    private Long id;
 
+    @Column("email")
     private String email;
 
+    @Column("password_hash")
     private String passwordHash;
 
+    @Column("name")
     private String name;
 
+    @Column("status")
     private String status;
 
+    @Column("is_verified")
     private boolean isVerified;
 
+    @Column("last_login_at")
     private OffsetDateTime lastLoginAt;
 
+    @Column("created_at")
     private OffsetDateTime createdAt;
 
+    @Column("update_at")
     private OffsetDateTime updateAt;
 
-    private long accountId;
+    @Column("organization_id")
+    private Long organizationId;
 
-    private long organizationId;
+    @Column("department_id")
+    private Long departmentId;
 
-    private long departmentId;
+    @Column("leader_id")
+    private Long leaderId;
 
+    @Column("note")
     private String note;
 
-    public <T> User(long userId, String email, String fullName, String status, List<Account> accounts) {
-    }
 
-    public User() {
-
-    }
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -116,28 +123,28 @@ public class User {
         this.updateAt = updateAt;
     }
 
-    public long getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(long accountId) {
-        this.accountId = accountId;
-    }
-
-    public long getOrganizationId() {
+    public Long getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(long organizationId) {
+    public void setOrganizationId(Long organizationId) {
         this.organizationId = organizationId;
     }
 
-    public long getDepartmentId() {
+    public Long getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(long departmentId) {
+    public void setDepartmentId(Long departmentId) {
         this.departmentId = departmentId;
+    }
+
+    public Long getLeaderId() {
+        return leaderId;
+    }
+
+    public void setLeaderId(Long leaderId) {
+        this.leaderId = leaderId;
     }
 
     public String getNote() {
@@ -160,7 +167,9 @@ public class User {
                 ", lastLoginAt=" + lastLoginAt +
                 ", createdAt=" + createdAt +
                 ", updateAt=" + updateAt +
-                ", accountId=" + accountId +
+                ", organizationId=" + organizationId +
+                ", departmentId=" + departmentId +
+                ", leaderId=" + leaderId +
                 ", note='" + note + '\'' +
                 '}';
     }

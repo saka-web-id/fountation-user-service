@@ -1,39 +1,43 @@
 package id.web.saka.fountation.user.authority.role;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table("role_permission")
+@Table(value = "role_permission", schema = "users")
 public class RolePermission {
 
     @Id
-    private long id;
+    @Column("id")
+    private Long id;
 
-    private long roleId;
+    @Column("role_id")
+    private Long roleId;
 
-    private long permissionId;
+    @Column("permission_id")
+    private Long permissionId;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public long getRoleId() {
+    public Long getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(long roleId) {
+    public void setRoleId(Long roleId) {
         this.roleId = roleId;
     }
 
-    public long getPermissionId() {
+    public Long getPermissionId() {
         return permissionId;
     }
 
-    public void setPermissionId(long permissionId) {
+    public void setPermissionId(Long permissionId) {
         this.permissionId = permissionId;
     }
 

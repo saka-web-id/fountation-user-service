@@ -1,47 +1,54 @@
 package id.web.saka.fountation.user.authority.permission;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.OffsetDateTime;
 
-@Table("permission_manager")
+@Table(value = "permission_manager", schema = "users")
 public class PermissionManager {
 
     @Id
-    private long id;
+    @Column("id")
+    private Long id;
 
-    private long userId;
+    @Column("user_id")
+    private Long userId;
 
-    private long permissionId;
+    @Column("permission_id")
+    private Long permissionId;
 
+    @Column("source")
     private String source;
 
-    private long grantedBy;
+    @Column("granted_by")
+    private Long grantedBy;
 
+    @Column("granded_at")
     private OffsetDateTime grandedAt;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public long getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public long getPermissionId() {
+    public Long getPermissionId() {
         return permissionId;
     }
 
-    public void setPermissionId(long permissionId) {
+    public void setPermissionId(Long permissionId) {
         this.permissionId = permissionId;
     }
 
@@ -53,11 +60,11 @@ public class PermissionManager {
         this.source = source;
     }
 
-    public long getGrantedBy() {
+    public Long getGrantedBy() {
         return grantedBy;
     }
 
-    public void setGrantedBy(long grantedBy) {
+    public void setGrantedBy(Long grantedBy) {
         this.grantedBy = grantedBy;
     }
 
