@@ -1,22 +1,25 @@
 package id.web.saka.fountation.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final WebClient webClientAccount;
 
-    @Autowired
+    private final UserRepository userRepository;
+
     private MessageSource messageSource;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, @Qualifier("webClientAccount") WebClient webClientAccount, MessageSource messageSource) {
         this.userRepository = userRepository;
+        this.webClientAccount = webClientAccount;
+        this.messageSource = messageSource;
     }
 
     public Flux<User> findAllUsers() {
@@ -31,5 +34,18 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User getUserByEmail(String email) { return userRepository.getUsersByEmail(email);    }
+    public Mono<UserAccountDTO> getUserAccountDTOByEmail(String email) {
+        User user = userRepository.getUsersByEmail(email);
+
+        return webClientAccount.get()
+                .uri("/account/membership/detail/"+user.getAccountId()).retrieve()
+                .bodyToMono(UserAccountDTO.class)
+                .map(userAccountDTO -> {
+                    // enrich DTO with local user info
+                    userAccountDTO.setName(user.getName());
+                    userAccountDTO.setEmail(user.getEmail());
+                    return userAccountDTO;
+                });
+
+    }
 }

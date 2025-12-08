@@ -7,7 +7,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-@Table("users")
+@Table("user")
 public class User {
 
     @Id
@@ -36,8 +36,6 @@ public class User {
     private long departmentId;
 
     private String note;
-
-    List<Account> accounts;
 
     public <T> User(long userId, String email, String fullName, String status, List<Account> accounts) {
     }
@@ -150,14 +148,6 @@ public class User {
         this.note = note;
     }
 
-    public List<Account> getAccounts() {
-        return accounts;
-    }
-
-    public void setAccounts(List<Account> accounts) {
-        this.accounts = accounts;
-    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -172,7 +162,6 @@ public class User {
                 ", updateAt=" + updateAt +
                 ", accountId=" + accountId +
                 ", note='" + note + '\'' +
-                ", accounts=" + accounts +
                 '}';
     }
 }
