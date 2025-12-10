@@ -10,33 +10,35 @@ import reactor.core.publisher.Mono;
 @Service
 public class UserService {
 
-    private final WebClient webClientAccount;
 
     private final UserRepository userRepository;
 
     private MessageSource messageSource;
 
-    public UserService(UserRepository userRepository, @Qualifier("loadBalancedWebClientBuilder") WebClient.Builder builder, Env env, MessageSource messageSource) {
+    private Mono<WebClient> webClientAccount;
+
+    public UserService(UserRepository userRepository, @Qualifier("webClientAccount") Mono<WebClient> webClientAccount, Env env, MessageSource messageSource) {
         this.userRepository = userRepository;
-        this.webClientAccount = builder.baseUrl(env.getFountationServiceAccountUrl()).build();
+        this.webClientAccount = webClientAccount;
         this.messageSource = messageSource;
     }
 
-    public Mono<UserAccountDTO> getUserAccountDTOByEmail(String token, String email) {
+    public Mono<UserAccountDTO> getUserAccountDTOByEmail(String email) {
         return userRepository.getUsersByEmail(email)
                 .flatMap(user ->
-                        webClientAccount.get()
+                        webClientAccount.flatMap(webClient ->
+                            webClient.get()
                                 .uri("/account/membership/detail/" + user.getId())
-                                .headers(headers -> headers.setBearerAuth(token)) // tambahkan JWT
                                 .retrieve()
                                 .bodyToMono(UserAccountDTO.class)
                                 .map(userAccountDTO -> {
-                                    // enrich DTO with local user info
                                     userAccountDTO.setName(user.getName());
                                     userAccountDTO.setEmail(user.getEmail());
                                     return userAccountDTO;
                                 })
+                        )
                 );
     }
+
 
 }

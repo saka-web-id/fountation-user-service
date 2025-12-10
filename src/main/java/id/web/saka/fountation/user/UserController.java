@@ -13,7 +13,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.util.Collections;
 
 @RestController
 public class UserController {
@@ -25,17 +24,6 @@ public class UserController {
     private UserController(UserService userService) {
        this.userService = userService;
     }
-
-
-    /*@GetMapping("/user/{userId}/accounts")
-    public Mono<User> accountsForUser(@AuthenticationPrincipal Jwt jwt, @PathVariable Long userId) {
-        log.info("Retrieving accounts for user {}", userId);
-
-        return webClient.get()
-                .uri("/accounts").retrieve()
-                .bodyToMono(Account.class)
-                .map(account -> new User(userId, "testuser@email.com", "Joe", "Bloggs", List.of(account)));
-    }*/
 
     @GetMapping("/user/{userId}")
     public Mono<User> getUser(@AuthenticationPrincipal Jwt jwt, @PathVariable Long userId) {
@@ -59,7 +47,7 @@ public class UserController {
     @GetMapping("/user/detail")
     public Mono<UserAccountDTO> getUser(@AuthenticationPrincipal Jwt jwt) {
 
-        return userService.getUserAccountDTOByEmail(jwt.getTokenValue(), jwt.getClaimAsString("https://example.com/email"));
+        return userService.getUserAccountDTOByEmail(jwt.getClaimAsString("https://example.com/email"));
     }
 
     @GetMapping("/user/health")
