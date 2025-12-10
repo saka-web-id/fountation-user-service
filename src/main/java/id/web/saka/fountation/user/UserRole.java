@@ -3,8 +3,8 @@ package id.web.saka.fountation.user;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(schema = "users", value = "user_manager")
-public class UserManager {
+@Table(schema = "users", value = "user_role")
+public class UserRole {
 
     @Column("id")
     private Long id;
