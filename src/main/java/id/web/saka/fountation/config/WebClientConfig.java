@@ -36,6 +36,7 @@ public class WebClientConfig {
                                 .filter(lbFunction)
                                 .baseUrl(env.getFountationServiceAccountUrl())
                                 .defaultHeaders(headers -> {
+                                    System.out.println("Token berapa : " + token);
                                     headers.setBearerAuth(token);
                                     headers.set("Accept", "application/json");
                                     headers.set("Content-Type", "application/json");

@@ -70,4 +70,19 @@ public class AuthorityDTO {
     public void setPermissions(Flux<Permission> permissions) {
         this.permissions = permissions;
     }
+
+    @Override
+    public String toString() {
+        return "AuthorityDTO{" +
+                "userId=" + userId +
+                ", roleId=" + roleId +
+                ", roleName='" + roleName + '\'' +
+                ", roleDescription='" + roleDescription + '\'' +
+                ", permissions=" +
+                permissions.subscribe(
+                element -> System.out.println(element.toString()), // Consumer for each element
+                error -> System.err.println("Error: " + error), // Consumer for errors (optional)
+                () -> System.out.println("Flux completed.") // Runnable for completion (optional)
+        );
+    }
 }

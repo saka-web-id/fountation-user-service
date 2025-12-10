@@ -1,4 +1,4 @@
-package id.web.saka.fountation.department;
+package id.web.saka.fountation.organization.department;
 
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -11,8 +11,8 @@ public class Department {
     @Column("id")
     private Long id;
 
-    @Column("organization_id")
-    private Long organizationId;
+    @Column("company_id")
+    private Long companyId;
 
     @Column("name")
     private String name;
@@ -31,12 +31,12 @@ public class Department {
         this.id = id;
     }
 
-    public Long getOrganizationId() {
-        return organizationId;
+    public Long getCompanyId() {
+        return companyId;
     }
 
-    public void setOrganizationId(Long organizationId) {
-        this.organizationId = organizationId;
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 
     public String getName() {
@@ -67,7 +67,7 @@ public class Department {
     public String toString() {
         return "Department{" +
                 "id=" + id +
-                ", organizationId=" + organizationId +
+                ", companyId=" + companyId +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", createdAt=" + createdAt +

@@ -46,6 +46,7 @@ public class UserService {
                                                 userAccountDTO.setName(user.getName());
                                                 userAccountDTO.setEmail(user.getEmail());
                                                 userAccountDTO.setRole(authorityDTO.getRoleName());
+                                                userAccountDTO.setAuthority(authorityDTO);
                                                 return userAccountDTO;
                                             })
                             );

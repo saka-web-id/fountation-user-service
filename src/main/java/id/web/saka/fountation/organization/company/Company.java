@@ -1,12 +1,12 @@
-package id.web.saka.fountation.organization;
+package id.web.saka.fountation.organization.company;
 
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.OffsetDateTime;
 
-@Table(value = "organization", schema = "users")
-public class Organization {
+@Table(value = "company", schema = "users")
+public class Company {
 
     @Column("id")
     private Long id;
@@ -175,7 +175,7 @@ public class Organization {
 
     @Override
     public String toString() {
-        return "Organization{" +
+        return "Company{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +

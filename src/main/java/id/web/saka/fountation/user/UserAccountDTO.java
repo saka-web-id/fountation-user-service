@@ -1,6 +1,9 @@
 package id.web.saka.fountation.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import id.web.saka.fountation.user.authority.AuthorityDTO;
+import id.web.saka.fountation.user.authority.permission.Permission;
+import reactor.core.publisher.Mono;
 
 import java.time.OffsetDateTime;
 
@@ -27,14 +30,8 @@ public class UserAccountDTO {
     @JsonProperty("role")
     private String role;
 
-    @JsonProperty("locale")
-    private String locale;
-
-    @JsonProperty("department")
-    private String department;
-
-    @JsonProperty("organization")
-    private String organization;
+    @JsonProperty("authority")
+    private AuthorityDTO authority;
 
     @JsonProperty("createdAt")
     private OffsetDateTime createdAt;
@@ -101,30 +98,6 @@ public class UserAccountDTO {
         this.role = role;
     }
 
-    public String getLocale() {
-        return locale;
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-
-    public String getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(String organization) {
-        this.organization = organization;
-    }
-
     public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
@@ -147,5 +120,13 @@ public class UserAccountDTO {
 
     public void setMembershipEndDate(OffsetDateTime membershipEndDate) {
         this.membershipEndDate = membershipEndDate;
+    }
+
+    public AuthorityDTO getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(AuthorityDTO authority) {
+        this.authority = authority;
     }
 }
