@@ -1,5 +1,6 @@
 package id.web.saka.fountation.organization.company;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -8,6 +9,7 @@ import java.time.OffsetDateTime;
 @Table(value = "company", schema = "users")
 public class Company {
 
+    @Id
     @Column("id")
     private Long id;
 

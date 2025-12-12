@@ -1,9 +1,7 @@
 package id.web.saka.fountation.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import id.web.saka.fountation.user.authority.AuthorityDTO;
-import id.web.saka.fountation.user.authority.permission.Permission;
-import reactor.core.publisher.Mono;
+import id.web.saka.fountation.authority.AuthorityDTO;
 
 import java.time.OffsetDateTime;
 

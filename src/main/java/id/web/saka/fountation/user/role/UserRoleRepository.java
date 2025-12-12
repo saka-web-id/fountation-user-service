@@ -1,4 +1,4 @@
-package id.web.saka.fountation.user;
+package id.web.saka.fountation.user.role;
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;

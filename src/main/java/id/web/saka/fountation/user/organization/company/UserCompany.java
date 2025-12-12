@@ -1,10 +1,10 @@
-package id.web.saka.fountation.user;
+package id.web.saka.fountation.user.organization.company;
 
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(schema = "users", value = "user_role")
-public class UserRole {
+@Table(value = "user_company", schema = "users")
+public class UserCompany {
 
     @Column("id")
     private Long id;
@@ -12,8 +12,12 @@ public class UserRole {
     @Column("user_id")
     private Long userId;
 
-    @Column("role_id")
-    private Long roleId;
+    @Column("company_id")
+    private Long companyId;
+
+    @Column("is_default")
+    private boolean isDefault;
+
 
     public Long getId() {
         return id;
@@ -31,11 +35,11 @@ public class UserRole {
         this.userId = userId;
     }
 
-    public Long getRoleId() {
-        return roleId;
+    public Long getCompanyId() {
+        return companyId;
     }
 
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 }

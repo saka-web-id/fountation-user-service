@@ -1,4 +1,4 @@
-package id.web.saka.fountation.user.authority.permission;
+package id.web.saka.fountation.authority.permission;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;

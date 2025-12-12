@@ -17,8 +17,8 @@ public class Config {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(
                 auth -> auth
-                        .pathMatchers("/user/health").permitAll()
-                        .pathMatchers("/user/registration/**").permitAll()
+                        .pathMatchers("/api/v0/user/health").permitAll()
+                        .pathMatchers("/api/v0/user/registration/**").permitAll()
                 )
                 .authorizeExchange(auth -> auth.anyExchange().authenticated())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));

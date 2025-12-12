@@ -1,6 +1,6 @@
 package id.web.saka.fountation.user;
 
-import id.web.saka.fountation.user.authority.AuthorityService;
+import id.web.saka.fountation.authority.AuthorityService;
 import id.web.saka.fountation.util.Env;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -27,8 +27,12 @@ public class UserService {
         this.messageSource = messageSource;
     }
 
+    public Mono<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     public Mono<UserAccountDTO> getUserAccountDTOByEmail(String email) {
-        return userRepository.getUsersByEmail(email)
+        return getUserByEmail(email)
                 .flatMap(user ->
                         authorityService.getAuthorityByUserId(user.getId()).flatMap(authorityDTO -> {
                             if (authorityDTO == null) {
@@ -39,7 +43,7 @@ public class UserService {
 
                             return webClientAccount.flatMap(webClient ->
                                     webClient.get()
-                                            .uri("/account/membership/detail/" + user.getId())
+                                            .uri("/api/v0/account/membership/detail/" + user.getId())
                                             .retrieve()
                                             .bodyToMono(UserAccountDTO.class)
                                             .map(userAccountDTO -> {

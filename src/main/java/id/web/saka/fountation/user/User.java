@@ -5,7 +5,6 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 
 @Table(value = "users", schema = "users")
 public class User {
@@ -37,12 +36,6 @@ public class User {
 
     @Column("update_at")
     private OffsetDateTime updateAt;
-
-    @Column("organization_id")
-    private Long organizationId;
-
-    @Column("department_id")
-    private Long departmentId;
 
     @Column("leader_id")
     private Long leaderId;
@@ -123,22 +116,6 @@ public class User {
         this.updateAt = updateAt;
     }
 
-    public Long getOrganizationId() {
-        return organizationId;
-    }
-
-    public void setOrganizationId(Long organizationId) {
-        this.organizationId = organizationId;
-    }
-
-    public Long getDepartmentId() {
-        return departmentId;
-    }
-
-    public void setDepartmentId(Long departmentId) {
-        this.departmentId = departmentId;
-    }
-
     public Long getLeaderId() {
         return leaderId;
     }
@@ -167,8 +144,6 @@ public class User {
                 ", lastLoginAt=" + lastLoginAt +
                 ", createdAt=" + createdAt +
                 ", updateAt=" + updateAt +
-                ", organizationId=" + organizationId +
-                ", departmentId=" + departmentId +
                 ", leaderId=" + leaderId +
                 ", note='" + note + '\'' +
                 '}';

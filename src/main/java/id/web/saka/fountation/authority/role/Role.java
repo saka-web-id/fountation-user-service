@@ -1,4 +1,4 @@
-package id.web.saka.fountation.user.authority.role;
+package id.web.saka.fountation.authority.role;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
@@ -6,13 +6,14 @@ import org.springframework.data.relational.core.mapping.Table;
 
 @Table(value = "role", schema = "users")
 public class Role {
+    public enum RoleName { SUPERADMIN, ADMIN, USER, MANAGER, GUEST }
 
     @Id
     @Column("id")
     private Long id;
 
     @Column("role_name")
-    private String roleName;
+    private RoleName roleName;
 
     @Column("description")
     private String description;
@@ -25,11 +26,11 @@ public class Role {
         this.id = id;
     }
 
-    public String getRoleName() {
+    public RoleName getRoleName() {
         return roleName;
     }
 
-    public void setRoleName(String roleName) {
+    public void setRoleName(RoleName roleName) {
         this.roleName = roleName;
     }
 

@@ -1,9 +1,9 @@
-package id.web.saka.fountation.user.authority;
+package id.web.saka.fountation.authority;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import id.web.saka.fountation.user.authority.permission.Permission;
-import id.web.saka.fountation.user.authority.role.Role;
+import id.web.saka.fountation.authority.permission.Permission;
+import id.web.saka.fountation.authority.role.Role;
 import reactor.core.publisher.Flux;
 
 public class AuthorityDTO {
@@ -11,7 +11,7 @@ public class AuthorityDTO {
     public AuthorityDTO(Long UserId, Role role, Flux<Permission> permissions) {
         this.userId = UserId;
         this.roleId = role.getId();
-        this.roleName = role.getRoleName();
+        this.roleName = role.getRoleName().name();
         this.roleDescription = role.getDescription();
         this.permissions = permissions;
     }

@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 import java.util.Locale;
 
 @RestController
-@RequestMapping("user/registration")
+@RequestMapping("/api/v0")
 public class UserRegistrationController {
 
     @Autowired
@@ -28,7 +28,7 @@ public class UserRegistrationController {
         return userRegistrationService.save(userMono);
     }
 
-    @RequestMapping("/validation/{userName}/{email}")
+    @RequestMapping("/user/registration/validation/{userName}/{email}")
     public Mono<String> validationUser(ServerWebExchange exchange, @PathVariable String userName, @PathVariable String email) {
         Locale locale = exchange.getLocaleContext().getLocale();
 

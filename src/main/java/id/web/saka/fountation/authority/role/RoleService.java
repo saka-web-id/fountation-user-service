@@ -1,4 +1,4 @@
-package id.web.saka.fountation.user.authority.role;
+package id.web.saka.fountation.authority.role;
 
 import org.springframework.stereotype.Service;
 

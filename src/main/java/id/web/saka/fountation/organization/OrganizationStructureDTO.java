@@ -1,20 +1,24 @@
 package id.web.saka.fountation.organization;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nimbusds.openid.connect.sdk.assurance.evidences.Organization;
 import id.web.saka.fountation.organization.company.Company;
 import id.web.saka.fountation.organization.department.Department;
+import id.web.saka.fountation.organization.department.DepartmentDTO;
+import reactor.core.publisher.Flux;
 
-public class OrganizationDTO {
+import java.util.List;
 
-    public OrganizationDTO(Company company, Department department) {
+public class OrganizationStructureDTO {
+
+    public OrganizationStructureDTO(Company company, List<DepartmentDTO> departments) {
         this.companyName = company.getName();
         this.companyAddress = company.getAddress();
         this.companyPhone = company.getPhone();
         this.companyEmail = company.getEmail();
         this.companyWebsite = company.getWebsite();
         this.companyDescription = company.getDescription();
-        this.departmentName = department.getName();
-        this.departmentDescription = department.getDescription();
+        this.departments = departments;
     }
 
     @JsonProperty("companyName")
@@ -35,11 +39,8 @@ public class OrganizationDTO {
     @JsonProperty("companyDescription")
     private String companyDescription;
 
-    @JsonProperty("departmentName")
-    private String departmentName;
-
-    @JsonProperty("departmentDescription")
-    private String departmentDescription;
+    @JsonProperty("departments")
+    private List<DepartmentDTO> departments;
 
     public String getCompanyName() {
         return companyName;
@@ -89,19 +90,11 @@ public class OrganizationDTO {
         this.companyDescription = companyDescription;
     }
 
-    public String getDepartmentName() {
-        return departmentName;
+    public List<DepartmentDTO> getDepartments() {
+        return departments;
     }
 
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
-    }
-
-    public String getDepartmentDescription() {
-        return departmentDescription;
-    }
-
-    public void setDepartmentDescription(String departmentDescription) {
-        this.departmentDescription = departmentDescription;
+    public void setDepartments(List<DepartmentDTO> departments) {
+        this.departments = departments;
     }
 }

@@ -1,15 +1,13 @@
-package id.web.saka.fountation.user.authority;
+package id.web.saka.fountation.authority;
 
-import id.web.saka.fountation.user.UserRoleRepository;
-import id.web.saka.fountation.user.authority.permission.PermissionRepository;
-import id.web.saka.fountation.user.authority.role.RolePermission;
-import id.web.saka.fountation.user.authority.role.RolePermissionRepository;
-import id.web.saka.fountation.user.authority.role.RoleRepository;
+import id.web.saka.fountation.user.role.UserRoleRepository;
+import id.web.saka.fountation.authority.permission.PermissionRepository;
+import id.web.saka.fountation.authority.role.RolePermission;
+import id.web.saka.fountation.authority.role.RolePermissionRepository;
+import id.web.saka.fountation.authority.role.RoleRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @Service
 public class AuthorityService {
