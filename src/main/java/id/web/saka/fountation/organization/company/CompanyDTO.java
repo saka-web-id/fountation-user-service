@@ -7,188 +7,193 @@ import java.time.OffsetDateTime;
 
 public class CompanyDTO {
 
-    public CompanyDTO(Company company) {
-        this.companyId = company.getId();
-        this.companyName = company.getName();
-        this.companyAddress = company.getAddress();
-        this.companyPhone = company.getPhone();
-        this.companyEmail = company.getEmail();
-        this.companyWebsite = company.getWebsite();
-        this.companyDescription = company.getDescription();
-        this.companyLogoUrl = company.getLogoUrl();
-        this.companyTaxId = company.getTaxId();
-        this.companyRegistrationId = company.getRegistrationNumber();
-        this.companyStatus = company.getStatus();
-        this.companyIndustry = company.getIndustry();
-        this.companyType = company.getType();
-        this.companyCreatedAt = company.getCreatedAt();
-        this.companyUpdatedAt = company.getUpdatedAt();
+    public CompanyDTO() {
     }
 
+    /*public CompanyDTO(Company company) {
+        this.id = company.getId();
+        this.name = company.getName();
+        this.address = company.getAddress();
+        this.phone = company.getPhone();
+        this.email = company.getEmail();
+        this.website = company.getWebsite();
+        this.description = company.getDescription();
+        this.logoUrl = company.getLogoUrl();
+        this.taxId = company.getTaxId();
+        this.registrationId = company.getRegistrationNumber();
+        this.status = company.getStatus();
+        this.industry = company.getIndustry();
+        this.type = company.getType();
+        this.createdAt = company.getCreatedAt();
+        this.updatedAt = company.getUpdatedAt();
+    }*/
+
     @JsonProperty("companyId")
-    private Long companyId;
+    private Long id;
 
     @JsonProperty("companyName")
-    private String companyName;
+    private String name;
 
     @JsonProperty("companyAddress")
-    private String companyAddress;
+    private String address;
 
     @JsonProperty("companyPhone")
-    private String companyPhone;
+    private String phone;
 
     @JsonProperty("companyEmail")
-    private String companyEmail;
+    private String email;
 
     @JsonProperty("companyWebsite")
-    private String companyWebsite;
+    private String website;
 
     @JsonProperty("companyDescription")
-    private String companyDescription;
+    private String description;
 
     @JsonProperty("companyLogoUrl")
-    private String companyLogoUrl;
+    private String logoUrl;
 
     @JsonProperty("companyTaxId")
-    private String companyTaxId;
+    private String taxId;
 
     @JsonProperty("companyRegistrationId")
-    private String companyRegistrationId;
+    private String registrationId;
 
     @JsonProperty("companyStatus")
-    private String companyStatus;
+    private String status;
 
     @JsonProperty("companyIndustry")
-    private String companyIndustry;
+    private String industry;
 
     @JsonProperty("companyType")
-    private String companyType;
+    private String type;
 
     @JsonProperty("companyCreatedAt")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm z")
-    private OffsetDateTime companyCreatedAt;
+    private OffsetDateTime createdAt;
 
     @JsonProperty("companyUpdatedAt")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm z")
-    private OffsetDateTime companyUpdatedAt;
+    private OffsetDateTime updatedAt;
 
-    public Long getCompanyId() {
-        return companyId;
+    public Long getId() {
+        return id;
     }
 
-    public void setCompanyId(Long companyId) {
-        this.companyId = companyId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getCompanyName() {
-        return companyName;
+    public String getName() {
+        return name;
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getCompanyAddress() {
-        return companyAddress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setCompanyAddress(String companyAddress) {
-        this.companyAddress = companyAddress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public String getCompanyPhone() {
-        return companyPhone;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setCompanyPhone(String companyPhone) {
-        this.companyPhone = companyPhone;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public String getCompanyEmail() {
-        return companyEmail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setCompanyEmail(String companyEmail) {
-        this.companyEmail = companyEmail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getCompanyWebsite() {
-        return companyWebsite;
+    public String getWebsite() {
+        return website;
     }
 
-    public void setCompanyWebsite(String companyWebsite) {
-        this.companyWebsite = companyWebsite;
+    public void setWebsite(String website) {
+        this.website = website;
     }
 
-    public String getCompanyDescription() {
-        return companyDescription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setCompanyDescription(String companyDescription) {
-        this.companyDescription = companyDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getCompanyLogoUrl() {
-        return companyLogoUrl;
+    public String getLogoUrl() {
+        return logoUrl;
     }
 
-    public void setCompanyLogoUrl(String companyLogoUrl) {
-        this.companyLogoUrl = companyLogoUrl;
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
     }
 
-    public String getCompanyTaxId() {
-        return companyTaxId;
+    public String getTaxId() {
+        return taxId;
     }
 
-    public void setCompanyTaxId(String companyTaxId) {
-        this.companyTaxId = companyTaxId;
+    public void setTaxId(String taxId) {
+        this.taxId = taxId;
     }
 
-    public String getCompanyRegistrationId() {
-        return companyRegistrationId;
+    public String getRegistrationId() {
+        return registrationId;
     }
 
-    public void setCompanyRegistrationId(String companyRegistrationId) {
-        this.companyRegistrationId = companyRegistrationId;
+    public void setRegistrationId(String registrationId) {
+        this.registrationId = registrationId;
     }
 
-    public String getCompanyStatus() {
-        return companyStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setCompanyStatus(String companyStatus) {
-        this.companyStatus = companyStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public String getCompanyIndustry() {
-        return companyIndustry;
+    public String getIndustry() {
+        return industry;
     }
 
-    public void setCompanyIndustry(String companyIndustry) {
-        this.companyIndustry = companyIndustry;
+    public void setIndustry(String industry) {
+        this.industry = industry;
     }
 
-    public String getCompanyType() {
-        return companyType;
+    public String getType() {
+        return type;
     }
 
-    public void setCompanyType(String companyType) {
-        this.companyType = companyType;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public OffsetDateTime getCompanyCreatedAt() {
-        return companyCreatedAt;
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCompanyCreatedAt(OffsetDateTime companyCreatedAt) {
-        this.companyCreatedAt = companyCreatedAt;
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public OffsetDateTime getCompanyUpdatedAt() {
-        return companyUpdatedAt;
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setCompanyUpdatedAt(OffsetDateTime companyUpdatedAt) {
-        this.companyUpdatedAt = companyUpdatedAt;
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
+
+
 }
