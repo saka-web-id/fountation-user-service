@@ -1,17 +1,11 @@
 package id.web.saka.fountation.organization.company;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.OffsetDateTime;
+public class CompanyRequestDTO {
 
-public class CompanyDTO {
-
-    public CompanyDTO() {
+    public CompanyRequestDTO() {
     }
-
-    @JsonProperty("companyId")
-    private Long id;
 
     @JsonProperty("companyName")
     private String name;
@@ -48,22 +42,6 @@ public class CompanyDTO {
 
     @JsonProperty("companyType")
     private String type;
-
-    @JsonProperty("companyCreatedAt")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm z")
-    private OffsetDateTime createdAt;
-
-    @JsonProperty("companyUpdatedAt")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm z")
-    private OffsetDateTime updatedAt;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -161,21 +139,21 @@ public class CompanyDTO {
         this.type = type;
     }
 
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
+    @Override
+    public String toString() {
+        return "CompanyRequestDTO{" +
+                "name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", website='" + website + '\'' +
+                ", description='" + description + '\'' +
+                ", logoUrl='" + logoUrl + '\'' +
+                ", taxId='" + taxId + '\'' +
+                ", registrationId='" + registrationId + '\'' +
+                ", status='" + status + '\'' +
+                ", industry='" + industry + '\'' +
+                ", type='" + type + '\'' +
+                '}';
     }
-
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public OffsetDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(OffsetDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-
 }

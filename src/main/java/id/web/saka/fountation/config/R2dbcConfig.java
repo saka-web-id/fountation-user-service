@@ -3,8 +3,11 @@ package id.web.saka.fountation.config;
 import id.web.saka.fountation.util.converter.RoleNameReadConverter;
 import id.web.saka.fountation.util.converter.RoleNameWriteConverter;
 import io.r2dbc.spi.ConnectionFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.r2dbc.config.AbstractR2dbcConfiguration;
+import org.springframework.transaction.ReactiveTransactionManager;
+import org.springframework.transaction.reactive.TransactionalOperator;
 
 import java.util.List;
 
@@ -28,6 +31,11 @@ public class R2dbcConfig extends AbstractR2dbcConfiguration {
                 new RoleNameReadConverter(),
                 new RoleNameWriteConverter()
         );
+    }
+
+    @Bean
+    public TransactionalOperator transactionalOperator(ReactiveTransactionManager txManager) {
+        return TransactionalOperator.create(txManager);
     }
 
 }

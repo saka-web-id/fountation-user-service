@@ -2,6 +2,7 @@ package id.web.saka.fountation.organization;
 
 import id.web.saka.fountation.organization.company.CompanyDTO;
 import id.web.saka.fountation.organization.company.CompanyMapper;
+import id.web.saka.fountation.organization.company.CompanyRequestDTO;
 import id.web.saka.fountation.organization.company.CompanyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v0")
@@ -55,6 +58,24 @@ public class OrganizationController {
                 .flatMap(companyService::saveCompany)
                 .map(companyMapper::toDto)
                 .map(ResponseEntity::ok);
+    }
+
+    @PostMapping("/user/organization/company/add")
+    public Mono<ResponseEntity<CompanyDTO>> addCompany(@AuthenticationPrincipal Jwt jwt, @RequestBody Mono<CompanyRequestDTO> payload) {
+
+        String email = jwt.getClaimAsString("email");
+
+        return payload
+                .map(companyMapper::requestToEntity)
+                .flatMap(company -> companyService.createCompanyForUser(company, email))
+                .map(companyMapper::toDto)
+                .map(saved ->
+                        ResponseEntity
+                                .created(URI.create(
+                                        "/api/v0/user/organization/company/getCompanyById/" + saved.getId()
+                                ))
+                                .body(saved)
+                );
     }
 
 }

@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 public interface CompanyMapper {
     Company toEntity(CompanyDTO dto);
     CompanyDTO toDto(Company entity);
+    Company requestToEntity(CompanyRequestDTO dto);
 }
 
 
