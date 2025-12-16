@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -63,7 +62,7 @@ public class OrganizationController {
     @PostMapping("/user/organization/company/add")
     public Mono<ResponseEntity<CompanyDTO>> addCompany(@AuthenticationPrincipal Jwt jwt, @RequestBody Mono<CompanyRequestDTO> payload) {
 
-        String email = jwt.getClaimAsString("email");
+        String email = jwt.getClaimAsString("https://example.com/email");
 
         return payload
                 .map(companyMapper::requestToEntity)

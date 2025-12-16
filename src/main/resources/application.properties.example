@@ -23,6 +23,9 @@ logging:
             netty: DEBUG
 server:
     port: 0
+    error:
+        include-binding-errors: always
+        include-message: always
 spring:
     application:
         name: fountation-user-service

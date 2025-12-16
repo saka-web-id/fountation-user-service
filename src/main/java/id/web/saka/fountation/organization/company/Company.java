@@ -1,9 +1,12 @@
 package id.web.saka.fountation.organization.company;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 
 @Table(value = "company", schema = "users")
@@ -49,11 +52,13 @@ public class Company {
     @Column("type")
     private String type;
 
+    @CreatedDate
     @Column("created_at")
-    private OffsetDateTime createdAt;
+    private Instant createdAt;
 
+    @LastModifiedDate
     @Column("updated_at")
-    private OffsetDateTime updatedAt;
+    private Instant updatedAt;
 
     public Long getId() {
         return id;
@@ -159,19 +164,19 @@ public class Company {
         this.type = type;
     }
 
-    public OffsetDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(OffsetDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
-    public OffsetDateTime getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(OffsetDateTime updatedAt) {
+    public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
 

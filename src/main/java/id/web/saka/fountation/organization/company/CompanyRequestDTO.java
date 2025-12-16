@@ -32,7 +32,7 @@ public class CompanyRequestDTO {
     private String taxId;
 
     @JsonProperty("companyRegistrationId")
-    private String registrationId;
+    private String registrationNumber;
 
     @JsonProperty("companyStatus")
     private String status;
@@ -107,12 +107,12 @@ public class CompanyRequestDTO {
         this.taxId = taxId;
     }
 
-    public String getRegistrationId() {
-        return registrationId;
+    public String getRegistrationNumber() {
+        return registrationNumber;
     }
 
-    public void setRegistrationId(String registrationId) {
-        this.registrationId = registrationId;
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
     }
 
     public String getStatus() {
@@ -150,7 +150,7 @@ public class CompanyRequestDTO {
                 ", description='" + description + '\'' +
                 ", logoUrl='" + logoUrl + '\'' +
                 ", taxId='" + taxId + '\'' +
-                ", registrationId='" + registrationId + '\'' +
+                ", registrationNumber='" + registrationNumber + '\'' +
                 ", status='" + status + '\'' +
                 ", industry='" + industry + '\'' +
                 ", type='" + type + '\'' +

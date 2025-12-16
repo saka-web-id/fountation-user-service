@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 public class CompanyDTO {
 
@@ -38,7 +39,7 @@ public class CompanyDTO {
     private String taxId;
 
     @JsonProperty("companyRegistrationId")
-    private String registrationId;
+    private String registrationNumber;
 
     @JsonProperty("companyStatus")
     private String status;
@@ -50,12 +51,12 @@ public class CompanyDTO {
     private String type;
 
     @JsonProperty("companyCreatedAt")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm z")
-    private OffsetDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ssXXX")
+    private ZonedDateTime createdAt;
 
     @JsonProperty("companyUpdatedAt")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm z")
-    private OffsetDateTime updatedAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ssXXX")
+    private ZonedDateTime updatedAt;
 
     public Long getId() {
         return id;
@@ -129,12 +130,12 @@ public class CompanyDTO {
         this.taxId = taxId;
     }
 
-    public String getRegistrationId() {
-        return registrationId;
+    public String getRegistrationNumber() {
+        return registrationNumber;
     }
 
-    public void setRegistrationId(String registrationId) {
-        this.registrationId = registrationId;
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
     }
 
     public String getStatus() {
@@ -161,19 +162,19 @@ public class CompanyDTO {
         this.type = type;
     }
 
-    public OffsetDateTime getCreatedAt() {
+    public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(OffsetDateTime createdAt) {
+    public void setCreatedAt(ZonedDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public OffsetDateTime getUpdatedAt() {
+    public ZonedDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(OffsetDateTime updatedAt) {
+    public void setUpdatedAt(ZonedDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 

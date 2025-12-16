@@ -44,6 +44,8 @@ public class CompanyService {
 
     public Mono<Company> createCompanyForUser(Company company, String email) {
 
+        System.out.println("Creating company for user with email: " + email);
+
         return userRepository.findByEmail(email)
                 .switchIfEmpty(Mono.error(
                         new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found")
