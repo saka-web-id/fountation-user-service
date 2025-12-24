@@ -4,6 +4,8 @@ import id.web.saka.fountation.organization.company.CompanyDTO;
 import id.web.saka.fountation.organization.company.CompanyMapper;
 import id.web.saka.fountation.organization.company.CompanyRequestDTO;
 import id.web.saka.fountation.organization.company.CompanyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -16,6 +18,8 @@ import java.net.URI;
 @RestController
 @RequestMapping("/api/v0")
 public class OrganizationController {
+
+    private static final Logger log = LoggerFactory.getLogger(OrganizationController.class);
 
     private final OrganizationService organizationService;
 
@@ -41,12 +45,15 @@ public class OrganizationController {
         return organizationService.getAllOrganizations(jwt.getClaimAsString("https://example.com/email")); // Placeholder
     }
 
-    @GetMapping("/user/organization/company/getCompanyById/{companyId}")
-    public Mono<CompanyDTO> getCompanyById(@AuthenticationPrincipal Jwt jwt, @org.springframework.web.bind.annotation.PathVariable Long companyId) {
-        System.out.println("Controller called with companyId: " + companyId);
+    @GetMapping("/user/organization/company/list/{companyId}")
+    public Flux<CompanyDTO> getCompanyById(@AuthenticationPrincipal Jwt jwt, @PathVariable Long companyId) {
+        log.info("Controller called with companyId: " + companyId);
 
-        return companyService.getCompanyById(companyId)
-                .doOnNext(dto -> System.out.println("Controller received: " + dto.toString()));
+        if(companyId == 0) {
+            return companyService.getCompaniesByEmailAdmin(jwt.getClaimAsString("https://example.com/email"));
+        } else {
+            return companyService.getCompanyById(companyId).flux();
+        }
     }
 
     @PostMapping("/user/organization/company/update")
@@ -71,10 +78,16 @@ public class OrganizationController {
                 .map(saved ->
                         ResponseEntity
                                 .created(URI.create(
-                                        "/api/v0/user/organization/company/getCompanyById/" + saved.getId()
+                                        "/api/v0/user/organization/company/detail/" + saved.getId()
                                 ))
                                 .body(saved)
                 );
+    }
+
+    @GetMapping("/user/organization/company/detail/{companyId}")
+    public Mono<CompanyDTO> getCompanyDetail(@PathVariable Long companyId) {
+
+        return companyService.getCompanyById(companyId);
     }
 
 }

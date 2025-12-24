@@ -5,6 +5,7 @@ import id.web.saka.fountation.authority.role.Role;
 import id.web.saka.fountation.organization.company.CompanyRepository;
 import id.web.saka.fountation.organization.department.Department;
 import id.web.saka.fountation.organization.department.DepartmentDTO;
+import id.web.saka.fountation.organization.department.DepartmentMapper;
 import id.web.saka.fountation.organization.department.DepartmentRepository;
 import id.web.saka.fountation.user.UserService;
 import id.web.saka.fountation.user.organization.company.UserCompanyRepository;
@@ -22,20 +23,24 @@ public class OrganizationService {
     private final UserDepartmentRepository userDepartmentRepository;
     private final CompanyRepository companyRepository;
     private final DepartmentRepository departmentRepository;
-
+    private final DepartmentMapper departmentMapper;
     private final AuthorityService authorityService;
+
+
 
     public OrganizationService(UserService userService,
                                UserCompanyRepository userCompanyRepository,
                                UserDepartmentRepository userDepartmentRepository,
                                CompanyRepository companyRepository,
                                DepartmentRepository departmentRepository,
+                               DepartmentMapper departmentMapper,
                                AuthorityService authorityService) {
         this.userService = userService;
         this.userCompanyRepository = userCompanyRepository;
         this.userDepartmentRepository = userDepartmentRepository;
         this.companyRepository = companyRepository;
         this.departmentRepository = departmentRepository;
+        this.departmentMapper = departmentMapper;
         this.authorityService = authorityService;
     }
 
@@ -84,7 +89,7 @@ public class OrganizationService {
                                         companyRepository.findById(userCompany.getCompanyId())
                                                 .flatMap(company ->
                                                         departmentRepository.findAllByCompanyId(company.getId())
-                                                                .map(DepartmentDTO::new)
+                                                                .map(departmentMapper::toDto)
                                                                 .collectList()
                                                                 .map(departments -> new OrganizationStructureDTO(company, departments))
                                                 )
@@ -95,7 +100,7 @@ public class OrganizationService {
                     return companyRepository.findAll()
                             .flatMap(company ->
                                     departmentRepository.findAllByCompanyId(company.getId())
-                                            .map(DepartmentDTO::new)
+                                            .map(departmentMapper::toDto)
                                             .collectList()
                                             .map(departments -> new OrganizationStructureDTO(company, departments))
                             );
@@ -103,7 +108,7 @@ public class OrganizationService {
     }
 
     private Flux<DepartmentDTO> mapToDepartmentDTO(Flux<Department> departments) {
-        return departments.map(DepartmentDTO::new);
+        return departments.map(departmentMapper::toDto);
     }
 
 }

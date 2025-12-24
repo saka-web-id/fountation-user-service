@@ -1,51 +1,46 @@
 package id.web.saka.fountation.user;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
 
-@Table(value = "users", schema = "users")
-public class User {
+public class UserDTO {
 
-    @Id
-    @Column("id")
+    @JsonProperty("userId")
     private Long id;
 
-    @Column("email")
+    @JsonProperty("userEmail")
     private String email;
 
-    @Column("password_hash")
+    @JsonProperty("userPasswordHash")
     private String passwordHash;
 
-    @Column("name")
+    @JsonProperty("userName")
     private String name;
 
-    @Column("phone")
+    @JsonProperty("userPhone")
     private String phone;
 
-    @Column("status")
+    @JsonProperty("userStatus")
     private String status;
 
-    @Column("is_verified")
+    @JsonProperty("userIsVerified")
     private boolean isVerified;
 
-    @Column("last_login_at")
-    private Instant lastLoginAt;
+    @JsonProperty("userLastLoginAt")
+    private ZonedDateTime lastLoginAt;
 
-    @Column("created_at")
-    private Instant createdAt;
+    @JsonProperty("userCreatedAt")
+    private ZonedDateTime createdAt;
 
-    @Column("update_at")
-    private Instant updateAt;
+    @JsonProperty("userUpdatedAt")
+    private ZonedDateTime updateAt;
 
-    @Column("leader_id")
+    @JsonProperty("userLeaderId")
     private Long leaderId;
 
-    @Column("note")
+    @JsonProperty("userNote")
     private String note;
-
 
     public Long getId() {
         return id;
@@ -103,27 +98,27 @@ public class User {
         isVerified = verified;
     }
 
-    public Instant getLastLoginAt() {
+    public ZonedDateTime getLastLoginAt() {
         return lastLoginAt;
     }
 
-    public void setLastLoginAt(Instant lastLoginAt) {
+    public void setLastLoginAt(ZonedDateTime lastLoginAt) {
         this.lastLoginAt = lastLoginAt;
     }
 
-    public Instant getCreatedAt() {
+    public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Instant createdAt) {
+    public void setCreatedAt(ZonedDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Instant getUpdateAt() {
+    public ZonedDateTime getUpdateAt() {
         return updateAt;
     }
 
-    public void setUpdateAt(Instant updateAt) {
+    public void setUpdateAt(ZonedDateTime updateAt) {
         this.updateAt = updateAt;
     }
 
@@ -145,7 +140,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "UserDTO{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", passwordHash='" + passwordHash + '\'' +

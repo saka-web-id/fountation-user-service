@@ -1,10 +1,12 @@
 package id.web.saka.fountation.organization.department;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 @Table(schema = "users", value = "department")
 public class Department {
@@ -19,11 +21,19 @@ public class Department {
     @Column("name")
     private String name;
 
+    @Column("status")
+    private String status;
+
     @Column("description")
     private String description;
 
+    @CreatedDate
     @Column("created_at")
-    private OffsetDateTime createdAt;
+    private Instant createdAt;
+
+    @LastModifiedDate
+    @Column("updated_at")
+    private Instant updatedAt;
 
     public Long getId() {
         return id;
@@ -49,6 +59,14 @@ public class Department {
         this.name = name;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -57,12 +75,20 @@ public class Department {
         this.description = description;
     }
 
-    public OffsetDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(OffsetDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override
@@ -71,8 +97,10 @@ public class Department {
                 "id=" + id +
                 ", companyId=" + companyId +
                 ", name='" + name + '\'' +
+                ", status='" + status + '\'' +
                 ", description='" + description + '\'' +
                 ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

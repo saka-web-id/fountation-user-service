@@ -1,0 +1,81 @@
+package id.web.saka.fountation.user.organization.department;
+
+import id.web.saka.fountation.organization.department.Department;
+import id.web.saka.fountation.organization.department.DepartmentDTO;
+import id.web.saka.fountation.organization.department.DepartmentMapper;
+import id.web.saka.fountation.organization.department.DepartmentRepository;
+import id.web.saka.fountation.user.UserDTO;
+import id.web.saka.fountation.user.UserMapper;
+import id.web.saka.fountation.user.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@Service
+public class UserDepartmentService {
+
+    Logger log = LoggerFactory.getLogger(UserDepartmentService.class);
+
+    private final DepartmentRepository departmentRepository;
+
+    private final DepartmentMapper departmentMapper;
+
+    private final UserDepartmentRepository userDepartmentRepository;
+
+    private final UserRepository userRepository;
+
+    private final UserMapper userMapper;
+
+    public UserDepartmentService(UserDepartmentRepository userDepartmentRepository, DepartmentRepository departmentRepository, DepartmentMapper departmentMapper, UserRepository userRepository, UserMapper userMapper) {
+        this.userDepartmentRepository = userDepartmentRepository;
+        this.departmentRepository = departmentRepository;
+        this.departmentMapper = departmentMapper;
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+    }
+
+    public Flux<DepartmentDTO> getDepartmentsByCompanyId(Long companyId) {
+
+        log.info("Fetching departments for companyId: " + companyId);
+
+        return departmentRepository.findAllByCompanyId(companyId)
+                .map(departmentMapper::toDto).doOnNext(deptDto ->
+                        log.info("Fetched DepartmentDTO: " + deptDto)
+                );
+    }
+
+    public Mono<Department> saveDepartment(Department department) {
+        log.info("Saving department: " + department.toString());
+
+        return departmentRepository.save(department);
+    }
+
+    public Flux<UserDTO> getUsers(Long companyId, Long departmentId) {
+
+        log.info("Fetching users for companyId: " + companyId + " and departmentId: " + departmentId);
+
+        return userDepartmentRepository.findAllByCompanyIdAndDepartmentId(companyId, departmentId)
+                .flatMap(userDepartment -> userRepository.findById(userDepartment.getUserId())
+                        .map(userMapper::toDto)).doOnNext(userDto -> log.info("Fetched UserDTO: " + userDto.toString()));
+
+    }
+
+    public Mono<DepartmentDTO> getDepartmentDetail(Long departmentId) {
+
+        return departmentRepository.findById(departmentId)
+                .map(departmentMapper::toDto);
+
+    }
+
+    public Mono<Void> setDepartmentForUser(Long userId, Long departmentId) {
+
+        UserDepartment userDepartment = new UserDepartment();
+        userDepartment.setUserId(userId);
+        userDepartment.setDepartmentId(departmentId);
+
+        return userDepartmentRepository.save(new UserDepartment(userId, departmentId, false))
+                .then(Mono.empty());
+    }
+}

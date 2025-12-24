@@ -3,14 +3,19 @@ package id.web.saka.fountation.organization.company;
 import id.web.saka.fountation.user.UserRepository;
 import id.web.saka.fountation.user.organization.company.UserCompany;
 import id.web.saka.fountation.user.organization.company.UserCompanyRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
 public class CompanyService {
+
+    Logger log = LoggerFactory.getLogger(CompanyService.class);
 
     private final CompanyRepository companyRepository;
 
@@ -31,7 +36,7 @@ public class CompanyService {
     }
 
     public Mono<CompanyDTO> getCompanyById (Long companyId) {
-        System.out.println("Service called with companyId: " + companyId);
+        log.info("Service called with companyId: " + companyId);
 
         return companyRepository.findById(companyId)
                 .map(companyMapper::toDto);
@@ -44,7 +49,7 @@ public class CompanyService {
 
     public Mono<Company> createCompanyForUser(Company company, String email) {
 
-        System.out.println("Creating company for user with email: " + email);
+        log.info("Creating company for user with email: " + email);
 
         return userRepository.findByEmail(email)
                 .switchIfEmpty(Mono.error(
@@ -63,5 +68,22 @@ public class CompanyService {
                                 })
                 )
                 .as(transactionalOperator::transactional);
+    }
+
+    public Flux<CompanyDTO> getCompaniesByEmailAdmin(String email) {
+
+        log.info("Fetching companies for admin user with email: " + email);
+
+        return userRepository.findByEmail(email)
+                .switchIfEmpty(Mono.error(
+                        new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found")
+                ))
+                .flatMapMany(user ->
+                        userCompanyRepository.findAllByUserId(user.getId())
+                                .flatMap(userCompany ->
+                                        companyRepository.findById(userCompany.getCompanyId())
+                                )
+                                .map(companyMapper::toDto)
+                );
     }
 }

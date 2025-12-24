@@ -6,6 +6,15 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(value = "user_department", schema = "users")
 public class UserDepartment {
 
+    public UserDepartment() {
+    }
+
+    public UserDepartment(Long companyId, Long departmentId, boolean isDefault) {
+        this.companyId = companyId;
+        this.departmentId = departmentId;
+        this.isDefault = isDefault;
+    }
+
     @Column("id")
     private Long id;
 

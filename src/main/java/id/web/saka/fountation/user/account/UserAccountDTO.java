@@ -1,4 +1,4 @@
-package id.web.saka.fountation.user;
+package id.web.saka.fountation.user.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import id.web.saka.fountation.authority.AuthorityDTO;

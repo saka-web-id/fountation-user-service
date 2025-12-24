@@ -3,34 +3,48 @@ package id.web.saka.fountation.organization.department;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 public class DepartmentDTO {
 
-    public DepartmentDTO(Department department) {
-        this.departmentId = department.getId();
-        this.name = department.getName();
-        this.description = department.getDescription();
-        this.createdAt = department.getCreatedAt();
+    public DepartmentDTO() {
     }
 
-    @JsonProperty("id")
-    private Long departmentId;
+    @JsonProperty("departmentId")
+    private Long id;
 
-    @JsonProperty("name")
+    @JsonProperty("companyId")
+    private Long companyId;
+
+    @JsonProperty("departmentName")
     private String name;
 
-    @JsonProperty("description")
+    @JsonProperty("departmentStatus")
+    private String status;
+
+    @JsonProperty("departmentDescription")
     private String description;
 
-    @JsonProperty("createdAt")
-    private OffsetDateTime createdAt;
+    @JsonProperty("departmentCreatedAt")
+    private ZonedDateTime createdAt;
 
-    public Long getDepartmentId() {
-        return departmentId;
+    @JsonProperty("departmentUpdatedAt")
+    private ZonedDateTime updatedAt;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setDepartmentId(Long departmentId) {
-        this.departmentId = departmentId;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 
     public String getName() {
@@ -41,6 +55,14 @@ public class DepartmentDTO {
         this.name = name;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -49,21 +71,32 @@ public class DepartmentDTO {
         this.description = description;
     }
 
-    public OffsetDateTime getCreatedAt() {
+    public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(OffsetDateTime createdAt) {
+    public void setCreatedAt(ZonedDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public ZonedDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(ZonedDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override
     public String toString() {
         return "DepartmentDTO{" +
-                "departmentId=" + departmentId +
+                "id=" + id +
+                ", companyId=" + companyId +
                 ", name='" + name + '\'' +
+                ", status='" + status + '\'' +
                 ", description='" + description + '\'' +
                 ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

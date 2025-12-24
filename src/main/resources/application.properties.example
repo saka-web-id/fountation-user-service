@@ -10,10 +10,15 @@ fountation:
             url: lb://fountation-account-service
 logging:
     level:
+        com:
+            nimbusds:
+                jose: DEBUG
         org:
             springframework:
                 security:
                     oauth2:
+                        client: DEBUG
+                        jwt: DEBUG
                         server:
                             resource:
                                 authentication: DEBUG

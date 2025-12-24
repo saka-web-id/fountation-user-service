@@ -4,9 +4,13 @@ package id.web.saka.fountation.authority;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import id.web.saka.fountation.authority.permission.Permission;
 import id.web.saka.fountation.authority.role.Role;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 
 public class AuthorityDTO {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthorityDTO.class);
 
     public AuthorityDTO(Long UserId, Role role, Flux<Permission> permissions) {
         this.userId = UserId;
@@ -80,9 +84,9 @@ public class AuthorityDTO {
                 ", roleDescription='" + roleDescription + '\'' +
                 ", permissions=" +
                 permissions.subscribe(
-                element -> System.out.println(element.toString()), // Consumer for each element
-                error -> System.err.println("Error: " + error), // Consumer for errors (optional)
-                () -> System.out.println("Flux completed.") // Runnable for completion (optional)
+                element -> log.info(element.toString()), // Consumer for each element
+                error -> log.error("Error: " + error), // Consumer for errors (optional)
+                () -> log.info("Flux completed.") // Runnable for completion (optional)
         );
     }
 }

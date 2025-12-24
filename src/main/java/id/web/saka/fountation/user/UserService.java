@@ -1,7 +1,12 @@
 package id.web.saka.fountation.user;
 
 import id.web.saka.fountation.authority.AuthorityService;
+import id.web.saka.fountation.user.account.UserAccountDTO;
+import id.web.saka.fountation.user.organization.department.UserDepartmentRepository;
+import id.web.saka.fountation.user.organization.department.UserDepartmentService;
 import id.web.saka.fountation.util.Env;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -10,8 +15,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class UserService {
-
-
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
 
     private final AuthorityService authorityService;
@@ -20,11 +24,17 @@ public class UserService {
 
     private Mono<WebClient> webClientAccount;
 
-    public UserService(UserRepository userRepository, AuthorityService authorityService, @Qualifier("webClientAccount") Mono<WebClient> webClientAccount, Env env, MessageSource messageSource) {
+    private final UserMapper userMapper;
+
+    private final UserDepartmentService userDepartmentService;
+
+    public UserService(UserRepository userRepository, AuthorityService authorityService, @Qualifier("webClientAccount") Mono<WebClient> webClientAccount, Env env, MessageSource messageSource, UserMapper userMapper, UserDepartmentService userDepartmentService) {
         this.userRepository = userRepository;
         this.authorityService = authorityService;
         this.webClientAccount = webClientAccount;
         this.messageSource = messageSource;
+        this.userMapper = userMapper;
+        this.userDepartmentService = userDepartmentService;
     }
 
     public Mono<User> getUserByEmail(String email) {
@@ -38,7 +48,7 @@ public class UserService {
                             if (authorityDTO == null) {
                                 return Mono.error(new RuntimeException(messageSource.getMessage("error.user.no.authority", null, null)));
                             } else {
-                                System.out.println("Authority Role: " + authorityDTO.toString());
+                                log.info("Authority Role: {}", authorityDTO.toString());
                             }
 
                             return webClientAccount.flatMap(webClient ->
@@ -59,5 +69,27 @@ public class UserService {
                 );
     }
 
+    public Mono<UserDTO> getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .map(userMapper::toDto);
+    }
 
+    public Mono<? extends UserDTO> saveUser(UserDTO userDTO) {
+
+        return userRepository.save(userMapper.toEntity(userDTO))
+                .map(userMapper::toDto);
+    }
+
+    public Mono<? extends UserDTO> addUser(UserRequestDTO userRequestDTO) {
+
+        return userRepository
+                .save(userMapper.requestToEntity(userRequestDTO))
+                .map(userMapper::toDto).flatMap(userDTO ->
+                        // Set default department for new user
+                        userDepartmentService
+                                .setDepartmentForUser(userDTO.getId(), userRequestDTO.getDepartmentId())
+                                .thenReturn(userDTO)
+                );
+
+    }
 }
