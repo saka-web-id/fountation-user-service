@@ -9,9 +9,10 @@ public class UserDepartment {
     public UserDepartment() {
     }
 
-    public UserDepartment(Long companyId, Long departmentId, boolean isDefault) {
-        this.companyId = companyId;
+    public UserDepartment(Long userId, Long departmentId, Long companyId, boolean isDefault) {
+        this.userId = userId;
         this.departmentId = departmentId;
+        this.companyId = companyId;
         this.isDefault = isDefault;
     }
 

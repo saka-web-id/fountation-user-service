@@ -7,6 +7,7 @@ import id.web.saka.fountation.organization.department.DepartmentRepository;
 import id.web.saka.fountation.user.UserDTO;
 import id.web.saka.fountation.user.UserMapper;
 import id.web.saka.fountation.user.UserRepository;
+import id.web.saka.fountation.user.UserRequestDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -69,13 +70,9 @@ public class UserDepartmentService {
 
     }
 
-    public Mono<Void> setDepartmentForUser(Long userId, Long departmentId) {
+    public Mono<Void> setDepartmentForUser(Long userId, UserRequestDTO userRequestDTO) {
 
-        UserDepartment userDepartment = new UserDepartment();
-        userDepartment.setUserId(userId);
-        userDepartment.setDepartmentId(departmentId);
-
-        return userDepartmentRepository.save(new UserDepartment(userId, departmentId, false))
+        return userDepartmentRepository.save(new UserDepartment(userId, userRequestDTO.getDepartmentId(), userRequestDTO.getCompanyId(), false))
                 .then(Mono.empty());
     }
 }

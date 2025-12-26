@@ -6,9 +6,10 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(value = "user_company", schema = "users")
 public class UserCompany {
 
-    public UserCompany(Long userId, Long companyId) {
+    public UserCompany(Long userId, Long companyId, boolean isDefault) {
         this.userId = userId;
         this.companyId = companyId;
+        this.isDefault = isDefault;
     }
 
     @Column("id")

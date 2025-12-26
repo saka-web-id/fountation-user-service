@@ -60,7 +60,8 @@ public class CompanyService {
                                 .flatMap(savedCompany -> {
                                     UserCompany uc = new UserCompany(
                                             user.getId(),
-                                            savedCompany.getId()
+                                            savedCompany.getId(),
+                                            true
                                     );
 
                                     return userCompanyRepository.save(uc)

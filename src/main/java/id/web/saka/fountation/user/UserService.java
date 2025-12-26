@@ -2,6 +2,7 @@ package id.web.saka.fountation.user;
 
 import id.web.saka.fountation.authority.AuthorityService;
 import id.web.saka.fountation.user.account.UserAccountDTO;
+import id.web.saka.fountation.user.organization.company.UserCompanyService;
 import id.web.saka.fountation.user.organization.department.UserDepartmentRepository;
 import id.web.saka.fountation.user.organization.department.UserDepartmentService;
 import id.web.saka.fountation.util.Env;
@@ -28,13 +29,16 @@ public class UserService {
 
     private final UserDepartmentService userDepartmentService;
 
-    public UserService(UserRepository userRepository, AuthorityService authorityService, @Qualifier("webClientAccount") Mono<WebClient> webClientAccount, Env env, MessageSource messageSource, UserMapper userMapper, UserDepartmentService userDepartmentService) {
+    private final UserCompanyService userCompanyService;
+
+    public UserService(UserRepository userRepository, AuthorityService authorityService, @Qualifier("webClientAccount") Mono<WebClient> webClientAccount, Env env, MessageSource messageSource, UserMapper userMapper, UserDepartmentService userDepartmentService, UserCompanyService userCompanyService) {
         this.userRepository = userRepository;
         this.authorityService = authorityService;
         this.webClientAccount = webClientAccount;
         this.messageSource = messageSource;
         this.userMapper = userMapper;
         this.userDepartmentService = userDepartmentService;
+        this.userCompanyService = userCompanyService;
     }
 
     public Mono<User> getUserByEmail(String email) {
@@ -81,15 +85,14 @@ public class UserService {
     }
 
     public Mono<? extends UserDTO> addUser(UserRequestDTO userRequestDTO) {
-
         return userRepository
                 .save(userMapper.requestToEntity(userRequestDTO))
-                .map(userMapper::toDto).flatMap(userDTO ->
-                        // Set default department for new user
-                        userDepartmentService
-                                .setDepartmentForUser(userDTO.getId(), userRequestDTO.getDepartmentId())
-                                .thenReturn(userDTO)
+                .map(userMapper::toDto)
+                .flatMap(userDTO ->
+                        Mono.when(
+                                userCompanyService.setCompanyForUser(userDTO.getId(), userRequestDTO),
+                                userDepartmentService.setDepartmentForUser(userDTO.getId(), userRequestDTO)
+                        ).thenReturn(userDTO)
                 );
-
     }
 }

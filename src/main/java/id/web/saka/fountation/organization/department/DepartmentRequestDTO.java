@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DepartmentRequestDTO {
 
-    @JsonProperty("companyid")
+    @JsonProperty("companyId")
     private Long companyId;
 
     @JsonProperty("departmentName")

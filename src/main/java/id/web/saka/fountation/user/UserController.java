@@ -54,8 +54,8 @@ public class UserController {
                 .flatMap(userService::saveUser);
     }
 
-    @PostMapping("/user/add")
-    public Mono<UserDTO> addUser(@RequestBody Mono<UserRequestDTO> payload) {
+    @PostMapping("/user/add/{companyId}/{departmentId}")
+    public Mono<UserDTO> addUser(@RequestBody Mono<UserRequestDTO> payload, @PathVariable Long companyId, @PathVariable Long departmentId) {
 
         return payload
                 .flatMap(userService::addUser);
