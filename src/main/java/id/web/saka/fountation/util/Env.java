@@ -11,6 +11,9 @@ public class Env {
     @Value("${fountation.service.account.url}")
     private String fountationServiceAccountUrl;
 
+    @Value("${fountation.service.authorization.url}")
+    private String fountationServiceAuthorizationUrl;
+
     @Value("${spring.security.oauth2.client.registration.internal-service.client-id}")
     private String clientRegistrationInternalServiceClientId;
 
@@ -35,6 +38,14 @@ public class Env {
 
     public void setFountationServiceAccountUrl(String fountationServiceAccountUrl) {
         this.fountationServiceAccountUrl = fountationServiceAccountUrl;
+    }
+
+    public String getFountationServiceAuthorizationUrl() {
+        return fountationServiceAuthorizationUrl;
+    }
+
+    public void setFountationServiceAuthorizationUrl(String fountationServiceAuthorizationUrl) {
+        this.fountationServiceAuthorizationUrl = fountationServiceAuthorizationUrl;
     }
 
     public String getClientRegistrationInternalServiceClientId() {

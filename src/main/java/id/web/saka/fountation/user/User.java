@@ -1,6 +1,8 @@
 package id.web.saka.fountation.user;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -34,9 +36,11 @@ public class User {
     @Column("last_login_at")
     private Instant lastLoginAt;
 
+    @CreatedDate
     @Column("created_at")
     private Instant createdAt;
 
+    @LastModifiedDate
     @Column("update_at")
     private Instant updateAt;
 

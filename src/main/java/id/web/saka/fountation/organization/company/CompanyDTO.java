@@ -58,6 +58,9 @@ public class CompanyDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ssXXX")
     private ZonedDateTime updatedAt;
 
+    @JsonProperty("companyIsDefault")
+    private boolean isDefault;
+
     public Long getId() {
         return id;
     }
@@ -178,5 +181,11 @@ public class CompanyDTO {
         this.updatedAt = updatedAt;
     }
 
+    public boolean isDefault() {
+        return isDefault;
+    }
 
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
+    }
 }

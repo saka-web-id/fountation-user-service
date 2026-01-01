@@ -39,12 +39,6 @@ public class OrganizationController {
         return organizationService.getOrganizationDetail(jwt.getClaimAsString("https://example.com/email"));
     }
 
-    @GetMapping("/user/organization/all")
-    public Flux<OrganizationStructureDTO> getAllOrganizations(@AuthenticationPrincipal Jwt jwt) {
-        // Implementation for retrieving all organizations
-        return organizationService.getAllOrganizations(jwt.getClaimAsString("https://example.com/email")); // Placeholder
-    }
-
     @GetMapping("/user/organization/company/list/{companyId}")
     public Flux<CompanyDTO> getCompanyById(@AuthenticationPrincipal Jwt jwt, @PathVariable Long companyId) {
         log.info("Controller called with companyId: " + companyId);

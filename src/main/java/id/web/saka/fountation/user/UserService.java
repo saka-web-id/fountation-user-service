@@ -1,17 +1,14 @@
 package id.web.saka.fountation.user;
 
-import id.web.saka.fountation.authority.AuthorityService;
+import id.web.saka.fountation.account.AccountService;
+import id.web.saka.fountation.authority.RolePermissionService;
 import id.web.saka.fountation.user.account.UserAccountDTO;
 import id.web.saka.fountation.user.organization.company.UserCompanyService;
-import id.web.saka.fountation.user.organization.department.UserDepartmentRepository;
 import id.web.saka.fountation.user.organization.department.UserDepartmentService;
-import id.web.saka.fountation.util.Env;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -19,11 +16,9 @@ public class UserService {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
 
-    private final AuthorityService authorityService;
+    private final RolePermissionService rolePermissionService;
 
     private MessageSource messageSource;
-
-    private Mono<WebClient> webClientAccount;
 
     private final UserMapper userMapper;
 
@@ -31,14 +26,22 @@ public class UserService {
 
     private final UserCompanyService userCompanyService;
 
-    public UserService(UserRepository userRepository, AuthorityService authorityService, @Qualifier("webClientAccount") Mono<WebClient> webClientAccount, Env env, MessageSource messageSource, UserMapper userMapper, UserDepartmentService userDepartmentService, UserCompanyService userCompanyService) {
+    private final AccountService accountService;
+
+    public UserService(UserRepository userRepository,
+                       RolePermissionService rolePermissionService,
+                       MessageSource messageSource,
+                       UserMapper userMapper,
+                       UserDepartmentService userDepartmentService,
+                       UserCompanyService userCompanyService,
+                       AccountService accountService) {
         this.userRepository = userRepository;
-        this.authorityService = authorityService;
-        this.webClientAccount = webClientAccount;
+        this.rolePermissionService = rolePermissionService;
         this.messageSource = messageSource;
         this.userMapper = userMapper;
         this.userDepartmentService = userDepartmentService;
         this.userCompanyService = userCompanyService;
+        this.accountService = accountService;
     }
 
     public Mono<User> getUserByEmail(String email) {
@@ -48,28 +51,19 @@ public class UserService {
     public Mono<UserAccountDTO> getUserAccountDTOByEmail(String email) {
         return getUserByEmail(email)
                 .flatMap(user ->
-                        authorityService.getAuthorityByUserId(user.getId()).flatMap(authorityDTO -> {
-                            if (authorityDTO == null) {
-                                return Mono.error(new RuntimeException(messageSource.getMessage("error.user.no.authority", null, null)));
-                            } else {
-                                log.info("Authority Role: {}", authorityDTO.toString());
-                            }
-
-                            return webClientAccount.flatMap(webClient ->
-                                    webClient.get()
-                                            .uri("/api/v0/account/membership/detail/" + user.getId())
-                                            .retrieve()
-                                            .bodyToMono(UserAccountDTO.class)
-                                            .map(userAccountDTO -> {
-                                                userAccountDTO.setName(user.getName());
-                                                userAccountDTO.setEmail(user.getEmail());
-                                                userAccountDTO.setRole(authorityDTO.getRoleName());
-                                                userAccountDTO.setAuthority(authorityDTO);
-                                                return userAccountDTO;
-                                            })
-                            );
-                        })
-
+                        userCompanyService.getUserCompanyDefaultByUserId(user.getId())
+                                .flatMap(userCompany ->
+                                        rolePermissionService.getAuthorityByCompanyIdAndUserId(userCompany.getId(), user.getId())
+                                )
+                                .flatMap(rolePermissionDTO -> {
+                                    if (rolePermissionDTO == null) {
+                                        return Mono.error(new RuntimeException(messageSource.getMessage("error.user.no.authority", null, null)));
+                                    }
+                                    return accountService.getAccountById(user.getId())
+                                            .map(accountDTO -> new UserAccountDTO(user, accountDTO, rolePermissionDTO));
+                                })
+                ).doOnNext(userAccountDTO ->
+                        log.info("Fetched UserAccountDTO for email {}: {}", email, userAccountDTO.toString())
                 );
     }
 

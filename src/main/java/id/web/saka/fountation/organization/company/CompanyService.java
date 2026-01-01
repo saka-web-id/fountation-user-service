@@ -72,8 +72,7 @@ public class CompanyService {
     }
 
     public Flux<CompanyDTO> getCompaniesByEmailAdmin(String email) {
-
-        log.info("Fetching companies for admin user with email: " + email);
+        log.info("Fetching companies for admin user with email: {}", email);
 
         return userRepository.findByEmail(email)
                 .switchIfEmpty(Mono.error(
@@ -83,8 +82,12 @@ public class CompanyService {
                         userCompanyRepository.findAllByUserId(user.getId())
                                 .flatMap(userCompany ->
                                         companyRepository.findById(userCompany.getCompanyId())
+                                                .map(company -> {
+                                                    CompanyDTO dto = companyMapper.toDto(company);
+                                                    dto.setDefault(userCompany.isDefault()); // ✅ add flag
+                                                    return dto;
+                                                })
                                 )
-                                .map(companyMapper::toDto)
                 );
     }
 }

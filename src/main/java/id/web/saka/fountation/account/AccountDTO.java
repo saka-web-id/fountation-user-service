@@ -1,35 +1,10 @@
-package id.web.saka.fountation.user.account;
+package id.web.saka.fountation.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import id.web.saka.fountation.account.AccountDTO;
-import id.web.saka.fountation.authority.RolePermissionDTO;
-import id.web.saka.fountation.user.User;
 
 import java.time.OffsetDateTime;
 
-public class UserAccountDTO {
-
-    public UserAccountDTO(User user, AccountDTO account, RolePermissionDTO authority) {
-        this.id = user.getId();
-        this.name = user.getName();
-        this.email = user.getEmail();
-        this.accountNumber = account.getAccountNumber();
-        this.accountStatus = account.getAccountStatus();
-        this.membershipType = account.getMembershipType();
-        this.membershipStatus =  account.getMembershipStatus();
-        this.authority = authority;
-        this.createdAt = account.getCreatedAt();
-        this.membershipStartDate = account.getMembershipStartDate();
-        this.membershipEndDate = account.getMembershipEndDate();
-    }
-
-    @JsonProperty("id")
-    private Long id;
-    @JsonProperty("name")
-    private String name;
-
-    @JsonProperty("email")
-    private String email;
+public class AccountDTO {
 
     @JsonProperty("accountNumber")
     private String accountNumber;
@@ -43,9 +18,6 @@ public class UserAccountDTO {
     @JsonProperty("membershipStatus")
     private String membershipStatus;
 
-    @JsonProperty("authority")
-    private RolePermissionDTO authority;
-
     @JsonProperty("createdAt")
     private OffsetDateTime createdAt;
 
@@ -55,29 +27,6 @@ public class UserAccountDTO {
     @JsonProperty("membershipEndDate")
     private OffsetDateTime membershipEndDate;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getAccountNumber() {
         return accountNumber;
@@ -133,13 +82,5 @@ public class UserAccountDTO {
 
     public void setMembershipEndDate(OffsetDateTime membershipEndDate) {
         this.membershipEndDate = membershipEndDate;
-    }
-
-    public RolePermissionDTO getAuthority() {
-        return authority;
-    }
-
-    public void setAuthority(RolePermissionDTO authority) {
-        this.authority = authority;
     }
 }

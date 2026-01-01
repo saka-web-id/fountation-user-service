@@ -48,4 +48,12 @@ public class UserCompany {
     public void setCompanyId(Long companyId) {
         this.companyId = companyId;
     }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
+    }
 }

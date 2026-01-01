@@ -26,6 +26,14 @@ public class UserCompanyService {
         this.companyMapper = companyMapper;
     }
 
+    public Mono<CompanyDTO> getUserCompanyDefaultByUserId(Long userId) {
+        return userCompanyRepository.findByUserIdAndIsDefaultTrue(userId)
+                .flatMap(userCompany ->
+                        companyRepository.findById(userCompany.getCompanyId())
+                                .map(companyMapper::toDto)
+                );
+    }
+
     public Flux<CompanyDTO> getUserCompaniesByEmail(String email) {
         return userRepository.findByEmail(email)
                 .flatMapMany(user ->

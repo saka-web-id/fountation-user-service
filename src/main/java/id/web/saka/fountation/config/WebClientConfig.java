@@ -44,6 +44,22 @@ public class WebClientConfig {
                 );
     }
 
+    @Bean
+    public Mono<WebClient> webClientAuthorization(ReactorLoadBalancerExchangeFilterFunction lbFunction) {
+        return getAccessToken()
+                .map(token ->
+                        WebClient.builder()
+                                .filter(lbFunction)
+                                .baseUrl(env.getFountationServiceAuthorizationUrl())
+                                .defaultHeaders(headers -> {
+                                    headers.setBearerAuth(token);
+                                    headers.set("Accept", "application/json");
+                                    headers.set("Content-Type", "application/json");
+                                })
+                                .build()
+                );
+    }
+
     private Mono<String> getAccessToken() {
         WebClient webClient = WebClient.builder().build();
 
