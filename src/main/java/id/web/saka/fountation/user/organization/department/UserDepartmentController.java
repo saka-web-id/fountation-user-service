@@ -28,20 +28,20 @@ public class UserDepartmentController {
         this.departmentMapper = departmentMapper;
     }
 
-    @GetMapping("/user/organization/department/list/{companyId}")
+    @GetMapping("/user/organization/department/list/companyId/{companyId}/userId/{userId}")
     public Flux<DepartmentDTO> getDepartmentsByCompanyId(@PathVariable Long companyId) {
 
         return userDepartmentService.getDepartmentsByCompanyId(companyId); // Placeholder return
     }
 
-    @GetMapping("/user/organization/department/detail/{departmentId}")
-    public Mono<DepartmentDTO> getDepartmentDetail(@PathVariable Long departmentId) {
+    @GetMapping("/user/organization/department/detail/companyId/{companyId}/userId/{userId}/{departmentId}")
+    public Mono<DepartmentDTO> getDepartmentDetail(@PathVariable Long companyId, @PathVariable Long userId, @PathVariable Long departmentId) {
 
         return userDepartmentService.getDepartmentDetail(departmentId);
     }
 
-    @PostMapping("/user/organization/department/update")
-    public Mono<ResponseEntity<DepartmentDTO>> updateCompany(@RequestBody Mono<DepartmentDTO> payload) {
+    @PostMapping("/user/organization/department/update/companyId/{companyId}/userId/{userId}")
+    public Mono<ResponseEntity<DepartmentDTO>> updateCompany(@RequestBody Mono<DepartmentDTO> payload, @PathVariable Long companyId, @PathVariable Long userId) {
         return payload
                 .map(departmentMapper::toEntity)
                 .flatMap(userDepartmentService::saveDepartment)
@@ -49,8 +49,8 @@ public class UserDepartmentController {
                 .map(ResponseEntity::ok);
     }
 
-    @PostMapping("/user/organization/department/add")
-    public Mono<ResponseEntity<DepartmentDTO>> addCompany(@RequestBody Mono<DepartmentRequestDTO> payload) {
+    @PostMapping("/user/organization/department/add/companyId/{companyId}/userId/{userId}")
+    public Mono<ResponseEntity<DepartmentDTO>> addCompany(@RequestBody Mono<DepartmentRequestDTO> payload, @PathVariable Long companyId, @PathVariable Long userId) {
 
         return payload
                 .map(departmentMapper::requestToEntity)
@@ -65,9 +65,9 @@ public class UserDepartmentController {
                 );
     }
 
-
-    @GetMapping("/user/organization/department/users/{companyId}/{departmentId}")
-    public Flux<UserDTO> getUsers(@PathVariable Long companyId, @PathVariable Long departmentId) {
+    //TODO Check in database compare with /api/v0/user/list
+    @GetMapping("/user/organization/department/users/companyId/{companyId}/userId/{userId}/{departmentId}")
+    public Flux<UserDTO> getUsers(@PathVariable Long companyId, @PathVariable Long userId, @PathVariable Long departmentId) {
 
         return userDepartmentService.getUsers(companyId, departmentId);
     }

@@ -40,7 +40,7 @@ public class OrganizationService {
     }
 
 
-    public Mono<OrganizationDTO> getOrganizationDetail(String email) {
+    /*public Mono<OrganizationDTO> getOrganizationDetail(String email) {
 
         return userService.getUserByEmail(email)
                 .flatMap(user ->
@@ -57,6 +57,6 @@ public class OrganizationService {
                         )
                 );
 
-    }
+    }*/
 
 }

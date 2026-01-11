@@ -34,14 +34,11 @@ public class UserCompanyService {
                 );
     }
 
-    public Flux<CompanyDTO> getUserCompaniesByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .flatMapMany(user ->
-                        userCompanyRepository.findAllByUserId(user.getId())
-                                .flatMap(userCompany ->
-                                        companyRepository.findById(userCompany.getCompanyId())
-                                                .map(companyMapper::toDto)
-                                )
+    public Flux<CompanyDTO> getUserCompaniesByEmail(Long companyId, Long userId) {
+        return userCompanyRepository.findAllByUserId(userId)
+                .flatMap(userCompany ->
+                        companyRepository.findById(userCompany.getCompanyId())
+                                .map(companyMapper::toDto)
                 );
     }
 

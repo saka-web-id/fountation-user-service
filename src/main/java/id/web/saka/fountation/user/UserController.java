@@ -21,7 +21,7 @@ public class UserController {
 
     private final UserService userService;
 
-    private UserController(UserService userService) {
+    public UserController(UserService userService) {
        this.userService = userService;
     }
 
@@ -36,25 +36,25 @@ public class UserController {
         return exchange.getResponse().setComplete();
     }
 
-    @GetMapping("/user/detail")
+    @GetMapping({"/user/detail", "/user/detail/"}) //NOTE excluded from authorization filter
     public Mono<UserAccountDTO> getUser(@AuthenticationPrincipal Jwt jwt) {
 
         return userService.getUserAccountDTOByEmail(jwt.getClaimAsString("https://example.com/email"));
     }
 
-    @GetMapping("/user/detail/{userId}")
+    @GetMapping("/user/detail/{userId}") //NOTE excluded from authorization filter
     public Mono<UserDTO> getUserById(@PathVariable Long userId) {
         return userService.getUserById(userId);
     }
 
-    @PostMapping("/user/update")
-    public Mono<UserDTO> updateUser(@RequestBody Mono<UserDTO> payload) {
+    @PostMapping("/user/update/companyId/{companyId}/userId/{userId}")
+    public Mono<UserDTO> updateUser(@RequestBody Mono<UserDTO> payload, @PathVariable Long companyId, @PathVariable Long userId) {
 
         return payload
                 .flatMap(userService::saveUser);
     }
 
-    @PostMapping("/user/add/{companyId}/{departmentId}")
+    @PostMapping("/user/add/companyId/{companyId}/departementId/{departmentId}")
     public Mono<UserDTO> addUser(@RequestBody Mono<UserRequestDTO> payload, @PathVariable Long companyId, @PathVariable Long departmentId) {
 
         return payload

@@ -56,4 +56,14 @@ public class UserCompany {
     public void setDefault(boolean aDefault) {
         isDefault = aDefault;
     }
+
+    @Override
+    public String toString() {
+        return "UserCompany{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", companyId=" + companyId +
+                ", isDefault=" + isDefault +
+                '}';
+    }
 }

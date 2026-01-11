@@ -188,4 +188,26 @@ public class CompanyDTO {
     public void setDefault(boolean aDefault) {
         isDefault = aDefault;
     }
+
+    @Override
+    public String toString() {
+        return "CompanyDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", website='" + website + '\'' +
+                ", description='" + description + '\'' +
+                ", logoUrl='" + logoUrl + '\'' +
+                ", taxId='" + taxId + '\'' +
+                ", registrationNumber='" + registrationNumber + '\'' +
+                ", status='" + status + '\'' +
+                ", industry='" + industry + '\'' +
+                ", type='" + type + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", isDefault=" + isDefault +
+                '}';
+    }
 }

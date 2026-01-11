@@ -22,6 +22,7 @@ public class UserRegistrationController {
     @Autowired
     private MessageSource messageSource;
 
+    /*
     @RequestMapping("/new")
     public Mono<User> registerUser(@RequestBody Mono<User> userMono) {
 
@@ -40,5 +41,6 @@ public class UserRegistrationController {
             return Mono.just("");
         }
     }
+    */
 
 }

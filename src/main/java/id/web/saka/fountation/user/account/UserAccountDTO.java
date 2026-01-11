@@ -3,13 +3,15 @@ package id.web.saka.fountation.user.account;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import id.web.saka.fountation.account.AccountDTO;
 import id.web.saka.fountation.authority.RolePermissionDTO;
+import id.web.saka.fountation.organization.company.CompanyDTO;
+import id.web.saka.fountation.organization.department.DepartmentDTO;
 import id.web.saka.fountation.user.User;
 
 import java.time.OffsetDateTime;
 
 public class UserAccountDTO {
 
-    public UserAccountDTO(User user, AccountDTO account, RolePermissionDTO authority) {
+    public UserAccountDTO(User user, AccountDTO account, RolePermissionDTO authority, CompanyDTO companyDTO, DepartmentDTO departmentDTO) {
         this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
@@ -18,6 +20,8 @@ public class UserAccountDTO {
         this.membershipType = account.getMembershipType();
         this.membershipStatus =  account.getMembershipStatus();
         this.authority = authority;
+        this.company = companyDTO;
+        this.department = departmentDTO;
         this.createdAt = account.getCreatedAt();
         this.membershipStartDate = account.getMembershipStartDate();
         this.membershipEndDate = account.getMembershipEndDate();
@@ -45,6 +49,12 @@ public class UserAccountDTO {
 
     @JsonProperty("authority")
     private RolePermissionDTO authority;
+
+    @JsonProperty("company")
+    private CompanyDTO company;
+
+    @JsonProperty("department")
+    private DepartmentDTO department;
 
     @JsonProperty("createdAt")
     private OffsetDateTime createdAt;
@@ -141,5 +151,21 @@ public class UserAccountDTO {
 
     public void setAuthority(RolePermissionDTO authority) {
         this.authority = authority;
+    }
+
+    public CompanyDTO getCompany() {
+        return company;
+    }
+
+    public void setCompany(CompanyDTO company) {
+        this.company = company;
+    }
+
+    public DepartmentDTO getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(DepartmentDTO department) {
+        this.department = department;
     }
 }

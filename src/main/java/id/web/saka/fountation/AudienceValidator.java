@@ -1,3 +1,4 @@
+/*
 package id.web.saka.fountation;
 
 import org.springframework.security.oauth2.core.OAuth2Error;
@@ -27,3 +28,4 @@ public class AudienceValidator implements OAuth2TokenValidator<Jwt> {
         }
     }
 }
+*/

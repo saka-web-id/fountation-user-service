@@ -33,25 +33,25 @@ public class OrganizationController {
         this.companyMapper = companyMapper;
     }
 
-    @GetMapping("/user/organization/detail")
+    /*@GetMapping("/user/organization/detail")
     public Mono<OrganizationDTO> getOrganizationDetail(@AuthenticationPrincipal Jwt jwt) {
 
         return organizationService.getOrganizationDetail(jwt.getClaimAsString("https://example.com/email"));
-    }
+    }*/
 
-    @GetMapping("/user/organization/company/list/{companyId}")
-    public Flux<CompanyDTO> getCompanyById(@AuthenticationPrincipal Jwt jwt, @PathVariable Long companyId) {
-        log.info("Controller called with companyId: " + companyId);
+    @GetMapping("/user/organization/company/list/companyId/{companyId}/userId/{userId}/valueCompanyId/{valueCompanyId}")
+    public Flux<CompanyDTO> getCompanyById(@AuthenticationPrincipal Jwt jwt, @PathVariable Long companyId, @PathVariable Long userId, @PathVariable Long valueCompanyId) {
+        log.info("Controller called with companyId: " + valueCompanyId);
 
-        if(companyId == 0) {
+        if(valueCompanyId == 0) {
             return companyService.getCompaniesByEmailAdmin(jwt.getClaimAsString("https://example.com/email"));
         } else {
-            return companyService.getCompanyById(companyId).flux();
+            return companyService.getCompanyById(valueCompanyId).flux();
         }
     }
 
-    @PostMapping("/user/organization/company/update")
-    public Mono<ResponseEntity<CompanyDTO>> updateCompany(@RequestBody Mono<CompanyDTO> payload) {
+    @PostMapping("/user/organization/company/update/companyId/{companyId}/userId/{userId}")
+    public Mono<ResponseEntity<CompanyDTO>> updateCompany(@RequestBody Mono<CompanyDTO> payload, @PathVariable Long companyId, @PathVariable Long userId) {
 
         return payload
                 .map(companyMapper::toEntity)
@@ -60,8 +60,8 @@ public class OrganizationController {
                 .map(ResponseEntity::ok);
     }
 
-    @PostMapping("/user/organization/company/add")
-    public Mono<ResponseEntity<CompanyDTO>> addCompany(@AuthenticationPrincipal Jwt jwt, @RequestBody Mono<CompanyRequestDTO> payload) {
+    @PostMapping("/user/organization/company/add/companyId/{companyId}/userId/{userId}")
+    public Mono<ResponseEntity<CompanyDTO>> addCompany(@AuthenticationPrincipal Jwt jwt, @RequestBody Mono<CompanyRequestDTO> payload, @PathVariable Long companyId, @PathVariable Long userId) {
 
         String email = jwt.getClaimAsString("https://example.com/email");
 
@@ -78,8 +78,8 @@ public class OrganizationController {
                 );
     }
 
-    @GetMapping("/user/organization/company/detail/{companyId}")
-    public Mono<CompanyDTO> getCompanyDetail(@PathVariable Long companyId) {
+    @GetMapping("/user/organization/company/detail/companyId/{companyId}/userId/{userId}")
+    public Mono<CompanyDTO> getCompanyDetail(@PathVariable Long companyId, @PathVariable Long userId) {
 
         return companyService.getCompanyById(companyId);
     }

@@ -3,6 +3,7 @@ package id.web.saka.fountation.user.organization.company;
 import id.web.saka.fountation.organization.company.CompanyDTO;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -17,10 +18,10 @@ public class UserCompanyController {
         this.userCompanyService = userCompanyService;
     }
 
-    @RequestMapping("/user/companies")
-    public Flux<CompanyDTO> getUserCompanies(@AuthenticationPrincipal Jwt jwt) {
+    @RequestMapping("/user/companies/list/companyId/{companyId}/userId/{userId}")
+    public Flux<CompanyDTO> getUserCompanies(@PathVariable Long companyId, @PathVariable Long userId) {
 
-        return userCompanyService.getUserCompaniesByEmail(jwt.getClaimAsString("https://example.com/email"));
+        return userCompanyService.getUserCompaniesByEmail(companyId, userId);
     }
 
 }

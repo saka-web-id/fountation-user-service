@@ -24,6 +24,7 @@ public class AccountService {
                         .uri("/api/v0/account/membership/detail/" + userId)
                         .retrieve()
                         .bodyToMono(AccountDTO.class)
+                        .doOnNext(json -> log.info("Raw JSON: {}", json))
         );
     }
 

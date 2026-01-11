@@ -75,4 +75,23 @@ public class UserDepartmentService {
         return userDepartmentRepository.save(new UserDepartment(userId, userRequestDTO.getDepartmentId(), userRequestDTO.getCompanyId(), false))
                 .then(Mono.empty());
     }
+
+    public Mono<DepartmentDTO> getUserDepartmentDefaultByCompanyIdAndUserId(Long companyId, Long userId) {
+        return userDepartmentRepository.findByUserIdAndCompanyIdAndIsDefault(userId, companyId, true)
+                .doOnNext(userDepartment ->
+                        log.info("Fetched UserDepartment (default) for companyId={}, userId={}: {}", companyId, userId, userDepartment)
+                )
+                .flatMap(userDepartment ->
+                        departmentRepository.findById(userDepartment.getDepartmentId())
+                                .doOnNext(department ->
+                                        log.info("Fetched Department entity for departmentId={}: {}", userDepartment.getDepartmentId(), department)
+                                )
+                )
+                .map(departmentMapper::toDto)
+                .doOnNext(departmentDTO ->
+                        log.info("Mapped DepartmentDTO: {}", departmentDTO)
+                )
+                .doOnSubscribe(sub -> log.info("Starting department lookup for companyId={}, userId={}", companyId, userId))
+                .doOnError(err -> log.error("Error during department lookup: {}", err.getMessage(), err));
+    }
 }

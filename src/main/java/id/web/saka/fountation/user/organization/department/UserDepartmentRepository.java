@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface UserDepartmentRepository extends ReactiveCrudRepository<UserDepartment, Long> {
 
-    Mono<UserDepartment> findByUserIdAndCompanyIdAndDefault(Long userId, Long companyId, boolean isDefault);
+    Mono<UserDepartment> findByUserIdAndCompanyIdAndIsDefault(Long userId, Long companyId, boolean isDefault);
 
     Flux<UserDepartment> findAllByCompanyIdAndDepartmentId(Long companyId, Long departmentId);
 
