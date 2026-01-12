@@ -51,36 +51,7 @@ public class UserService {
     public Mono<UserAccountDTO> getUserAccountDTOByEmail(String email) {
         return getUserByEmail(email)
                 .doOnNext(user -> log.info("Fetched User for email {}: {}", email, user))
-                .flatMap(user ->
-                        userCompanyService.getUserCompanyDefaultByUserId(user.getId())
-                                .doOnNext(userCompany -> log.info("Fetched UserCompany for email {}: {}", email, userCompany))
-                                .flatMap(userCompany ->
-                                        rolePermissionService.getAuthorityByCompanyIdAndUserId(userCompany.getId(), user.getId())
-                                                .doOnNext(rolePermissionDTO -> log.info("Fetched RolePermission for email {}: {}", email, rolePermissionDTO))
-                                                .flatMap(rolePermissionDTO -> {
-                                                    if (rolePermissionDTO == null) {
-                                                        return Mono.error(new RuntimeException(
-                                                                messageSource.getMessage("error.user.no.authority", null, null)
-                                                        ));
-                                                    }
-                                                    // ✅ return the chain here
-                                                    return userDepartmentService
-                                                            .getUserDepartmentDefaultByCompanyIdAndUserId(userCompany.getId(), user.getId())
-                                                            .doOnNext(departmentDTO -> log.info("Fetched Department for email {}: {}", email, departmentDTO))
-                                                            .flatMap(departmentDTO ->
-                                                                    accountService.getAccountById(user.getId())
-                                                                            .doOnNext(accountDTO -> log.info("Fetched Account for email {}: {}", email, accountDTO))
-                                                                            .map(accountDTO -> {
-                                                                                UserAccountDTO dto = new UserAccountDTO(
-                                                                                        user, accountDTO, rolePermissionDTO, userCompany, departmentDTO
-                                                                                );
-                                                                                log.info("Built UserAccountDTO for email {}: {}", email, dto);
-                                                                                return dto;
-                                                                            })
-                                                            );
-                                                })
-                                )
-                );
+                .flatMap(user -> getUserAccountByUserMono(Mono.just(user)));
     }
 
     public Mono<UserDTO> getUserById(Long userId) {
@@ -104,5 +75,40 @@ public class UserService {
                                 userDepartmentService.setDepartmentForUser(userDTO.getId(), userRequestDTO)
                         ).thenReturn(userDTO)
                 );
+    }
+
+    public Mono<UserAccountDTO> getUserAccountByUserMono(Mono<User> userMono) {
+        return userMono
+                .flatMap(user ->
+                        userCompanyService.getUserCompanyDefaultByUserId(user.getId())
+                                .doOnNext(userCompany -> log.info("Fetched UserCompany for email {}: {}", user.getEmail(), userCompany))
+                                .flatMap(userCompany ->
+                                        rolePermissionService.getAuthorityByCompanyIdAndUserId(userCompany.getId(), user.getId())
+                                                .doOnNext(rolePermissionDTO -> log.info("Fetched RolePermission for email {}: {}", user.getEmail(), rolePermissionDTO))
+                                                .flatMap(rolePermissionDTO -> {
+                                                    if (rolePermissionDTO == null) {
+                                                        return Mono.error(new RuntimeException(
+                                                                messageSource.getMessage("error.user.no.authority", null, null)
+                                                        ));
+                                                    }
+                                                    // ✅ return the chain here
+                                                    return userDepartmentService
+                                                            .getUserDepartmentDefaultByCompanyIdAndUserId(userCompany.getId(), user.getId())
+                                                            .doOnNext(departmentDTO -> log.info("Fetched Department for email {}: {}", user.getEmail(), departmentDTO))
+                                                            .flatMap(departmentDTO ->
+                                                                    accountService.getAccountById(userCompany.getId(), user.getId())
+                                                                            .doOnNext(accountDTO -> log.info("Fetched Account for email {}: {}", user.getEmail(), accountDTO))
+                                                                            .map(accountDTO -> {
+                                                                                UserAccountDTO dto = new UserAccountDTO(
+                                                                                        user, accountDTO, rolePermissionDTO, userCompany, departmentDTO
+                                                                                );
+                                                                                log.info("Built UserAccountDTO for email {}: {}", user.getEmail(), dto);
+                                                                                return dto;
+                                                                            })
+                                                            );
+                                                })
+                                )
+                );
+
     }
 }

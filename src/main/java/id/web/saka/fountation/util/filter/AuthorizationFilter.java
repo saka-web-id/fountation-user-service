@@ -67,6 +67,7 @@ public class AuthorizationFilter implements WebFilter {
 
                     return policyService.evaluate(jwt, userId, companyId, authRequest)
                             .flatMap(decision -> {
+                                logger.info("Authorization decision: isAllow={}", decision.isAllow());
                                 if (decision.isAllow()) {
                                     return chain.filter(exchange);
                                 } else {

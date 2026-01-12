@@ -1,6 +1,5 @@
 package id.web.saka.fountation.policy;
 
-import id.web.saka.fountation.authority.RolePermissionDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;

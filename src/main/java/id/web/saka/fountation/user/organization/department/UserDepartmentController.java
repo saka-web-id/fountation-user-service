@@ -66,7 +66,7 @@ public class UserDepartmentController {
     }
 
     //TODO Check in database compare with /api/v0/user/list
-    @GetMapping("/user/organization/department/users/companyId/{companyId}/userId/{userId}/{departmentId}")
+    @GetMapping("/user/organization/department/users/companyId/{companyId}/userId/{userId}/valueDepartmentId/{departmentId}")
     public Flux<UserDTO> getUsers(@PathVariable Long companyId, @PathVariable Long userId, @PathVariable Long departmentId) {
 
         return userDepartmentService.getUsers(companyId, departmentId);
