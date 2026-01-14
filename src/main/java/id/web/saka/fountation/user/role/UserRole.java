@@ -1,19 +1,20 @@
 package id.web.saka.fountation.user.role;
 
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Table(schema = "users", value = "user_role")
 public class UserRole {
 
-    @Column("id")
+    @JsonProperty("id")
     private Long id;
 
-    @Column("user_id")
+    @JsonProperty("userId")
     private Long userId;
 
-    @Column("role_id")
+    @JsonProperty("roleId")
     private Long roleId;
+
+    @JsonProperty("companyId")
+    private Long companyId;
 
     public Long getId() {
         return id;
@@ -37,5 +38,13 @@ public class UserRole {
 
     public void setRoleId(Long roleId) {
         this.roleId = roleId;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 }

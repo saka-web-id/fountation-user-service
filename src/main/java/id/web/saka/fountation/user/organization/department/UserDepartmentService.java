@@ -11,6 +11,7 @@ import id.web.saka.fountation.user.UserRequestDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import reactor.core.CorePublisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -72,7 +73,7 @@ public class UserDepartmentService {
 
     public Mono<Void> setDepartmentForUser(Long userId, UserRequestDTO userRequestDTO) {
 
-        return userDepartmentRepository.save(new UserDepartment(userId, userRequestDTO.getDepartmentId(), userRequestDTO.getCompanyId(), false))
+        return addUserDepartment(new UserDepartment(userId, userRequestDTO.getDepartmentId(), userRequestDTO.getCompanyId(), false))
                 .then(Mono.empty());
     }
 
@@ -93,5 +94,18 @@ public class UserDepartmentService {
                 )
                 .doOnSubscribe(sub -> log.info("Starting department lookup for companyId={}, userId={}", companyId, userId))
                 .doOnError(err -> log.error("Error during department lookup: {}", err.getMessage(), err));
+    }
+
+    public Mono<Integer> updateUserDepartment(UserDepartment userDepartmentEntity) {
+
+        log.info("Updating UserDepartment for userId={} to departmentId={}", userDepartmentEntity.getUserId(), userDepartmentEntity.getDepartmentId());
+
+        return userDepartmentRepository.updateDepartmentIdByUserId(userDepartmentEntity.getDepartmentId(), userDepartmentEntity.getUserId());
+
+    }
+
+    public Mono<UserDepartment> addUserDepartment(UserDepartment userDepartment) {
+        return userDepartmentRepository.save(userDepartment)
+                .doOnNext(savedUserDepartment -> log.info("Saved UserDepartment: {}", savedUserDepartment));
     }
 }

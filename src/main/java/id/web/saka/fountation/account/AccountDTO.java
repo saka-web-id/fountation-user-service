@@ -3,6 +3,7 @@ package id.web.saka.fountation.account;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 public class AccountDTO {
 
@@ -19,13 +20,13 @@ public class AccountDTO {
     private String membershipStatus;
 
     @JsonProperty("createdAt")
-    private OffsetDateTime createdAt;
+    private ZonedDateTime createdAt;
 
     @JsonProperty("membershipStartDate")
-    private OffsetDateTime membershipStartDate;
+    private ZonedDateTime membershipStartDate;
 
     @JsonProperty("membershipEndDate")
-    private OffsetDateTime membershipEndDate;
+    private ZonedDateTime membershipEndDate;
 
 
     public String getAccountNumber() {
@@ -60,27 +61,27 @@ public class AccountDTO {
         this.membershipStatus = membershipStatus;
     }
 
-    public OffsetDateTime getCreatedAt() {
+    public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(OffsetDateTime createdAt) {
+    public void setCreatedAt(ZonedDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public OffsetDateTime getMembershipStartDate() {
+    public ZonedDateTime getMembershipStartDate() {
         return membershipStartDate;
     }
 
-    public void setMembershipStartDate(OffsetDateTime membershipStartDate) {
+    public void setMembershipStartDate(ZonedDateTime membershipStartDate) {
         this.membershipStartDate = membershipStartDate;
     }
 
-    public OffsetDateTime getMembershipEndDate() {
+    public ZonedDateTime getMembershipEndDate() {
         return membershipEndDate;
     }
 
-    public void setMembershipEndDate(OffsetDateTime membershipEndDate) {
+    public void setMembershipEndDate(ZonedDateTime membershipEndDate) {
         this.membershipEndDate = membershipEndDate;
     }
 }

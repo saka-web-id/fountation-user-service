@@ -7,14 +7,21 @@ import id.web.saka.fountation.organization.company.CompanyDTO;
 import id.web.saka.fountation.organization.department.DepartmentDTO;
 import id.web.saka.fountation.user.User;
 
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 public class UserAccountDTO {
+
+    public UserAccountDTO() {
+        // empty constructor for Jackson
+    }
 
     public UserAccountDTO(User user, AccountDTO account, RolePermissionDTO authority, CompanyDTO companyDTO, DepartmentDTO departmentDTO) {
         this.id = user.getId();
         this.name = user.getName();
+        this.phone = user.getPhone();
         this.email = user.getEmail();
+        this.note = user.getNote();
+        this.isVerified = user.isVerified();
         this.accountNumber = account.getAccountNumber();
         this.accountStatus = account.getAccountStatus();
         this.membershipType = account.getMembershipType();
@@ -32,8 +39,17 @@ public class UserAccountDTO {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("phone")
+    private String phone;
+
     @JsonProperty("email")
     private String email;
+
+    @JsonProperty("note")
+    private String note;
+
+    @JsonProperty("isVerified")
+    private boolean isVerified;
 
     @JsonProperty("accountNumber")
     private String accountNumber;
@@ -57,13 +73,13 @@ public class UserAccountDTO {
     private DepartmentDTO department;
 
     @JsonProperty("createdAt")
-    private OffsetDateTime createdAt;
+    private ZonedDateTime createdAt;
 
     @JsonProperty("membershipStartDate")
-    private OffsetDateTime membershipStartDate;
+    private ZonedDateTime membershipStartDate;
 
     @JsonProperty("membershipEndDate")
-    private OffsetDateTime membershipEndDate;
+    private ZonedDateTime membershipEndDate;
 
     public Long getId() {
         return id;
@@ -81,12 +97,36 @@ public class UserAccountDTO {
         this.name = name;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 
     public String getAccountNumber() {
@@ -121,30 +161,6 @@ public class UserAccountDTO {
         this.membershipStatus = membershipStatus;
     }
 
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public OffsetDateTime getMembershipStartDate() {
-        return membershipStartDate;
-    }
-
-    public void setMembershipStartDate(OffsetDateTime membershipStartDate) {
-        this.membershipStartDate = membershipStartDate;
-    }
-
-    public OffsetDateTime getMembershipEndDate() {
-        return membershipEndDate;
-    }
-
-    public void setMembershipEndDate(OffsetDateTime membershipEndDate) {
-        this.membershipEndDate = membershipEndDate;
-    }
-
     public RolePermissionDTO getAuthority() {
         return authority;
     }
@@ -167,5 +183,51 @@ public class UserAccountDTO {
 
     public void setDepartment(DepartmentDTO department) {
         this.department = department;
+    }
+
+    public ZonedDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(ZonedDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public ZonedDateTime getMembershipStartDate() {
+        return membershipStartDate;
+    }
+
+    public void setMembershipStartDate(ZonedDateTime membershipStartDate) {
+        this.membershipStartDate = membershipStartDate;
+    }
+
+    public ZonedDateTime getMembershipEndDate() {
+        return membershipEndDate;
+    }
+
+    public void setMembershipEndDate(ZonedDateTime membershipEndDate) {
+        this.membershipEndDate = membershipEndDate;
+    }
+
+    @Override
+    public String toString() {
+        return "UserAccountDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", note='" + note + '\'' +
+                ", isVerified=" + isVerified +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", accountStatus='" + accountStatus + '\'' +
+                ", membershipType='" + membershipType + '\'' +
+                ", membershipStatus='" + membershipStatus + '\'' +
+                ", authority=" + authority +
+                ", company=" + company +
+                ", department=" + department +
+                ", createdAt=" + createdAt +
+                ", membershipStartDate=" + membershipStartDate +
+                ", membershipEndDate=" + membershipEndDate +
+                '}';
     }
 }
