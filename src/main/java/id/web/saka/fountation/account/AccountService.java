@@ -21,7 +21,7 @@ public class AccountService {
     public Mono<AccountDTO> getAccountById(Long companyId, Long userId) {
         return webClientAccount.flatMap(webClient ->
                 webClient.get()
-                        .uri("/api/v0/account/membership/detail/companyId/" + companyId + "/userId/" + userId)
+                        .uri("/api/v0/account/user/membership/plan/detail/companyId/" + companyId + "/userId/" + userId + "/valueUserId/" + userId)
                         .retrieve()
                         .bodyToMono(AccountDTO.class)
                         .doOnNext(json -> log.info("Raw JSON: {}", json))
