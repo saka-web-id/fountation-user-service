@@ -22,16 +22,16 @@ public class UserAccountDTO {
         this.email = user.getEmail();
         this.note = user.getNote();
         this.isVerified = user.isVerified();
-        this.accountNumber = account.getAccountNumber();
-        this.accountStatus = account.getAccountStatus();
-        this.membershipType = account.getMembershipType();
-        this.membershipStatus =  account.getMembershipStatus();
+        this.accountNumber = account.accountNumber();
+        this.accountStatus = account.accountStatus();
+        this.membershipType = account.membershipType();
+        this.membershipStatus =  account.membershipStatus();
         this.authority = authority;
         this.company = companyDTO;
         this.department = departmentDTO;
-        this.createdAt = account.getCreatedAt();
-        this.membershipStartDate = account.getMembershipStartDate();
-        this.membershipEndDate = account.getMembershipEndDate();
+        this.createdAt = account.createdAt();
+        this.membershipStartDate = account.membershipStartDate();
+        this.membershipEndDate = account.membershipEndDate();
     }
 
     @JsonProperty("id")

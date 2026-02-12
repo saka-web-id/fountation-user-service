@@ -22,7 +22,7 @@ public class Department {
     private String name;
 
     @Column("status")
-    private String status;
+    private DepartmentStatus status;
 
     @Column("description")
     private String description;
@@ -59,11 +59,11 @@ public class Department {
         this.name = name;
     }
 
-    public String getStatus() {
+    public DepartmentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(DepartmentStatus status) {
         this.status = status;
     }
 

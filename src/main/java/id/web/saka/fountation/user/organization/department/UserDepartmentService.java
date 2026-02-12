@@ -4,10 +4,7 @@ import id.web.saka.fountation.organization.department.Department;
 import id.web.saka.fountation.organization.department.DepartmentDTO;
 import id.web.saka.fountation.organization.department.DepartmentMapper;
 import id.web.saka.fountation.organization.department.DepartmentRepository;
-import id.web.saka.fountation.user.UserDTO;
-import id.web.saka.fountation.user.UserMapper;
-import id.web.saka.fountation.user.UserRepository;
-import id.web.saka.fountation.user.UserRequestDTO;
+import id.web.saka.fountation.user.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -73,7 +70,7 @@ public class UserDepartmentService {
 
     public Mono<Void> setDepartmentForUser(Long userId, UserRequestDTO userRequestDTO) {
 
-        return addUserDepartment(new UserDepartment(userId, userRequestDTO.getDepartmentId(), userRequestDTO.getCompanyId(), false))
+        return addUserDepartment(new UserDepartment(userId, userRequestDTO.departmentId(), userRequestDTO.companyId(), false))
                 .then(Mono.empty());
     }
 
@@ -107,5 +104,12 @@ public class UserDepartmentService {
     public Mono<UserDepartment> addUserDepartment(UserDepartment userDepartment) {
         return userDepartmentRepository.save(userDepartment)
                 .doOnNext(savedUserDepartment -> log.info("Saved UserDepartment: {}", savedUserDepartment));
+    }
+
+    public Mono<UserDepartment> addUserToDepartment(User user, Department department) {
+        log.info("Adding User (ID: {}) to Department (ID: {})", user.getId(), department.getId());
+
+        return userDepartmentRepository.save(new UserDepartment(user.getId(), department.getId(), department.getCompanyId(), true))
+                .doOnNext(savedUserDepartment -> log.info("Added User to Department: {}", savedUserDepartment));
     }
 }

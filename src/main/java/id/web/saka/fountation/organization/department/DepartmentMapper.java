@@ -1,5 +1,6 @@
 package id.web.saka.fountation.organization.department;
 
+import id.web.saka.fountation.util.mapper.DateTimeMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -7,24 +8,15 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { DateTimeMapper.class })
 public interface DepartmentMapper {
 
+    @Mapping(target = "status", expression = "java(DepartmentStatus.fromValue(dto.status()))")
     Department toEntity(DepartmentDTO dto);
 
+    @Mapping(target = "status", expression = "java(entity.getStatus().getValue())")
     DepartmentDTO toDto(Department entity);
 
     Department requestToEntity(DepartmentRequestDTO dto);
-
-    default ZonedDateTime toOffset(Instant instant) {
-        return instant == null ? null :
-                instant.atZone(ZoneOffset.UTC);
-    }
-
-
-    // OffsetDateTime (GMT+7) → Instant (UTC)
-    default Instant toInstant(ZonedDateTime zdt) {
-        return zdt == null ? null : zdt.toInstant();
-    }
 
 }

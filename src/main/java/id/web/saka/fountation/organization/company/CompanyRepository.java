@@ -7,4 +7,6 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface CompanyRepository extends ReactiveCrudRepository<Company, Long> {
     Mono<Company> save(Company company);
+
+    Mono<Company> searchCompanyByName(String companyName);
 }

@@ -42,10 +42,24 @@ public class CompanyService {
                 .map(companyMapper::toDto);
     }
 
+    public Mono<Boolean> isCompanyNameExists(Company company) {
+        return companyRepository.searchCompanyByName(company.getName())
+                .flatMap(existingCompany -> {
+                    log.info("Company name already exists: {}", existingCompany.getName());
+                    return Mono.just(true);
+                })
+                .defaultIfEmpty(false); // if no company found, return false
+    }
+
     public Mono<Company> saveCompany(Company company) {
 
         return companyRepository.save(company);
     }
+
+    public Mono<Company> saveCompany(Mono<Company> company) {
+        return company.flatMap(companyRepository::save);
+    }
+
 
     public Mono<Company> createCompanyForUser(Company company, String email) {
 
@@ -83,9 +97,7 @@ public class CompanyService {
                                 .flatMap(userCompany ->
                                         companyRepository.findById(userCompany.getCompanyId())
                                                 .map(company -> {
-                                                    CompanyDTO dto = companyMapper.toDto(company);
-                                                    dto.setDefault(userCompany.isDefault()); // ✅ add flag
-                                                    return dto;
+                                                    return companyMapper.toDto(company, userCompany.isDefault());
                                                 })
                                 )
                 );

@@ -1,11 +1,13 @@
 package id.web.saka.fountation.user.account;
 
+import id.web.saka.fountation.user.User;
 import id.web.saka.fountation.user.UserService;
 import id.web.saka.fountation.user.organization.department.UserDepartmentService;
 import id.web.saka.fountation.user.role.UserRoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import reactor.core.CorePublisher;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -33,7 +35,7 @@ public class UserAccountService {
     public Mono<UserAccountDTO> getUserAccountDTOByUserId(Long valueUserId) {
         return userService.getUserById(valueUserId)
                 .flatMap(userDTO -> {
-                    return userService.getUserAccountDTOByEmail(userDTO.getEmail());
+                    return userService.getUserAccountDTOByEmail(userDTO.email());
                 });
     }
 

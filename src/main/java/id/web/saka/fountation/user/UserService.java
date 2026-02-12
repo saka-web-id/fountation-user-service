@@ -60,6 +60,7 @@ public class UserService {
     }
 
     public Mono<? extends UserDTO> saveUser(UserDTO userDTO) {
+        log.info("Saving user: {}", userDTO);
 
         return userRepository.save(userMapper.toEntity(userDTO))
                 .map(userMapper::toDto);
@@ -71,8 +72,8 @@ public class UserService {
                 .map(userMapper::toDto)
                 .flatMap(userDTO ->
                         Mono.when(
-                                userCompanyService.setCompanyForUser(userDTO.getId(), userRequestDTO),
-                                userDepartmentService.setDepartmentForUser(userDTO.getId(), userRequestDTO)
+                                userCompanyService.setCompanyForUser(userDTO.id(), userRequestDTO),
+                                userDepartmentService.setDepartmentForUser(userDTO.id(), userRequestDTO)
                         ).thenReturn(userDTO)
                 );
     }
@@ -83,7 +84,7 @@ public class UserService {
                         userCompanyService.getUserCompanyDefaultByUserId(user.getId())
                                 .doOnNext(userCompany -> log.info("Fetched UserCompany for email {}: {}", user.getEmail(), userCompany))
                                 .flatMap(userCompany ->
-                                        rolePermissionService.getAuthorityByCompanyIdAndUserId(userCompany.getId(), user.getId())
+                                        rolePermissionService.getAuthorityByCompanyIdAndUserId(userCompany.id(), user.getId())
                                                 .doOnNext(rolePermissionDTO -> log.info("Fetched RolePermission for email {}: {}", user.getEmail(), rolePermissionDTO))
                                                 .flatMap(rolePermissionDTO -> {
                                                     if (rolePermissionDTO == null) {
@@ -93,10 +94,10 @@ public class UserService {
                                                     }
                                                     // ✅ return the chain here
                                                     return userDepartmentService
-                                                            .getUserDepartmentDefaultByCompanyIdAndUserId(userCompany.getId(), user.getId())
+                                                            .getUserDepartmentDefaultByCompanyIdAndUserId(userCompany.id(), user.getId())
                                                             .doOnNext(departmentDTO -> log.info("Fetched Department for email {}: {}", user.getEmail(), departmentDTO))
                                                             .flatMap(departmentDTO ->
-                                                                    accountService.getAccountById(userCompany.getId(), user.getId())
+                                                                    accountService.getAccountById(userCompany.id(), user.getId())
                                                                             .doOnNext(accountDTO -> log.info("Fetched Account for email {}: {}", user.getEmail(), accountDTO))
                                                                             .map(accountDTO -> {
                                                                                 UserAccountDTO dto = new UserAccountDTO(
@@ -111,4 +112,10 @@ public class UserService {
                 );
 
     }
+
+    public Mono<Boolean> isUserNameExists(UserDTO user) {
+        return userRepository.findByName(user.name())
+                .hasElements(); // ✅ returns Mono<Boolean>
+    }
+
 }

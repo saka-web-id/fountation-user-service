@@ -44,7 +44,7 @@ public class Company {
     private String registrationNumber;
 
     @Column("status")
-    private String status;
+    private CompanyStatus status;
 
     @Column("industry")
     private String industry;
@@ -140,11 +140,11 @@ public class Company {
         this.registrationNumber = registrationNumber;
     }
 
-    public String getStatus() {
+    public CompanyStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(CompanyStatus status) {
         this.status = status;
     }
 

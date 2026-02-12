@@ -18,9 +18,6 @@ public class User {
     @Column("email")
     private String email;
 
-    @Column("password_hash")
-    private String passwordHash;
-
     @Column("name")
     private String name;
 
@@ -28,7 +25,7 @@ public class User {
     private String phone;
 
     @Column("status")
-    private String status;
+    private UserStatus status;
 
     @Column("is_verified")
     private boolean isVerified;
@@ -67,14 +64,6 @@ public class User {
         this.email = email;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
     public String getName() {
         return name;
     }
@@ -91,11 +80,11 @@ public class User {
         this.phone = phone;
     }
 
-    public String getStatus() {
+    public UserStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(UserStatus status) {
         this.status = status;
     }
 
@@ -152,7 +141,6 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
-                ", passwordHash='" + passwordHash + '\'' +
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
                 ", status='" + status + '\'' +

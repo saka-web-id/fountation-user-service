@@ -59,7 +59,7 @@ public class UserDepartmentController {
                 .map(saved ->
                         ResponseEntity
                                 .created(URI.create(
-                                        "/api/v0/user/organization/department/detail/" + saved.getId()
+                                        "/api/v0/user/organization/department/detail/" + saved.id()
                                 ))
                                 .body(saved)
                 );

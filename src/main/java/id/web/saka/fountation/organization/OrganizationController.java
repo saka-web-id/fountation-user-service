@@ -72,7 +72,7 @@ public class OrganizationController {
                 .map(saved ->
                         ResponseEntity
                                 .created(URI.create(
-                                        "/api/v0/user/organization/company/detail/" + saved.getId()
+                                        "/api/v0/user/organization/company/detail/" + saved.id()
                                 ))
                                 .body(saved)
                 );
