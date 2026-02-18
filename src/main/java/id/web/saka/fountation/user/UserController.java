@@ -1,6 +1,7 @@
 package id.web.saka.fountation.user;
 
 import id.web.saka.fountation.user.account.UserAccountDTO;
+import id.web.saka.fountation.user.account.UserAccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,8 +22,11 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final UserAccountService userAccountService;
+
+    public UserController(UserService userService, UserAccountService userAccountService) {
        this.userService = userService;
+       this.userAccountService = userAccountService;
     }
 
     @GetMapping("/user/login")
@@ -39,7 +43,7 @@ public class UserController {
     @GetMapping({"/user/detail", "/user/detail/"}) //NOTE excluded from authorization filter
     public Mono<UserAccountDTO> getUser(@AuthenticationPrincipal Jwt jwt) {
 
-        return userService.getUserAccountDTOByEmail(jwt.getClaimAsString("https://example.com/email"));
+        return userAccountService.getUserAccountDTOByEmail(jwt.getClaimAsString("https://example.com/email"));
     }
 
     @GetMapping("/user/detail/{userId}") //NOTE excluded from authorization filter

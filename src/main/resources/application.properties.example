@@ -8,6 +8,12 @@ fountation:
     service:
         account:
             url: lb://fountation-account-service
+        authorization:
+            url: lb://fountation-authorization-service
+        redis:
+            store:
+                duration:
+                    minutes: 10
 logging:
     level:
         com:
@@ -73,3 +79,9 @@ spring:
                         - https://XXXXXXXXXXX
                     issuer-uri: https://XXXXXXXXXXX
                     jwk-set-uri: https://XXXXXXXXXXX
+    data:
+        redis:
+            host: XX.XX.XX.XX
+            port: XXXX
+            database: XX
+            password: XXXXXXXXXXXXXXXX

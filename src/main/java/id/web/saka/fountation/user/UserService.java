@@ -1,15 +1,24 @@
 package id.web.saka.fountation.user;
 
+import id.web.saka.fountation.account.AccountDTO;
 import id.web.saka.fountation.account.AccountService;
+import id.web.saka.fountation.authority.RolePermissionDTO;
 import id.web.saka.fountation.authority.RolePermissionService;
+import id.web.saka.fountation.organization.company.CompanyDTO;
+import id.web.saka.fountation.organization.department.DepartmentDTO;
 import id.web.saka.fountation.user.account.UserAccountDTO;
+import id.web.saka.fountation.user.account.UserAccountService;
 import id.web.saka.fountation.user.organization.company.UserCompanyService;
 import id.web.saka.fountation.user.organization.department.UserDepartmentService;
+import id.web.saka.fountation.util.Env;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import java.time.Duration;
 
 @Service
 public class UserService {
@@ -28,13 +37,18 @@ public class UserService {
 
     private final AccountService accountService;
 
+    private final ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO;
+
+    private final Env env;
+
     public UserService(UserRepository userRepository,
                        RolePermissionService rolePermissionService,
                        MessageSource messageSource,
                        UserMapper userMapper,
                        UserDepartmentService userDepartmentService,
                        UserCompanyService userCompanyService,
-                       AccountService accountService) {
+                       AccountService accountService,
+                       ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO, Env env) {
         this.userRepository = userRepository;
         this.rolePermissionService = rolePermissionService;
         this.messageSource = messageSource;
@@ -42,28 +56,33 @@ public class UserService {
         this.userDepartmentService = userDepartmentService;
         this.userCompanyService = userCompanyService;
         this.accountService = accountService;
+        this.redisTemplateUserDTO = redisTemplateUserDTO;
+        this.env = env;
     }
 
     public Mono<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    public Mono<UserAccountDTO> getUserAccountDTOByEmail(String email) {
-        return getUserByEmail(email)
-                .doOnNext(user -> log.info("Fetched User for email {}: {}", email, user))
-                .flatMap(user -> getUserAccountByUserMono(Mono.just(user)));
-    }
-
     public Mono<UserDTO> getUserById(Long userId) {
-        return userRepository.findById(userId)
-                .map(userMapper::toDto);
+
+        return redisTemplateUserDTO.opsForValue().get(buildCacheKey(userId))
+            .onErrorResume(e -> {
+                log.warn("Redis unavailable, fallback to DB: {}", e.getMessage());
+                return Mono.empty();
+            })
+            .switchIfEmpty(
+                    userRepository.findById(userId)
+                            .map(userMapper::toDto)
+            );
     }
 
     public Mono<? extends UserDTO> saveUser(UserDTO userDTO) {
         log.info("Saving user: {}", userDTO);
 
         return userRepository.save(userMapper.toEntity(userDTO))
-                .map(userMapper::toDto);
+                .map(userMapper::toDto)
+                .flatMap(savedUserDTO -> cacheUserDTO(buildCacheKey(savedUserDTO.id()), savedUserDTO));
     }
 
     public Mono<? extends UserDTO> addUser(UserRequestDTO userRequestDTO) {
@@ -75,7 +94,16 @@ public class UserService {
                                 userCompanyService.setCompanyForUser(userDTO.id(), userRequestDTO),
                                 userDepartmentService.setDepartmentForUser(userDTO.id(), userRequestDTO)
                         ).thenReturn(userDTO)
-                );
+                ).flatMap(savedUserDTO -> cacheUserDTO(buildCacheKey(savedUserDTO.id()), savedUserDTO));
+    }
+
+    public Mono<UserAccountDTO> getUserAccountByUserDTOMono(Mono<UserDTO> userDTOMono) {
+        return getUserAccountByUserMono(userDTOMono.map(userMapper::toEntity));
+    }
+
+    public Mono<Boolean> isUserNameExists(UserDTO user) {
+        return userRepository.findByName(user.name())
+                .hasElements(); // ✅ returns Mono<Boolean>
     }
 
     public Mono<UserAccountDTO> getUserAccountByUserMono(Mono<User> userMono) {
@@ -113,9 +141,22 @@ public class UserService {
 
     }
 
-    public Mono<Boolean> isUserNameExists(UserDTO user) {
-        return userRepository.findByName(user.name())
-                .hasElements(); // ✅ returns Mono<Boolean>
+    private Mono<UserDTO> cacheUserDTO(String key, UserDTO dto) {
+        log.info("Redis cache user {} with dto {} ", key, dto.toString() );
+
+        return redisTemplateUserDTO.opsForValue()
+                .set(key, dto, Duration.ofMinutes(env.getFountationServiceRedisStoreDurationInMinutes()))
+                .onErrorResume(err -> {
+                    log.warn("Failed to cache in Redis: {}", err.getMessage());
+                    return Mono.empty();
+                })
+                .thenReturn(dto);
     }
+
+    private String buildCacheKey(Long valueUserId) {
+        return "userDTO:userId:" + valueUserId;
+    }
+
+
 
 }

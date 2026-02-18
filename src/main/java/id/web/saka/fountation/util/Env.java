@@ -3,8 +3,6 @@ package id.web.saka.fountation.util;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class Env {
 
@@ -13,6 +11,9 @@ public class Env {
 
     @Value("${fountation.service.authorization.url}")
     private String fountationServiceAuthorizationUrl;
+
+    @Value("${fountation.service.redis.store.duration.minutes}")
+    private int fountationServiceRedisStoreDurationInMinutes;
 
     @Value("${spring.security.oauth2.client.registration.internal-service.client-id}")
     private String clientRegistrationInternalServiceClientId;
@@ -46,6 +47,14 @@ public class Env {
 
     public void setFountationServiceAuthorizationUrl(String fountationServiceAuthorizationUrl) {
         this.fountationServiceAuthorizationUrl = fountationServiceAuthorizationUrl;
+    }
+
+    public int getFountationServiceRedisStoreDurationInMinutes() {
+        return fountationServiceRedisStoreDurationInMinutes;
+    }
+
+    public void setFountationServiceRedisStoreDurationInMinutes(int fountationServiceRedisStoreDurationInMinutes) {
+        this.fountationServiceRedisStoreDurationInMinutes = fountationServiceRedisStoreDurationInMinutes;
     }
 
     public String getClientRegistrationInternalServiceClientId() {

@@ -20,7 +20,7 @@ public class RolePermissionService {
         return webClientAuthority.flatMap(webClient ->
                 webClient.get()
                         /*@GetMapping("/authorization/role/permission/detail/companyId/{companyId}/userId/{userId}/valueCompanyId/{valueCompanyId}/valueUserId/{valueUserId}")*/
-                        .uri("/api/v0/authorization/role/permission/detail/companyId/" + companyId + "/userId/" + userId + "/valueCompanyId/" + companyId + "/valueUserId/" + userId)
+                        .uri("/api/v0/authorization/company/role/permission/detail/companyId/" + companyId + "/userId/" + userId + "/valueCompanyId/" + companyId + "/valueUserId/" + userId)
                         .retrieve()
                         .bodyToMono(RolePermissionDTO.class)
                         .doOnNext(json -> log.info("Raw JSON: {}", json))
