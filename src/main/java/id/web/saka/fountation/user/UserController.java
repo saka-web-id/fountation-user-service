@@ -53,6 +53,7 @@ public class UserController {
 
     @PostMapping("/user/update/companyId/{companyId}/userId/{userId}")
     public Mono<UserDTO> updateUser(@RequestBody Mono<UserDTO> payload, @PathVariable Long companyId, @PathVariable Long userId) {
+        log.info("Updating User in companyId {} userId {} ", companyId, userId);
 
         return payload
                 .flatMap(userService::saveUser);

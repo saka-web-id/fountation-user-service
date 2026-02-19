@@ -6,6 +6,7 @@ import id.web.saka.fountation.authority.RolePermissionDTO;
 import id.web.saka.fountation.organization.company.CompanyDTO;
 import id.web.saka.fountation.organization.department.DepartmentDTO;
 import id.web.saka.fountation.user.User;
+import id.web.saka.fountation.user.UserStatus;
 
 import java.time.ZonedDateTime;
 
@@ -21,6 +22,7 @@ public class UserAccountDTO {
         this.phone = user.getPhone();
         this.email = user.getEmail();
         this.note = user.getNote();
+        this.status = user.getStatus();
         this.isVerified = user.isVerified();
         this.accountNumber = account.accountNumber();
         this.accountStatus = account.accountStatus();
@@ -47,6 +49,9 @@ public class UserAccountDTO {
 
     @JsonProperty("note")
     private String note;
+
+    @JsonProperty("status")
+    private UserStatus status;
 
     @JsonProperty("isVerified")
     private boolean isVerified;
@@ -119,6 +124,14 @@ public class UserAccountDTO {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
     }
 
     public boolean isVerified() {
@@ -217,6 +230,7 @@ public class UserAccountDTO {
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
                 ", note='" + note + '\'' +
+                ", status='" + status + '\'' +
                 ", isVerified=" + isVerified +
                 ", accountNumber='" + accountNumber + '\'' +
                 ", accountStatus='" + accountStatus + '\'' +
