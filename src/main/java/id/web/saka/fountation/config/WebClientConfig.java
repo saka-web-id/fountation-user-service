@@ -21,14 +21,6 @@ public class WebClientConfig {
     }
 
     @Bean
-    WebClient webClient() {
-        return WebClient.builder()
-                .filter(new ServerBearerExchangeFilterFunction())
-                .baseUrl("http://www.myproject.local:8083")
-                .build();
-    }
-
-    @Bean
     public Mono<WebClient> webClientAccount(ReactorLoadBalancerExchangeFilterFunction lbFunction) {
         return getAccessToken()
                 .map(token ->
@@ -68,7 +60,7 @@ public class WebClientConfig {
                 .bodyValue(Map.of(
                         "client_id", env.getClientRegistrationInternalServiceClientId(),
                         "client_secret", env.getClientRegistrationInternalServiceClientSecret(),
-                        "audience", "https://myproject.local/api", // YOUR_API_IDENTIFIER
+                        "audience", env.getFountationServiceSecurityJwtAudience(),
                         "grant_type", env.getClientRegistrationInternalServiceGrantType(),
                         "scope", env.getClientRegistrationInternalServiceScope()
                 ))

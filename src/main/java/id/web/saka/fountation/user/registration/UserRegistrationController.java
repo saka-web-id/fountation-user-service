@@ -6,7 +6,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.Locale;
 
-/*@CrossOrigin(origins = "http://www.myproject.local:5173")*/
 @RestController
 @RequestMapping("/api/v0")
 public class UserRegistrationController {

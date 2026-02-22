@@ -2,6 +2,7 @@ package id.web.saka.fountation.user;
 
 import id.web.saka.fountation.user.account.UserAccountDTO;
 import id.web.saka.fountation.user.account.UserAccountService;
+import id.web.saka.fountation.util.Env;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,9 +25,12 @@ public class UserController {
 
     private final UserAccountService userAccountService;
 
-    public UserController(UserService userService, UserAccountService userAccountService) {
+    private final Env env;
+
+    public UserController(UserService userService, UserAccountService userAccountService, Env env) {
        this.userService = userService;
        this.userAccountService = userAccountService;
+       this.env = env;
     }
 
     @GetMapping("/user/login")
@@ -34,7 +38,8 @@ public class UserController {
 
         // Redirect to Vue SPA
         exchange.getResponse().setStatusCode(HttpStatus.FOUND); // 302 redirect
-        exchange.getResponse().getHeaders().setLocation(URI.create("http://www.myproject.local:5173/dashboard"));
+        /*exchange.getResponse().getHeaders().setLocation(URI.create("http://www.myproject.local:5173/dashboard"));*/
+        exchange.getResponse().getHeaders().setLocation(URI.create(env.getFountationServiceUiUrl() + "/dashboard"));
 
         //todo user history login
         return exchange.getResponse().setComplete();
