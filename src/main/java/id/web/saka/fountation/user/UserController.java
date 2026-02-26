@@ -35,6 +35,7 @@ public class UserController {
 
     @GetMapping("/user/login")
     public Mono<Void> loginSuccess(ServerWebExchange exchange) {
+        log.info("Login successful, redirecting to Vue SPA...");
 
         // Redirect to Vue SPA
         exchange.getResponse().setStatusCode(HttpStatus.FOUND); // 302 redirect
@@ -47,6 +48,7 @@ public class UserController {
 
     @GetMapping({"/user/detail", "/user/detail/"}) //NOTE excluded from authorization filter
     public Mono<UserAccountDTO> getUser(@AuthenticationPrincipal Jwt jwt) {
+        log.info("Fetching user details for email: {}", jwt.getClaimAsString("https://example.com/email"));
 
         return userAccountService.getUserAccountDTOByEmail(jwt.getClaimAsString("https://example.com/email"));
     }
@@ -73,7 +75,6 @@ public class UserController {
 
     @GetMapping("/user/health")
     public Mono<String> health(@AuthenticationPrincipal Jwt jwt) {
-
         String token = jwt.getTokenValue();   // <-- full JWT access token
 
         log.info("BEARER TOKEN = " + token);
