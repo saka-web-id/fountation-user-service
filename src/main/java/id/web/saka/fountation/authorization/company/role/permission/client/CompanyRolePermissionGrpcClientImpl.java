@@ -1,0 +1,72 @@
+package id.web.saka.fountation.authorization.company.role.permission.client;
+
+import id.web.saka.fountation.authorization.company.role.permission.CompanyRolePermissionDTO;
+import id.web.saka.fountation.authorization.company.role.permission.CompanyRolePermissionProto;
+import id.web.saka.fountation.authorization.company.role.permission.CompanyRolePermissionServiceGrpc;
+import id.web.saka.fountation.authorization.company.role.permission.GetCompanyRolePermissionRequest;
+import id.web.saka.fountation.permission.PermissionDTO;
+import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
+
+import java.util.stream.Collectors;
+
+@Component("rolePermissionGrpcClient")
+public class CompanyRolePermissionGrpcClientImpl implements CompanyRolePermissionClient {
+
+    private final Logger log = LoggerFactory.getLogger(CompanyRolePermissionGrpcClientImpl.class);
+
+    @GrpcClient("fountation-authorization-service")
+    private CompanyRolePermissionServiceGrpc.CompanyRolePermissionServiceStub stub;
+
+    @Override
+    public Mono<CompanyRolePermissionDTO> getCompanyRolePermissionByCompanyIdAndUserId(Long companyId, Long userId) {
+        log.info("Fetching company role permissions via gRPC for companyId: {}, userId: {}", companyId, userId);
+
+        GetCompanyRolePermissionRequest request = GetCompanyRolePermissionRequest.newBuilder()
+                .setCompanyId(companyId)
+                .setUserId(userId)
+                .build();
+
+        return Mono.create(sink -> {
+            stub.getCompanyRolePermission(request, new io.grpc.stub.StreamObserver<CompanyRolePermissionProto>() {
+                @Override
+                public void onNext(CompanyRolePermissionProto proto) {
+                    sink.success(mapToDto(proto));
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                    sink.error(t);
+                }
+
+                @Override
+                public void onCompleted() {
+                    // Reaktif Mono selesai setelah success dipanggil
+                }
+            });
+        });
+    }
+
+    private CompanyRolePermissionDTO mapToDto(CompanyRolePermissionProto response) {
+        return new CompanyRolePermissionDTO(
+                response.getRoleId(),
+                response.getCompanyId(),
+                response.getRoleName(),
+                response.getRoleDescription(),
+                response.getPermissionsList().stream()
+                        .map(p -> new PermissionDTO(
+                                p.getPermissionId(),
+                                p.getPermissionName(),
+                                p.getIsSuperAdmin(),
+                                p.getPermissionResource(),
+                                p.getPermissionAction(),
+                                p.getPermissionDescription(),
+                                p.getIsAssigned()
+                        ))
+                        .collect(Collectors.toList())
+        );
+    }
+}

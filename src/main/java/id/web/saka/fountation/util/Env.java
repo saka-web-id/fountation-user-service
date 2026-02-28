@@ -6,11 +6,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class Env {
 
+    /* FOUNTATION ENVIRONMENT SETTING */
+
     @Value("${fountation.service.account.url}")
     private String fountationServiceAccountUrl;
 
+    @Value("${fountation.service.account.clientType}")
+    private String fountationServiceAccountClientType;
+
     @Value("${fountation.service.authorization.url}")
     private String fountationServiceAuthorizationUrl;
+
+    @Value("${fountation.service.authorization.clientType}")
+    private String fountationServiceAuthorizationClientType;
 
     @Value("${fountation.service.redis.store.duration.minutes}")
     private int fountationServiceRedisStoreDurationInMinutes;
@@ -20,6 +28,9 @@ public class Env {
 
     @Value("${fountation.service.security.jwt.audience}")
     private String fountationServiceSecurityJwtAudience;
+
+
+    /* SPRINT SECURITY ENVIRONMENT SETTING */
 
     @Value("${spring.security.oauth2.client.registration.internal-service.client-id}")
     private String clientRegistrationInternalServiceClientId;
@@ -44,12 +55,28 @@ public class Env {
         this.fountationServiceAccountUrl = fountationServiceAccountUrl;
     }
 
+    public String getFountationServiceAccountClientType() {
+        return fountationServiceAccountClientType;
+    }
+
+    public void setFountationServiceAccountClientType(String fountationServiceAccountClientType) {
+        this.fountationServiceAccountClientType = fountationServiceAccountClientType;
+    }
+
     public String getFountationServiceAuthorizationUrl() {
         return fountationServiceAuthorizationUrl;
     }
 
     public void setFountationServiceAuthorizationUrl(String fountationServiceAuthorizationUrl) {
         this.fountationServiceAuthorizationUrl = fountationServiceAuthorizationUrl;
+    }
+
+    public String getFountationServiceAuthorizationClientType() {
+        return fountationServiceAuthorizationClientType;
+    }
+
+    public void setFountationServiceAuthorizationClientType(String fountationServiceAuthorizationClientType) {
+        this.fountationServiceAuthorizationClientType = fountationServiceAuthorizationClientType;
     }
 
     public int getFountationServiceRedisStoreDurationInMinutes() {

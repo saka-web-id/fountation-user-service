@@ -5,10 +5,8 @@ import id.web.saka.fountation.organization.company.CompanyMapper;
 import id.web.saka.fountation.organization.company.CompanyService;
 import id.web.saka.fountation.organization.department.DepartmentMapper;
 import id.web.saka.fountation.organization.department.DepartmentService.DepartmentService;
-import id.web.saka.fountation.user.UserDTO;
 import id.web.saka.fountation.user.UserMapper;
 import id.web.saka.fountation.user.UserService;
-import id.web.saka.fountation.user.UserStatus;
 import id.web.saka.fountation.user.organization.company.UserCompanyService;
 import id.web.saka.fountation.user.organization.department.UserDepartmentService;
 import id.web.saka.fountation.user.role.UserRoleService;
@@ -93,7 +91,8 @@ public class UserRegistrationService {
                                                                                         // Assign user to company and department
                                                                                         userCompanyService.addUserToCompany(userMapper.toEntity(userDTO), company)
                                                                                                 .then(userDepartmentService.addUserToDepartment(userMapper.toEntity(userDTO), department))
-                                                                                                .then(userRoleService.assignRoleToNewUser(dto, userDTO, companyMapper.toDto(company), departmentMapper.toDto(department)))
+                                                                                                .then(userRoleService.assignRoleToNewUser( new UserRegistrationDTO(userDTO, dto.account(), companyMapper.toDto(company), departmentMapper.toDto(department)))
+                                                                                                )
                                                                                                 .flatMap(dtoUpdate ->
                                                                                                         // Assign account
                                                                                                         accountService.assignAccountToNewUser(dtoUpdate, userDTO, companyMapper.toDto(company), departmentMapper.toDto(department))

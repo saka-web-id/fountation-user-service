@@ -1,13 +1,8 @@
 package id.web.saka.fountation.user;
 
-import id.web.saka.fountation.account.AccountDTO;
 import id.web.saka.fountation.account.AccountService;
-import id.web.saka.fountation.authority.RolePermissionDTO;
-import id.web.saka.fountation.authority.RolePermissionService;
-import id.web.saka.fountation.organization.company.CompanyDTO;
-import id.web.saka.fountation.organization.department.DepartmentDTO;
+import id.web.saka.fountation.authorization.company.role.permission.CompanyRolePermissionService;
 import id.web.saka.fountation.user.account.UserAccountDTO;
-import id.web.saka.fountation.user.account.UserAccountService;
 import id.web.saka.fountation.user.organization.company.UserCompanyService;
 import id.web.saka.fountation.user.organization.department.UserDepartmentService;
 import id.web.saka.fountation.util.Env;
@@ -25,7 +20,7 @@ public class UserService {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
 
-    private final RolePermissionService rolePermissionService;
+    private final CompanyRolePermissionService companyRolePermissionService;
 
     private MessageSource messageSource;
 
@@ -42,7 +37,7 @@ public class UserService {
     private final Env env;
 
     public UserService(UserRepository userRepository,
-                       RolePermissionService rolePermissionService,
+                       CompanyRolePermissionService companyRolePermissionService,
                        MessageSource messageSource,
                        UserMapper userMapper,
                        UserDepartmentService userDepartmentService,
@@ -50,7 +45,7 @@ public class UserService {
                        AccountService accountService,
                        ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO, Env env) {
         this.userRepository = userRepository;
-        this.rolePermissionService = rolePermissionService;
+        this.companyRolePermissionService = companyRolePermissionService;
         this.messageSource = messageSource;
         this.userMapper = userMapper;
         this.userDepartmentService = userDepartmentService;
@@ -112,7 +107,7 @@ public class UserService {
                         userCompanyService.getUserCompanyDefaultByUserId(user.getId())
                                 .doOnNext(userCompany -> log.info("Fetched UserCompany for email {}: {}", user.getEmail(), userCompany))
                                 .flatMap(userCompany ->
-                                        rolePermissionService.getAuthorityByCompanyIdAndUserId(userCompany.id(), user.getId())
+                                        companyRolePermissionService.getAuthorityByCompanyIdAndUserId(userCompany.id(), user.getId())
                                                 .doOnNext(rolePermissionDTO -> log.info("Fetched RolePermission for email {}: {}", user.getEmail(), rolePermissionDTO))
                                                 .flatMap(rolePermissionDTO -> {
                                                     if (rolePermissionDTO == null) {

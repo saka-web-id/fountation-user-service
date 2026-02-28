@@ -1,7 +1,7 @@
 package id.web.saka.fountation.util.filter;
 
-import id.web.saka.fountation.policy.PolicyRequestDTO;
-import id.web.saka.fountation.policy.PolicyService;
+import id.web.saka.fountation.authorization.policy.PolicyRequestDTO;
+import id.web.saka.fountation.authorization.policy.PolicyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

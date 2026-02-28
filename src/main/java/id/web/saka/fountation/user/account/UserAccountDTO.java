@@ -2,7 +2,7 @@ package id.web.saka.fountation.user.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import id.web.saka.fountation.account.AccountDTO;
-import id.web.saka.fountation.authority.RolePermissionDTO;
+import id.web.saka.fountation.authorization.company.role.permission.CompanyRolePermissionDTO;
 import id.web.saka.fountation.organization.company.CompanyDTO;
 import id.web.saka.fountation.organization.department.DepartmentDTO;
 import id.web.saka.fountation.user.User;
@@ -16,7 +16,7 @@ public class UserAccountDTO {
         // empty constructor for Jackson
     }
 
-    public UserAccountDTO(User user, AccountDTO account, RolePermissionDTO authority, CompanyDTO companyDTO, DepartmentDTO departmentDTO) {
+    public UserAccountDTO(User user, AccountDTO account, CompanyRolePermissionDTO authority, CompanyDTO companyDTO, DepartmentDTO departmentDTO) {
         this.id = user.getId();
         this.name = user.getName();
         this.phone = user.getPhone();
@@ -69,7 +69,7 @@ public class UserAccountDTO {
     private String membershipStatus;
 
     @JsonProperty("authority")
-    private RolePermissionDTO authority;
+    private CompanyRolePermissionDTO authority;
 
     @JsonProperty("company")
     private CompanyDTO company;
@@ -174,11 +174,11 @@ public class UserAccountDTO {
         this.membershipStatus = membershipStatus;
     }
 
-    public RolePermissionDTO getAuthority() {
+    public CompanyRolePermissionDTO getAuthority() {
         return authority;
     }
 
-    public void setAuthority(RolePermissionDTO authority) {
+    public void setAuthority(CompanyRolePermissionDTO authority) {
         this.authority = authority;
     }
 

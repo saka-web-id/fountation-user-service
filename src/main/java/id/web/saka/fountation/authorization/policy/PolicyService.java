@@ -1,4 +1,4 @@
-package id.web.saka.fountation.policy;
+package id.web.saka.fountation.authorization.policy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

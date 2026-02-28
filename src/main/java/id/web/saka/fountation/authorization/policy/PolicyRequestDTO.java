@@ -1,4 +1,4 @@
-package id.web.saka.fountation.policy;
+package id.web.saka.fountation.authorization.policy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 public record PolicyRequestDTO(

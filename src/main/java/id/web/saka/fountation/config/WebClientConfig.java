@@ -1,11 +1,10 @@
 package id.web.saka.fountation.config;
 
 import id.web.saka.fountation.util.Env;
+import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.server.resource.web.reactive.function.client.ServerBearerExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;

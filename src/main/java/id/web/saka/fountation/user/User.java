@@ -28,7 +28,7 @@ public class User {
     private UserStatus status;
 
     @Column("is_verified")
-    private boolean isVerified;
+    private boolean verified;
 
     @Column("last_login_at")
     private Instant lastLoginAt;
@@ -89,11 +89,11 @@ public class User {
     }
 
     public boolean isVerified() {
-        return isVerified;
+        return verified;
     }
 
     public void setVerified(boolean verified) {
-        isVerified = verified;
+        this.verified = verified;
     }
 
     public Instant getLastLoginAt() {
@@ -144,7 +144,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
                 ", status='" + status + '\'' +
-                ", isVerified=" + isVerified +
+                ", isVerified=" + verified +
                 ", lastLoginAt=" + lastLoginAt +
                 ", createdAt=" + createdAt +
                 ", updateAt=" + updateAt +

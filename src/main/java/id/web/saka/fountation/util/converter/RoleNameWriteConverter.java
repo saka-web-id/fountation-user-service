@@ -1,6 +1,6 @@
 package id.web.saka.fountation.util.converter;
 
-import id.web.saka.fountation.authority.role.Role;
+import id.web.saka.fountation.authorization.company.role.Role;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.WritingConverter;
 

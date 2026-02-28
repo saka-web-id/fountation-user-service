@@ -1,0 +1,15 @@
+package id.web.saka.fountation.permission;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record PermissionDTO(
+        @JsonProperty("permissionId") Long id,
+        @JsonProperty("permissionName") String name,
+        @JsonProperty("isSuperAdmin") boolean isSuperAdmin,
+        @JsonProperty("permissionResource") String resource,
+        @JsonProperty("permissionAction") String action,
+        @JsonProperty("permissionDescription") String description,
+        @JsonProperty("isAssigned") boolean isAssigned
+) {
+
+}

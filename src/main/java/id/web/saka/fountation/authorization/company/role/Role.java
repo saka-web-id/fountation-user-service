@@ -1,4 +1,4 @@
-package id.web.saka.fountation.authority.role;
+package id.web.saka.fountation.authorization.company.role;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

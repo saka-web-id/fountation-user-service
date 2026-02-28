@@ -10,7 +10,7 @@ public record UserDTO (
         @JsonProperty("userName") String name,
         @JsonProperty("userPhone") String phone,
         @JsonProperty("userStatus") String status,
-        @JsonProperty("userIsVerified") boolean isVerified,
+        @JsonProperty("userIsVerified") boolean verified,
         @JsonProperty("userLastLoginAt") ZonedDateTime lastLoginAt,
         @JsonProperty("userCreatedAt") ZonedDateTime createdAt,
         @JsonProperty("userUpdatedAt") ZonedDateTime updateAt,

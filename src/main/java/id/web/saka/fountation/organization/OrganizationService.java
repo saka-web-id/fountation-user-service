@@ -1,6 +1,6 @@
 package id.web.saka.fountation.organization;
 
-import id.web.saka.fountation.authority.RolePermissionService;
+import id.web.saka.fountation.authorization.company.role.permission.CompanyRolePermissionService;
 import id.web.saka.fountation.organization.company.CompanyRepository;
 import id.web.saka.fountation.organization.department.DepartmentMapper;
 import id.web.saka.fountation.organization.department.DepartmentRepository;
@@ -8,7 +8,6 @@ import id.web.saka.fountation.user.UserService;
 import id.web.saka.fountation.user.organization.company.UserCompanyRepository;
 import id.web.saka.fountation.user.organization.department.UserDepartmentRepository;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 @Service
 public class OrganizationService {
@@ -19,7 +18,7 @@ public class OrganizationService {
     private final CompanyRepository companyRepository;
     private final DepartmentRepository departmentRepository;
     private final DepartmentMapper departmentMapper;
-    private final RolePermissionService rolePermissionService;
+    private final CompanyRolePermissionService companyRolePermissionService;
 
 
 
@@ -29,14 +28,14 @@ public class OrganizationService {
                                CompanyRepository companyRepository,
                                DepartmentRepository departmentRepository,
                                DepartmentMapper departmentMapper,
-                               RolePermissionService rolePermissionService) {
+                               CompanyRolePermissionService companyRolePermissionService) {
         this.userService = userService;
         this.userCompanyRepository = userCompanyRepository;
         this.userDepartmentRepository = userDepartmentRepository;
         this.companyRepository = companyRepository;
         this.departmentRepository = departmentRepository;
         this.departmentMapper = departmentMapper;
-        this.rolePermissionService = rolePermissionService;
+        this.companyRolePermissionService = companyRolePermissionService;
     }
 
 

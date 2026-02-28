@@ -1,15 +1,30 @@
 eureka:
     client:
+        registerWithEureka: true
+        fetchRegistry: true
         serviceUrl:
             defaultZone: ${EUREKA_URI:http://XXXXXXXXXXX:11111111111/XXXXXXXXXXXXXX}
     instance:
-        preferIpAddress: false
+        refer-ip-address: false                 # Local setup forces Eureka to use IP instead of hostname
+        ip-address: XXXXXXXX                # Local setup forces Eureka to use IP instead of hostname
+        hostname: fountation-user-service       # use the Swarm DNS alias
+        non-secure-port: XXXX                   # internal container port
+
 fountation:
     service:
         account:
-            url: lb://fountation-account-service
+            url: http://fountation-account-service:8080  #Remove eureka
+            clientType: grpc
         authorization:
-            url: lb://fountation-authorization-service
+            url: http://fountation-authorization-service:8080 #Remove eureka
+            clientType: grpc
+        ui:
+            url: https://192.168.1.51                #--> Docker
+            #url: http://www.myproject.local:5173   #--> Local
+            clientType: webClient
+        security:
+            jwt:
+                audience: https://myproject.local/api
         redis:
             store:
                 duration:
@@ -33,7 +48,7 @@ logging:
                 publisher: DEBUG
             netty: DEBUG
 server:
-    port: 0
+    port: 8080
     error:
         include-binding-errors: always
         include-message: always
@@ -85,3 +100,13 @@ spring:
             port: XXXX
             database: XX
             password: XXXXXXXXXXXXXXXX
+grpc:
+    server:
+        port: XXXXX
+    client:
+        fountation-authorization-service:
+            address: 'static://fountation-authorization-service:XXXX'
+            negotiation-type: plaintext
+        fountation-account-service:
+            address: 'static://fountation-account-service:XXXXXX'
+            negotiation-type: plaintext
