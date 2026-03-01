@@ -1,7 +1,6 @@
 package id.web.saka.fountation.config;
 
 import id.web.saka.fountation.util.Env;
-import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,11 +19,10 @@ public class WebClientConfig {
     }
 
     @Bean
-    public Mono<WebClient> webClientAccount(ReactorLoadBalancerExchangeFilterFunction lbFunction) {
+    public Mono<WebClient> webClientAccount() {
         return getAccessToken()
                 .map(token ->
                         WebClient.builder()
-                                .filter(lbFunction)
                                 .baseUrl(env.getFountationServiceAccountUrl())
                                 .defaultHeaders(headers -> {
                                     headers.setBearerAuth(token);
@@ -36,11 +34,10 @@ public class WebClientConfig {
     }
 
     @Bean
-    public Mono<WebClient> webClientAuthorization(ReactorLoadBalancerExchangeFilterFunction lbFunction) {
+    public Mono<WebClient> webClientAuthorization() {
         return getAccessToken()
                 .map(token ->
                         WebClient.builder()
-                                .filter(lbFunction)
                                 .baseUrl(env.getFountationServiceAuthorizationUrl())
                                 .defaultHeaders(headers -> {
                                     headers.setBearerAuth(token);

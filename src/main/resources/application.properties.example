@@ -1,15 +1,3 @@
-eureka:
-    client:
-        registerWithEureka: true
-        fetchRegistry: true
-        serviceUrl:
-            defaultZone: ${EUREKA_URI:http://XXXXXXXXXXX:11111111111/XXXXXXXXXXXXXX}
-    instance:
-        refer-ip-address: false                 # Local setup forces Eureka to use IP instead of hostname
-        ip-address: XXXXXXXX                # Local setup forces Eureka to use IP instead of hostname
-        hostname: fountation-user-service       # use the Swarm DNS alias
-        non-secure-port: XXXX                   # internal container port
-
 fountation:
     service:
         account:
