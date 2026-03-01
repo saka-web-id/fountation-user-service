@@ -20,8 +20,7 @@ public class DateTimeMapper {
         return instant == null ? null : instant.atZone(DEFAULT_ZONE);
     }
 
-    // ZonedDateTime (
-    // GMT+7) → Instant (UTC)
+    // ZonedDateTime (GMT+7) → Instant (UTC)
     @Named("toInstant")
     public Instant toInstant(ZonedDateTime zdt) {
         return zdt == null ? null : zdt.toInstant();
@@ -30,19 +29,23 @@ public class DateTimeMapper {
     // Protobuf Timestamp → ZonedDateTime (GMT+7)
     @Named("toZonedDateTime")
     public ZonedDateTime toZonedDateTime(Timestamp ts) {
-        return ts == null ? null :
-                ZonedDateTime.ofInstant(Instant.ofEpochSecond(ts.getSeconds(), ts.getNanos()), DEFAULT_ZONE);
+        if (ts == null || (ts.getSeconds() == 0 && ts.getNanos() == 0)) return null;
+        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(ts.getSeconds(), ts.getNanos()), DEFAULT_ZONE);
     }
 
     // ZonedDateTime (GMT+7) → Protobuf Timestamp
     @Named("toProtoTimestamp")
     public Timestamp toProtoTimestamp(ZonedDateTime zdt) {
-        return zdt == null ? null :
-                Timestamp.newBuilder()
+        if (zdt == null) return Timestamp.getDefaultInstance();
+        return Timestamp.newBuilder()
                         .setSeconds(zdt.toEpochSecond())
                         .setNanos(zdt.getNano())
                         .build();
     }
 
-}
+    @Named("instantToZonedDateTime")
+    public ZonedDateTime toZonedDateTime(Instant instant) {
+        return instant == null ? null : instant.atZone(DEFAULT_ZONE);
+    }
 
+}

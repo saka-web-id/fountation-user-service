@@ -1,5 +1,6 @@
 package id.web.saka.fountation.user.account;
 
+import id.web.saka.fountation.user.UserMapper;
 import id.web.saka.fountation.user.UserService;
 import id.web.saka.fountation.user.organization.department.UserDepartmentService;
 import id.web.saka.fountation.user.role.UserRoleService;
@@ -19,6 +20,8 @@ public class UserAccountService {
 
     private final UserService userService;
 
+    private final UserMapper userMapper;
+
     private final UserAccountMapper userAccountMapper;
 
     private final UserRoleService userRoleService;
@@ -30,9 +33,14 @@ public class UserAccountService {
     private final Env env;
 
 
-    public UserAccountService(UserService userService, UserAccountMapper userAccountMapper, UserRoleService userRoleService, UserDepartmentService userDepartmentService,
+    public UserAccountService(UserService userService,
+                              UserMapper userMapper,
+                              UserAccountMapper userAccountMapper,
+                              UserRoleService userRoleService,
+                              UserDepartmentService userDepartmentService,
                               ReactiveRedisTemplate<String, UserAccountDTO> redisTemplateUserAccountDTO, Env env) {
         this.userService = userService;
+        this.userMapper = userMapper;
         this.userAccountMapper = userAccountMapper;
         this.userRoleService = userRoleService;
         this.userDepartmentService = userDepartmentService;
@@ -44,18 +52,18 @@ public class UserAccountService {
         return userService.getUserByEmail(email)
                 .doOnNext(user -> log.info("Fetched User for email {}: {}", email, user))
                 .flatMap(user -> {
-                    log.info("Fetching UserAccountDTO for userId: {}", user.getId());
+                    log.info("Fetching UserAccountDTO for userId: {}", user.id());
 
-                    return redisTemplateUserAccountDTO.opsForValue().get(buildCacheKey(user.getId()))
-                            .doOnNext(cachedDto -> log.info("Cache hit for userId {}: {}", user.getId(), cachedDto))
+                    return redisTemplateUserAccountDTO.opsForValue().get(buildCacheKey(user.id()))
+                            .doOnNext(cachedDto -> log.info("Cache hit for userId {}: {}", user.id(), cachedDto))
                             .onErrorResume(e -> {
                                 log.warn("Redis unavailable, fallback to DB: {}", e.getMessage());
                                 return Mono.empty();
                             })
                             .switchIfEmpty(
-                                    userService.getUserAccountByUserMono(Mono.just(user))
+                                    userService.getUserAccountByUserMono(Mono.just(userMapper.toEntity(user)))
                                             .flatMap(dto ->
-                                                    cacheUserAccountDTO(buildCacheKey(user.getId()), dto)
+                                                    cacheUserAccountDTO(buildCacheKey(user.id()), dto)
                                                             .onErrorResume(err -> {
                                                                 log.warn("Failed to cache in Redis: {}", err.getMessage());
                                                                 return Mono.just(dto); // fallback to original DTO

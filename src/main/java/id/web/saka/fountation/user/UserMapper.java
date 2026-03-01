@@ -8,25 +8,25 @@ import org.mapstruct.Mapping;
 public interface UserMapper {
     @Mapping(target = "status", expression = "java(UserStatus.fromValue(dto.status()))")
     @Mapping(target = "createdAt", qualifiedByName = "toInstant")
-    @Mapping(target = "updateAt", qualifiedByName = "toInstant")
+    @Mapping(target = "updatedAt", qualifiedByName = "toInstant")
     @Mapping(target = "lastLoginAt", qualifiedByName = "toInstant")
     User toEntity(UserDTO dto);
 
     @Mapping(target = "status", expression = "java(entity.getStatus().getValue())")
     @Mapping(target = "createdAt", qualifiedByName = "toOffset")
-    @Mapping(target = "updateAt", qualifiedByName = "toOffset")
+    @Mapping(target = "updatedAt", qualifiedByName = "toOffset")
     @Mapping(target = "lastLoginAt", qualifiedByName = "toOffset")
     UserDTO toDto(User entity);
 
     User requestToEntity(UserRequestDTO dto);
 
     @Mapping(target = "createdAt", qualifiedByName = "toZonedDateTime")
-    @Mapping(target = "updateAt", source = "updatedAt", qualifiedByName = "toZonedDateTime")
+    @Mapping(target = "updatedAt", source = "updatedAt", qualifiedByName = "toZonedDateTime")
     @Mapping(target = "lastLoginAt", qualifiedByName = "toZonedDateTime")
     UserDTO toDto(UserProto proto);
 
     @Mapping(target = "createdAt", qualifiedByName = "toProtoTimestamp")
-    @Mapping(target = "updatedAt", source = "updateAt", qualifiedByName = "toProtoTimestamp")
+    @Mapping(target = "updatedAt", source = "updatedAt", qualifiedByName = "toProtoTimestamp")
     @Mapping(target = "lastLoginAt", qualifiedByName = "toProtoTimestamp")
     UserProto toProto(UserDTO dto);
 

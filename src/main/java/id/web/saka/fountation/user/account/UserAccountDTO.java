@@ -1,7 +1,7 @@
 package id.web.saka.fountation.user.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import id.web.saka.fountation.account.AccountDTO;
+import id.web.saka.fountation.account.membership.plan.AccountMembershipPlanDTO;
 import id.web.saka.fountation.authorization.company.role.permission.CompanyRolePermissionDTO;
 import id.web.saka.fountation.organization.company.CompanyDTO;
 import id.web.saka.fountation.organization.department.DepartmentDTO;
@@ -16,7 +16,7 @@ public class UserAccountDTO {
         // empty constructor for Jackson
     }
 
-    public UserAccountDTO(User user, AccountDTO account, CompanyRolePermissionDTO authority, CompanyDTO companyDTO, DepartmentDTO departmentDTO) {
+    public UserAccountDTO(User user, AccountMembershipPlanDTO account, CompanyRolePermissionDTO authority, CompanyDTO companyDTO, DepartmentDTO departmentDTO) {
         this.id = user.getId();
         this.name = user.getName();
         this.phone = user.getPhone();
@@ -26,12 +26,12 @@ public class UserAccountDTO {
         this.isVerified = user.isVerified();
         this.accountNumber = account.accountNumber();
         this.accountStatus = account.accountStatus();
-        this.membershipType = account.membershipType();
+        this.membershipType = account.accountType(); // In AccountMembershipPlanDTO it is accountType
         this.membershipStatus =  account.membershipStatus();
         this.authority = authority;
         this.company = companyDTO;
         this.department = departmentDTO;
-        this.createdAt = account.createdAt();
+        this.createdAt = account.accountCreatedAt();
         this.membershipStartDate = account.membershipStartDate();
         this.membershipEndDate = account.membershipEndDate();
     }

@@ -38,8 +38,8 @@ public class User {
     private Instant createdAt;
 
     @LastModifiedDate
-    @Column("update_at")
-    private Instant updateAt;
+    @Column("updated_at")
+    private Instant updatedAt;
 
     @Column("leader_id")
     private Long leaderId;
@@ -112,12 +112,12 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    public Instant getUpdateAt() {
-        return updateAt;
+    public Instant getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdateAt(Instant updateAt) {
-        this.updateAt = updateAt;
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Long getLeaderId() {
@@ -147,7 +147,7 @@ public class User {
                 ", isVerified=" + verified +
                 ", lastLoginAt=" + lastLoginAt +
                 ", createdAt=" + createdAt +
-                ", updateAt=" + updateAt +
+                ", updatedAt=" + updatedAt +
                 ", leaderId=" + leaderId +
                 ", note='" + note + '\'' +
                 '}';

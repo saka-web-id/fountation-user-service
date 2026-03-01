@@ -17,67 +17,72 @@ import java.time.Duration;
 
 @Service
 public class UserService {
+
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
     private final UserRepository userRepository;
-
-    private final CompanyRolePermissionService companyRolePermissionService;
-
-    private MessageSource messageSource;
-
     private final UserMapper userMapper;
-
-    private final UserDepartmentService userDepartmentService;
-
-    private final UserCompanyService userCompanyService;
-
-    private final AccountService accountService;
-
     private final ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO;
-
     private final Env env;
+    private final UserCompanyService userCompanyService;
+    private final CompanyRolePermissionService companyRolePermissionService;
+    private final UserDepartmentService userDepartmentService;
+    private final AccountService accountService;
+    private final MessageSource messageSource;
 
-    public UserService(UserRepository userRepository,
-                       CompanyRolePermissionService companyRolePermissionService,
-                       MessageSource messageSource,
-                       UserMapper userMapper,
-                       UserDepartmentService userDepartmentService,
-                       UserCompanyService userCompanyService,
-                       AccountService accountService,
-                       ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO, Env env) {
+    public UserService(UserRepository userRepository, UserMapper userMapper,
+                       ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO, Env env,
+                       UserCompanyService userCompanyService, CompanyRolePermissionService companyRolePermissionService,
+                       UserDepartmentService userDepartmentService, AccountService accountService,
+                       MessageSource messageSource) {
         this.userRepository = userRepository;
-        this.companyRolePermissionService = companyRolePermissionService;
-        this.messageSource = messageSource;
         this.userMapper = userMapper;
-        this.userDepartmentService = userDepartmentService;
-        this.userCompanyService = userCompanyService;
-        this.accountService = accountService;
         this.redisTemplateUserDTO = redisTemplateUserDTO;
         this.env = env;
+        this.userCompanyService = userCompanyService;
+        this.companyRolePermissionService = companyRolePermissionService;
+        this.userDepartmentService = userDepartmentService;
+        this.accountService = accountService;
+        this.messageSource = messageSource;
     }
 
-    public Mono<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Mono<UserDTO> getUserById(Long id) {
+        String key = "userDTO:userId:" + id;
+        return redisTemplateUserDTO.opsForValue().get(key)
+                .onErrorResume(e -> Mono.empty())
+                .switchIfEmpty(userRepository.findById(id)
+                        .map(userMapper::toDto)
+                        .flatMap(dto -> cacheUserDTO(key, dto)));
     }
 
-    public Mono<UserDTO> getUserById(Long userId) {
-
-        return redisTemplateUserDTO.opsForValue().get(buildCacheKey(userId))
-            .onErrorResume(e -> {
-                log.warn("Redis unavailable, fallback to DB: {}", e.getMessage());
-                return Mono.empty();
-            })
-            .switchIfEmpty(
-                    userRepository.findById(userId)
-                            .map(userMapper::toDto)
-            );
+    public Mono<User> getUserEntityById(Long id) {
+        return userRepository.findById(id);
     }
 
-    public Mono<? extends UserDTO> saveUser(UserDTO userDTO) {
-        log.info("Saving user: {}", userDTO);
+    public Mono<UserDTO> getUserByEmail(String email) {
+        String key = "userDTO:email:" + email;
+        return redisTemplateUserDTO.opsForValue().get(key)
+                .onErrorResume(e -> Mono.empty())
+                .switchIfEmpty(userRepository.findByEmail(email)
+                        .map(userMapper::toDto)
+                        .flatMap(dto -> cacheUserDTO(key, dto)));
+    }
 
-        return userRepository.save(userMapper.toEntity(userDTO))
+    public Mono<Long> getUserIdByEmail(String email) {
+        return userRepository.findByEmail(email).map(User::getId);
+    }
+
+    public Mono<UserDTO> saveUser(UserDTO userDTO) {
+        User user = userMapper.toEntity(userDTO);
+        return userRepository.save(user)
                 .map(userMapper::toDto)
-                .flatMap(savedUserDTO -> cacheUserDTO(buildCacheKey(savedUserDTO.id()), savedUserDTO));
+                .flatMap(dto -> {
+                    String keyId = "userDTO:userId:" + dto.id();
+                    String keyEmail = "userDTO:email:" + dto.email();
+                    return cacheUserDTO(keyId, dto)
+                            .then(cacheUserDTO(keyEmail, dto))
+                            .thenReturn(dto);
+                });
     }
 
     public Mono<? extends UserDTO> addUser(UserRequestDTO userRequestDTO) {
@@ -96,7 +101,7 @@ public class UserService {
         return getUserAccountByUserMono(userDTOMono.map(userMapper::toEntity));
     }
 
-    public Mono<Boolean> isUserNameExists(UserDTO user) {
+    public Mono<Boolean> checkUserExist(UserDTO user) {
         return userRepository.findByName(user.name())
                 .hasElements(); // ✅ returns Mono<Boolean>
     }
@@ -120,7 +125,7 @@ public class UserService {
                                                             .getUserDepartmentDefaultByCompanyIdAndUserId(userCompany.id(), user.getId())
                                                             .doOnNext(departmentDTO -> log.info("Fetched Department for email {}: {}", user.getEmail(), departmentDTO))
                                                             .flatMap(departmentDTO ->
-                                                                    accountService.getAccountById(userCompany.id(), user.getId())
+                                                                    accountService.getAccountMembershipPlanDetailByUserId(userCompany.id(), user.getId(), user.getId())
                                                                             .doOnNext(accountDTO -> log.info("Fetched Account for email {}: {}", user.getEmail(), accountDTO))
                                                                             .map(accountDTO -> {
                                                                                 UserAccountDTO dto = new UserAccountDTO(

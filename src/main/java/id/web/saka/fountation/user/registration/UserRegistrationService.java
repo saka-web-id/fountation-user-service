@@ -78,7 +78,7 @@ public class UserRegistrationService {
                                             departmentService.saveDepartment(company, departmentMapper.toEntity(dto.department()))
                                                     .flatMap(department ->
                                                             // Validate user existence
-                                                            userService.isUserNameExists(dto.user())
+                                                            userService.checkUserExist(dto.user())
                                                                     .flatMap(userExist -> {
                                                                         if (userExist) {
                                                                             log.info("User email already exists: {}", dto.user().email());

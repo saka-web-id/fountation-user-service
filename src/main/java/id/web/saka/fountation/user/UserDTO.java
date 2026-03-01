@@ -13,7 +13,7 @@ public record UserDTO (
         @JsonProperty("userIsVerified") boolean verified,
         @JsonProperty("userLastLoginAt") ZonedDateTime lastLoginAt,
         @JsonProperty("userCreatedAt") ZonedDateTime createdAt,
-        @JsonProperty("userUpdatedAt") ZonedDateTime updateAt,
+        @JsonProperty("userUpdatedAt") ZonedDateTime updatedAt,
         @JsonProperty("userLeaderId") Long leaderId,
         @JsonProperty("userNote") String note
 ) {
