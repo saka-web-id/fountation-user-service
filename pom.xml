@@ -42,6 +42,11 @@
             <artifactId>fountation-grpc-contract</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>id.web.saka.fountation</groupId>
+            <artifactId>fountation-config-service</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
         <!-- Spring Boot Starters -->
         <dependency>
@@ -70,14 +75,17 @@
             <artifactId>spring-grpc-spring-boot-starter</artifactId>
             <version>1.0.2</version>
         </dependency>-->
+
+        <!-- R2DBC -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-client-spring-boot-starter</artifactId>
             <version>3.1.0.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
         </dependency>
 
         <!-- MapStruct -->
