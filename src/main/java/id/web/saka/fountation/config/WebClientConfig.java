@@ -1,11 +1,18 @@
 package id.web.saka.fountation.config;
 
 import id.web.saka.fountation.util.Env;
+import org.springframework.boot.web.reactive.function.client.WebClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.resources.ConnectionProvider;
 
+import java.time.Duration;
 import java.util.Map;
 
 
@@ -19,37 +26,84 @@ public class WebClientConfig {
     }
 
     @Bean
-    public Mono<WebClient> webClientAccount() {
-        return getAccessToken()
-                .map(token ->
-                        WebClient.builder()
-                                .baseUrl(env.getFountationServiceAccountUrl())
-                                .defaultHeaders(headers -> {
-                                    headers.setBearerAuth(token);
-                                    headers.set("Accept", "application/json");
-                                    headers.set("Content-Type", "application/json");
-                                })
-                                .build()
-                );
+    public HttpClient httpClient() {
+        ConnectionProvider provider = ConnectionProvider.builder("fountation-user-pool")
+                .maxIdleTime(Duration.ofSeconds(20)) // Clear connections that have been idle for 20s
+                .maxLifeTime(Duration.ofMinutes(1))  // Max life of a connection
+                .evictInBackground(Duration.ofSeconds(30)) // Evict idle connections in background
+                .build();
+
+        return HttpClient.create(provider)
+                .responseTimeout(Duration.ofSeconds(10)); // Request timeout
     }
 
     @Bean
-    public Mono<WebClient> webClientAuthorization() {
-        return getAccessToken()
-                .map(token ->
-                        WebClient.builder()
-                                .baseUrl(env.getFountationServiceAuthorizationUrl())
-                                .defaultHeaders(headers -> {
-                                    headers.setBearerAuth(token);
-                                    headers.set("Accept", "application/json");
-                                    headers.set("Content-Type", "application/json");
-                                })
-                                .build()
-                );
+    public WebClientCustomizer webClientCustomizer(HttpClient httpClient) {
+        return webClientBuilder -> webClientBuilder.clientConnector(new ReactorClientHttpConnector(httpClient));
     }
 
-    private Mono<String> getAccessToken() {
-        WebClient webClient = WebClient.builder().build();
+    @Bean
+    public WebClient webClientAccount(HttpClient httpClient) {
+        // 1. Buat Cache untuk Token agar tidak membebani server Auth
+        Mono<String> tokenCache = getAccessToken(httpClient)
+                .cache(
+                        token -> Duration.ofMinutes(50), // Cache jika sukses (50 menit)
+                        error -> Duration.ZERO,           // Jangan cache jika error (coba lagi langsung)
+                        () -> Duration.ZERO               // Jangan cache jika kosong
+                );
+
+        // 2. Buat Filter yang menggunakan Cache tersebut
+        ExchangeFilterFunction authFilter = (request, next) ->
+                tokenCache.flatMap(token -> {
+                    ClientRequest filteredRequest = ClientRequest.from(request)
+                            .headers(headers -> headers.setBearerAuth(token))
+                            .build();
+                    return next.exchange(filteredRequest);
+                });
+
+        // 3. Bangun WebClient
+        return WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .baseUrl(env.getFountationServiceAccountUrl())
+                .defaultHeader("Accept", "application/json")
+                .defaultHeader("Content-Type", "application/json")
+                .filter(authFilter)
+                .build();
+    }
+
+    @Bean
+    public WebClient webClientAuthorization(HttpClient httpClient) {
+        // 1. Buat Cache untuk Token agar tidak membebani server Auth
+        Mono<String> tokenCache = getAccessToken(httpClient)
+                .cache(
+                        token -> Duration.ofMinutes(50), // Cache jika sukses (50 menit)
+                        error -> Duration.ZERO,           // Jangan cache jika error (coba lagi langsung)
+                        () -> Duration.ZERO               // Jangan cache jika kosong
+                );
+
+        // 2. Buat Filter yang menggunakan Cache tersebut
+        ExchangeFilterFunction authFilter = (request, next) ->
+                tokenCache.flatMap(token -> {
+                    ClientRequest filteredRequest = ClientRequest.from(request)
+                            .headers(headers -> headers.setBearerAuth(token))
+                            .build();
+                    return next.exchange(filteredRequest);
+                });
+
+        // 3. Bangun WebClient
+        return WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .baseUrl(env.getFountationServiceAuthorizationUrl())
+                .defaultHeader("Accept", "application/json")
+                .defaultHeader("Content-Type", "application/json")
+                .filter(authFilter)
+                .build();
+    }
+
+    private Mono<String> getAccessToken(HttpClient httpClient) {
+        WebClient webClient = WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .build();
 
         return webClient.post()
                 .uri(env.getClientRegistrationInternalServiceTokenUri())
@@ -62,7 +116,8 @@ public class WebClientConfig {
                 ))
                 .retrieve()
                 .bodyToMono(Map.class)
-                .map(response -> (String) response.get("access_token"));
+                .map(response -> (String) response.get("access_token"))
+                .cache(Duration.ofMinutes(50));
     }
 
 

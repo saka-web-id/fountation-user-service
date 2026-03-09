@@ -9,22 +9,20 @@ import reactor.core.publisher.Mono;
 @Component("rolePermissionWebClient")
 public class CompanyRolePermissionWebClientImpl implements CompanyRolePermissionClient {
 
-    private final Mono<WebClient> webClientAuthority;
+    private final WebClient webClientAuthority;
 
-    public CompanyRolePermissionWebClientImpl(@Qualifier("webClientAuthorization") Mono<WebClient> webClientAuthority) {
+    public CompanyRolePermissionWebClientImpl(@Qualifier("webClientAuthorization") WebClient webClientAuthority) {
         this.webClientAuthority = webClientAuthority;
     }
 
     @Override
     public Mono<CompanyRolePermissionDTO> getCompanyRolePermissionByCompanyIdAndUserId(Long companyId, Long userId) {
-        return webClientAuthority.flatMap(webClient ->
-                webClient.get()
-                        .uri("/api/v0/authorization/company/role/permission/detail/companyId/" + companyId +
-                                "/userId/" + userId +
-                                "/valueCompanyId/" + companyId +
-                                "/valueUserId/" + userId)
-                        .retrieve()
-                        .bodyToMono(CompanyRolePermissionDTO.class)
-        );
+        return webClientAuthority.get()
+                .uri("/api/v0/authorization/company/role/permission/detail/companyId/" + companyId +
+                        "/userId/" + userId +
+                        "/valueCompanyId/" + companyId +
+                        "/valueUserId/" + userId)
+                .retrieve()
+                .bodyToMono(CompanyRolePermissionDTO.class);
     }
 }

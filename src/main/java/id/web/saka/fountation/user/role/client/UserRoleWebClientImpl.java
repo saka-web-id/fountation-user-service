@@ -14,9 +14,9 @@ public class UserRoleWebClientImpl implements UserRoleClient {
 
     Logger log = LoggerFactory.getLogger(UserRoleWebClientImpl.class);
 
-    private Mono<WebClient> webClientAuthority;
+    private WebClient webClientAuthority;
 
-    public UserRoleWebClientImpl(@Qualifier("webClientAuthorization") Mono<WebClient> webClientAuthority) {
+    public UserRoleWebClientImpl(@Qualifier("webClientAuthorization") WebClient webClientAuthority) {
         this.webClientAuthority = webClientAuthority;
     }
 
@@ -30,13 +30,11 @@ public class UserRoleWebClientImpl implements UserRoleClient {
     public Mono<UserRoleDTO> updateUserRoles(Long companyId, Long userId, UserRoleDTO userRoleDTOEntity) {
         log.info("Updating UserRoleDTO for companyId {} userId: {}", companyId, userRoleDTOEntity.userId());
 
-        return webClientAuthority.flatMap(webClient ->
-                webClient.post()
-                        .uri("/api/v0/authorization/user/role/update/companyId/{companyId}/userId/{userId}", companyId, userId)
-                        .bodyValue(userRoleDTOEntity)
-                        .retrieve()
-                        .bodyToMono(UserRoleDTO.class)
-        );
+        return webClientAuthority.post()
+                .uri("/api/v0/authorization/user/role/update/companyId/{companyId}/userId/{userId}", companyId, userId)
+                .bodyValue(userRoleDTOEntity)
+                .retrieve()
+                .bodyToMono(UserRoleDTO.class);
     }
 
     /**
@@ -49,13 +47,11 @@ public class UserRoleWebClientImpl implements UserRoleClient {
     public Mono<UserRoleDTO> addUserRole(Long companyId, Long userId, UserRoleDTO userRoleDTO) {
         log.info("Adding UserRoleDTO for companyId {} userId: {}", companyId, userRoleDTO.userId());
 
-        return webClientAuthority.flatMap(webClient ->
-                webClient.post()
-                        .uri("/api/v0/authorization/user/role/add/companyId/{companyId}/userId/{userId}", companyId, userId)
-                        .bodyValue(userRoleDTO)
-                        .retrieve()
-                        .bodyToMono(UserRoleDTO.class)
-        );
+        return webClientAuthority.post()
+                .uri("/api/v0/authorization/user/role/add/companyId/{companyId}/userId/{userId}", companyId, userId)
+                .bodyValue(userRoleDTO)
+                .retrieve()
+                .bodyToMono(UserRoleDTO.class);
     }
 
     /**
@@ -66,12 +62,10 @@ public class UserRoleWebClientImpl implements UserRoleClient {
     public Mono<UserRegistrationDTO> assignRoleToNewUser(UserRegistrationDTO userRegistrationDTO) {
         log.info("Adding New UserRoleDTO for user: {} ", userRegistrationDTO);
 
-        return webClientAuthority.flatMap(webClient ->
-                webClient.post()
-                        .uri("/api/v0/authorization/user/registration")
-                        .bodyValue(userRegistrationDTO)
-                        .retrieve()
-                        .bodyToMono(UserRegistrationDTO.class)
-        );
+        return webClientAuthority.post()
+                .uri("/api/v0/authorization/user/registration")
+                .bodyValue(userRegistrationDTO)
+                .retrieve()
+                .bodyToMono(UserRegistrationDTO.class);
     }
 }

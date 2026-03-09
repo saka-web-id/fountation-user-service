@@ -14,45 +14,39 @@ import reactor.core.publisher.Mono;
 public class AccountWebClientImpl implements AccountClient {
 
     private static final Logger log = LoggerFactory.getLogger(AccountWebClientImpl.class);
-    private final Mono<WebClient> webClientAccount;
+    private final WebClient webClientAccount;
 
-    public AccountWebClientImpl(@Qualifier("webClientAccount") Mono<WebClient> webClientAccount) {
+    public AccountWebClientImpl(@Qualifier("webClientAccount") WebClient webClientAccount) {
         this.webClientAccount = webClientAccount;
     }
 
     @Override
     public Mono<AccountMembershipPlanDTO> getAccountMembershipPlanDetailByUserId(Long companyId, Long userId, Long valueUserId) {
         log.info("Fetching AccountMembershipPlanDTO via REST for valueUserId: {} in companyId: {}", valueUserId, companyId);
-        return webClientAccount.flatMap(webClient ->
-                webClient.get()
-                        .uri("/api/v0/account/user/membership/plan/detail/companyId/" + companyId + "/userId/" + userId + "/valueUserId/" + valueUserId)
-                        .retrieve()
-                        .bodyToMono(AccountMembershipPlanDTO.class)
-                        .doOnNext(json -> log.info("REST Response: {}", json))
-        );
+        return webClientAccount.get()
+                .uri("/api/v0/account/user/membership/plan/detail/companyId/" + companyId + "/userId/" + userId + "/valueUserId/" + valueUserId)
+                .retrieve()
+                .bodyToMono(AccountMembershipPlanDTO.class)
+                .doOnNext(json -> log.info("REST Response: {}", json));
     }
 
     @Override
     public Mono<UserRegistrationDTO> assignAccountToNewUser(UserRegistrationDTO dto) {
         log.info("Adding New Account via REST for user: {}", dto.user().email());
-        return webClientAccount.flatMap(webClient ->
-                webClient.post()
-                        .uri("/api/v0/account/user/registration")
-                        .bodyValue(dto)
-                        .retrieve()
-                        .bodyToMono(UserRegistrationDTO.class)
-                        .doOnNext(json -> log.info("REST Response: {}", json))
-        );
+        return webClientAccount.post()
+                .uri("/api/v0/account/user/registration")
+                .bodyValue(dto)
+                .retrieve()
+                .bodyToMono(UserRegistrationDTO.class)
+                .doOnNext(json -> log.info("REST Response: {}", json));
     }
 
     @Override
     public Mono<AccountDTO> getAccountById(Long companyId, Long userId) {
-        return webClientAccount.flatMap(webClient ->
-                webClient.get()
-                        .uri("/api/v0/account/user/membership/plan/detail/companyId/" + companyId + "/userId/" + userId + "/valueUserId/" + userId)
-                        .retrieve()
-                        .bodyToMono(AccountDTO.class)
-                        .doOnNext(json -> log.info("Raw JSON: {}", json))
-        );
+        return webClientAccount.get()
+                .uri("/api/v0/account/user/membership/plan/detail/companyId/" + companyId + "/userId/" + userId + "/valueUserId/" + userId)
+                .retrieve()
+                .bodyToMono(AccountDTO.class)
+                .doOnNext(json -> log.info("Raw JSON: {}", json));
     }
 }
