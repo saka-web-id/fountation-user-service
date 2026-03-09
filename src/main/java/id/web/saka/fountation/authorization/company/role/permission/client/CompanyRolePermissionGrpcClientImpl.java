@@ -58,12 +58,12 @@ public class CompanyRolePermissionGrpcClientImpl implements CompanyRolePermissio
                 response.getRoleDescription(),
                 response.getPermissionsList().stream()
                         .map(p -> new PermissionDTO(
-                                p.getPermissionId(),
-                                p.getPermissionName(),
+                                p.getId(),
+                                p.getName(),
                                 p.getIsSuperAdmin(),
-                                p.getPermissionResource(),
-                                p.getPermissionAction(),
-                                p.getPermissionDescription(),
+                                p.getResource(),
+                                p.getAction(),
+                                p.getDescription(),
                                 p.getIsAssigned()
                         ))
                         .collect(Collectors.toList())
