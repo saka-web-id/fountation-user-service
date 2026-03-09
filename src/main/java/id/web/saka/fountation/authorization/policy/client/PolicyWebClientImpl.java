@@ -24,7 +24,7 @@ public class PolicyWebClientImpl implements PolicyClient {
         logger.info("Evaluating policy via REST: companyId={}, userId={}", companyId, userId);
         return webClientAuthority.flatMap(webClient ->
                 webClient.post()
-                        .uri("/api/v0/authorization/policy/check/{companyId}/{userId}", companyId, userId)
+                        .uri("/api/v0/authorization/policy/check/companyId/{companyId}/userId/{userId}", companyId, userId)
                         .bodyValue(authRequest)
                         .retrieve()
                         .bodyToMono(PolicyResponseDTO.class)
