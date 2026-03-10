@@ -60,7 +60,7 @@ public class CompanyRolePermissionGrpcClientImpl implements CompanyRolePermissio
                         .map(p -> new PermissionDTO(
                                 p.getId(),
                                 p.getName(),
-                                p.getIsSuperAdmin(),
+                                p.getSuperAdmin(),
                                 p.getResource(),
                                 p.getAction(),
                                 p.getDescription(),
