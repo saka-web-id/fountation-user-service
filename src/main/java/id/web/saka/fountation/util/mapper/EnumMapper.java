@@ -1,6 +1,5 @@
 package id.web.saka.fountation.util.mapper;
 
-import id.web.saka.fountation.account.AccountStatus;
 import id.web.saka.fountation.account.AccountType;
 import id.web.saka.fountation.account.MembershipStatus;
 import org.mapstruct.Named;
@@ -14,21 +13,43 @@ public class EnumMapper {
         return e == null ? null : e.name();
     }
 
+
     @Named("stringToAccountStatus")
-    public AccountStatus stringToAccountStatus(String status) {
-        if (status == null) return AccountStatus.AS_ACTIVE;
-        try { return AccountStatus.valueOf("AS_" + status.toUpperCase()); } catch (Exception e) { return AccountStatus.AS_ACTIVE; }
+    public id.web.saka.fountation.account.AccountStatus stringToAccountStatus(String status) {
+        if (status == null) return id.web.saka.fountation.account.AccountStatus.AS_INACTIVE;
+
+        return switch (status.toUpperCase()) {
+            case "ACTIVE" -> id.web.saka.fountation.account.AccountStatus.AS_ACTIVE;
+            case "INACTIVE" -> id.web.saka.fountation.account.AccountStatus.AS_INACTIVE;
+            case "DISABLE", "DISABLED" -> id.web.saka.fountation.account.AccountStatus.AS_DISABLE;
+            default -> id.web.saka.fountation.account.AccountStatus.UNRECOGNIZED;
+        };
     }
+
 
     @Named("stringToAccountType")
     public AccountType stringToAccountType(String type) {
         if (type == null) return AccountType.AT_FREE;
-        try { return AccountType.valueOf("AT_" + type.toUpperCase()); } catch (Exception e) { return AccountType.AT_FREE; }
+
+
+        return switch (type.toUpperCase()) {
+            case "FREE" -> AccountType.AT_FREE;
+            case "PREMIUM" -> AccountType.AT_PREMIUM;
+            case "ENTERPRISE" -> AccountType.AT_ENTERPRISE;
+            default -> AccountType.AT_FREE;
+        };
     }
 
     @Named("stringToMembershipStatus")
     public MembershipStatus stringToMembershipStatus(String status) {
-        if (status == null) return MembershipStatus.MS_ACTIVE;
-        try { return MembershipStatus.valueOf("MS_" + status.toUpperCase()); } catch (Exception e) { return MembershipStatus.MS_ACTIVE; }
+        if (status == null) return MembershipStatus.MS_PENDING;
+
+        return switch (status.toUpperCase()) {
+            case "PENDING" -> MembershipStatus.MS_PENDING;
+            case "INACTIVE" -> MembershipStatus.MS_INACTIVE;
+            case "ACTIVE" -> MembershipStatus.MS_ACTIVE;
+            default -> MembershipStatus.MS_PENDING;
+        };
+
     }
 }

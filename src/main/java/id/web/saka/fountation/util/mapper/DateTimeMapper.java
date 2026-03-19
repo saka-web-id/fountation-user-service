@@ -48,4 +48,36 @@ public class DateTimeMapper {
         return instant == null ? null : instant.atZone(DEFAULT_ZONE);
     }
 
+    // LocalDateTime → ZonedDateTime (Attach Asia/Jakarta)
+    @Named("localDateTimeToZonedDateTime")
+    public ZonedDateTime localDateTimeToZonedDateTime(java.time.LocalDateTime ldt) {
+        return ldt == null ? null : ldt.atZone(DEFAULT_ZONE);
+    }
+
+    // LocalDateTime → Protobuf Timestamp
+    @Named("localDateTimeToProtoTimestamp")
+    public Timestamp localDateTimeToProtoTimestamp(java.time.LocalDateTime ldt) {
+        if (ldt == null) return Timestamp.getDefaultInstance();
+        ZonedDateTime zdt = ldt.atZone(DEFAULT_ZONE);
+        return Timestamp.newBuilder()
+                .setSeconds(zdt.toEpochSecond())
+                .setNanos(zdt.getNano())
+                .build();
+    }
+
+    // ADD THIS: Default mapper for ZonedDateTime to Proto Timestamp
+    public Timestamp map(ZonedDateTime zdt) {
+        return toProtoTimestamp(zdt);
+    }
+
+    // ADD THIS: Default mapper for Proto Timestamp to ZonedDateTime
+    public ZonedDateTime map(Timestamp ts) {
+        return toZonedDateTime(ts);
+    }
+
+    // ADD THIS: Default mapper for LocalDateTime to Proto Timestamp
+    public Timestamp map(java.time.LocalDateTime ldt) {
+        return localDateTimeToProtoTimestamp(ldt);
+    }
+
 }

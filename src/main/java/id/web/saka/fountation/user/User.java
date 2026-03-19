@@ -47,6 +47,9 @@ public class User {
     @Column("note")
     private String note;
 
+    @Column("iam_id")
+    private String iamId;
+
 
     public Long getId() {
         return id;
@@ -136,6 +139,14 @@ public class User {
         this.note = note;
     }
 
+    public String getIamId() {
+        return iamId;
+    }
+
+    public void setIamId(String iamId) {
+        this.iamId = iamId;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -150,6 +161,7 @@ public class User {
                 ", updatedAt=" + updatedAt +
                 ", leaderId=" + leaderId +
                 ", note='" + note + '\'' +
+                ", iamId='" + iamId + '\'' +
                 '}';
     }
 }

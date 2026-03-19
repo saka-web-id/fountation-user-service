@@ -21,6 +21,7 @@ public class Config {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(
                                 "/api/v0/user/health",
+                                "/api/v0/user/registration",
                                 "/api/v0/user/registration/**"
                         ).permitAll()
                         .anyExchange().authenticated()

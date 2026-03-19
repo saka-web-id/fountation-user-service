@@ -81,23 +81,36 @@ public class UserRoleGrpcClientImpl implements UserRoleClient {
 
     @Override
     public Mono<UserRegistrationDTO> assignRoleToNewUser(UserRegistrationDTO userRegistrationDTO) {
-        log.info("Assigning role to new user via gRPC: {}", userRegistrationDTO);
+        String userEmail = userRegistrationDTO.user().email();
+        log.info("gRPC_START | Starting role assignment via gRPC for user: {}", userEmail);
+
         UserRegistrationProto request = mapper.toProto(userRegistrationDTO);
 
-        return Mono.create(sink -> userRoleServiceStub.assignRoleToNewUser(request, new StreamObserver<UserRegistrationProto>() {
-            @Override
-            public void onNext(UserRegistrationProto response) {
-                sink.success(mapper.toDto(response));
-            }
+        return Mono.<UserRegistrationDTO>create(sink -> {
+                    log.debug("gRPC_INVOKE | Calling userRoleServiceStub.assignRoleToNewUser for: {}", userEmail);
 
-            @Override
-            public void onError(Throwable t) {
-                log.error("Error in assignRoleToNewUser gRPC call", t);
-                sink.error(t);
-            }
+                    userRoleServiceStub.assignRoleToNewUser(request, new StreamObserver<UserRegistrationProto>() {
+                        @Override
+                        public void onNext(UserRegistrationProto response) {
+                            log.info("gRPC_ON_NEXT | Received response from Role Service for user: {}", userEmail);
+                            sink.success(mapper.toDto(response));
+                        }
 
-            @Override
-            public void onCompleted() {}
-        }));
+                        @Override
+                        public void onError(Throwable t) {
+                            // This is the most important log for your 'Internal Error'
+                            log.error("gRPC_ERROR | Failed to assign role via gRPC for user: {}. Error: {} - {}",
+                                    userEmail, t.getClass().getName(), t.getMessage());
+                            sink.error(t);
+                        }
+
+                        @Override
+                        public void onCompleted() {
+                            log.debug("gRPC_COMPLETED | Stream closed for user: {}", userEmail);
+                        }
+                    });
+                })
+                .doOnCancel(() -> log.warn("gRPC_CANCEL | Mono was cancelled (timeout?) for user: {}", userEmail))
+                .doOnError(e -> log.error("FLOW_ERROR | Final Mono error state for user: {}", userEmail));
     }
 }

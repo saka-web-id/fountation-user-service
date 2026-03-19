@@ -5,7 +5,6 @@ import id.web.saka.fountation.account.membership.plan.MembershipPlanGrpcMapper;
 import id.web.saka.fountation.organization.company.CompanyGrpcMapper;
 import id.web.saka.fountation.organization.department.DepartmentGrpcMapper;
 import id.web.saka.fountation.user.UserGrpcMapper;
-import id.web.saka.fountation.user.registration.UserRegistrationDTO;
 import id.web.saka.fountation.util.mapper.DateTimeMapper;
 import id.web.saka.fountation.util.mapper.EnumMapper;
 import id.web.saka.fountation.util.mapper.JsonMapper;
@@ -30,18 +29,6 @@ public interface AccountGrpcMapper {
     @Mapping(target = "accountType", source = "accountType", qualifiedByName = "enumToString")
     @Mapping(target = "membershipStatus", source = "membershipStatus", qualifiedByName = "enumToString")
     AccountMembershipPlanDTO toDTO(AccountMembershipPlanResponse proto);
-
-    @Mapping(target = "user", source = "user")
-    @Mapping(target = "account", source = "account")
-    @Mapping(target = "company", source = "company")
-    @Mapping(target = "department", source = "department")
-    UserRegistrationRequest toProto(UserRegistrationDTO dto);
-
-    @Mapping(target = "user", source = "user")
-    @Mapping(target = "account", source = "account")
-    @Mapping(target = "company", source = "company")
-    @Mapping(target = "department", source = "department")
-    UserRegistrationDTO toDTO(UserRegistrationResponse proto);
 
     @Mapping(target = "accountNumber", source = "accountNumber")
     @Mapping(target = "accountStatus", source = "accountStatus", qualifiedByName = "stringToAccountStatus")

@@ -15,6 +15,8 @@ public record UserDTO (
         @JsonProperty("userCreatedAt") ZonedDateTime createdAt,
         @JsonProperty("userUpdatedAt") ZonedDateTime updatedAt,
         @JsonProperty("userLeaderId") Long leaderId,
-        @JsonProperty("userNote") String note
+        @JsonProperty("userNote") String note,
+        @JsonProperty("userIamId") String iamId,
+        @JsonProperty("userPassword") String password
 ) {
 }

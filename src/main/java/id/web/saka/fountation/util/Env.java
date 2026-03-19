@@ -29,6 +29,9 @@ public class Env {
     @Value("${fountation.service.security.jwt.audience}")
     private String fountationServiceSecurityJwtAudience;
 
+    @Value("${spring.security.oauth2.client.provider.auth0.issuer-uri}api/v2/")
+    private String auth0ManagementApiAudience;
+
 
     /* SPRINT SECURITY ENVIRONMENT SETTING */
 
@@ -101,6 +104,14 @@ public class Env {
 
     public void setFountationServiceSecurityJwtAudience(String fountationServiceSecurityJwtAudience) {
         this.fountationServiceSecurityJwtAudience = fountationServiceSecurityJwtAudience;
+    }
+
+    public String getAuth0ManagementApiAudience() {
+        return auth0ManagementApiAudience;
+    }
+
+    public void setAuth0ManagementApiAudience(String auth0ManagementApiAudience) {
+        this.auth0ManagementApiAudience = auth0ManagementApiAudience;
     }
 
     public String getClientRegistrationInternalServiceClientId() {

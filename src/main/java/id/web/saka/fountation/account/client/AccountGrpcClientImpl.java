@@ -3,6 +3,7 @@ package id.web.saka.fountation.account.client;
 import id.web.saka.fountation.account.*;
 import id.web.saka.fountation.account.membership.plan.AccountMembershipPlanDTO;
 import id.web.saka.fountation.user.registration.UserRegistrationDTO;
+import id.web.saka.fountation.user.registration.UserRegistrationMapper;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.slf4j.Logger;
@@ -14,13 +15,15 @@ import reactor.core.publisher.Mono;
 public class AccountGrpcClientImpl implements AccountClient {
 
     private static final Logger log = LoggerFactory.getLogger(AccountGrpcClientImpl.class);
-    private final AccountGrpcMapper mapper;
+    private final AccountGrpcMapper accountMapper;
+    private final UserRegistrationMapper userRegistrationMapper;
 
     @GrpcClient("fountation-account-service")
     private AccountServiceGrpc.AccountServiceStub accountServiceStub;
 
-    public AccountGrpcClientImpl(AccountGrpcMapper mapper) {
-        this.mapper = mapper;
+    public AccountGrpcClientImpl(AccountGrpcMapper accountMapper, UserRegistrationMapper userRegistrationMapper) {
+        this.accountMapper = accountMapper;
+        this.userRegistrationMapper = userRegistrationMapper;
     }
 
     @Override
@@ -37,7 +40,7 @@ public class AccountGrpcClientImpl implements AccountClient {
             accountServiceStub.getAccountMembershipPlanDetailByUserId(request, new StreamObserver<AccountMembershipPlanResponse>() {
                 @Override
                 public void onNext(AccountMembershipPlanResponse response) {
-                    sink.success(mapper.toDTO(response));
+                    sink.success(accountMapper.toDTO(response));
                 }
 
                 @Override
@@ -58,13 +61,13 @@ public class AccountGrpcClientImpl implements AccountClient {
     public Mono<UserRegistrationDTO> assignAccountToNewUser(UserRegistrationDTO dto) {
         log.info("Adding New Account via gRPC for user: {}", dto.user().email());
 
-        UserRegistrationRequest request = mapper.toProto(dto);
+        UserRegistrationRequest request = userRegistrationMapper.toProto(dto);
 
         return Mono.create(sink -> {
             accountServiceStub.registerUser(request, new StreamObserver<UserRegistrationResponse>() {
                 @Override
                 public void onNext(UserRegistrationResponse response) {
-                    sink.success(mapper.toDTO(response));
+                    sink.success(userRegistrationMapper.toDTO(response));
                 }
 
                 @Override

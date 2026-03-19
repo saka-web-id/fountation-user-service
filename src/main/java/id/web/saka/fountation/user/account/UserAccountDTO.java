@@ -1,5 +1,6 @@
 package id.web.saka.fountation.user.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import id.web.saka.fountation.account.membership.plan.AccountMembershipPlanDTO;
 import id.web.saka.fountation.authorization.company.role.permission.CompanyRolePermissionDTO;
@@ -68,6 +69,7 @@ public class UserAccountDTO {
     @JsonProperty("membershipStatus")
     private String membershipStatus;
 
+    @JsonIgnore
     @JsonProperty("authority")
     private CompanyRolePermissionDTO authority;
 
@@ -77,12 +79,15 @@ public class UserAccountDTO {
     @JsonProperty("department")
     private DepartmentDTO department;
 
+    @JsonIgnore
     @JsonProperty("createdAt")
     private ZonedDateTime createdAt;
 
+    @JsonIgnore
     @JsonProperty("membershipStartDate")
     private ZonedDateTime membershipStartDate;
 
+    @JsonIgnore
     @JsonProperty("membershipEndDate")
     private ZonedDateTime membershipEndDate;
 
