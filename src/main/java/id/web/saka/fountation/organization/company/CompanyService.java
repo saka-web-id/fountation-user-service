@@ -3,6 +3,7 @@ package id.web.saka.fountation.organization.company;
 import id.web.saka.fountation.user.UserRepository;
 import id.web.saka.fountation.user.organization.company.UserCompany;
 import id.web.saka.fountation.user.organization.company.UserCompanyRepository;
+import id.web.saka.fountation.user.role.client.UserRoleClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -27,12 +28,15 @@ public class CompanyService {
 
     private final TransactionalOperator transactionalOperator;
 
-    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper, UserRepository userRepository, UserCompanyRepository userCompanyRepository, TransactionalOperator transactionalOperator) {
+    private final UserRoleClient userRoleClient;
+
+    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper, UserRepository userRepository, UserCompanyRepository userCompanyRepository, TransactionalOperator transactionalOperator, UserRoleClient userRoleClient) {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
         this.userRepository = userRepository;
         this.userCompanyRepository = userCompanyRepository;
         this.transactionalOperator = transactionalOperator;
+        this.userRoleClient = userRoleClient;
     }
 
     public Mono<CompanyDTO> getCompanyById (Long companyId) {
@@ -85,21 +89,22 @@ public class CompanyService {
                 .as(transactionalOperator::transactional);
     }
 
-    public Flux<CompanyDTO> getCompaniesByEmailAdmin(String email) {
-        log.info("Fetching companies for admin user with email: {}", email);
+    public Flux<CompanyDTO> getCompaniesByCompanyIdAndUserId(Long companyId, Long userId, String email) {
+        log.info("Fetching companies for admin user with companId: {} | userId: {} ", companyId, userId);
 
-        return userRepository.findByEmail(email)
-                .switchIfEmpty(Mono.error(
-                        new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found")
-                ))
-                .flatMapMany(user ->
-                        userCompanyRepository.findAllByUserId(user.getId())
-                                .flatMap(userCompany ->
-                                        companyRepository.findById(userCompany.getCompanyId())
-                                                .map(company -> {
-                                                    return companyMapper.toDto(company, userCompany.isDefault());
-                                                })
-                                )
+        return userRoleClient.getRoleByUserIdAndCompanyId(companyId, userId)
+            .flatMapMany( userRoleDTO -> {
+                    if (userRoleDTO.roleId() == 1) { // SUPER_ADMIN
+                        return userCompanyRepository.findAll();
+                    } else {
+                        return userCompanyRepository.findAllByUserId(userId);
+                    }
+                })
+                .flatMap(userCompany ->
+                        companyRepository.findById(userCompany.getCompanyId())
+                                .map(company -> {
+                                    return companyMapper.toDto(company, userCompany.isDefault());
+                                })
                 );
     }
 }

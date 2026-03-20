@@ -44,7 +44,7 @@ public class OrganizationController {
         log.info("Controller called with companyId: " + valueCompanyId);
 
         if(valueCompanyId == 0) {
-            return companyService.getCompaniesByEmailAdmin(jwt.getClaimAsString("https://example.com/email"));
+            return companyService.getCompaniesByCompanyIdAndUserId(companyId, userId, jwt.getClaimAsString("https://example.com/email"));
         } else {
             return companyService.getCompanyById(valueCompanyId).flux();
         }
