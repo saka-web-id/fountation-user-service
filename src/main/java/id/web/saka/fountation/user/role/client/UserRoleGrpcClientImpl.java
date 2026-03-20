@@ -4,6 +4,7 @@ import id.web.saka.fountation.authorization.user.role.AddUserRoleRequest;
 import id.web.saka.fountation.authorization.user.role.UpdateUserRolesRequest;
 import id.web.saka.fountation.authorization.user.role.UserRegistrationProto;
 import id.web.saka.fountation.authorization.user.role.UserRoleProto;
+import id.web.saka.fountation.authorization.user.role.UserRoleRequest;
 import id.web.saka.fountation.authorization.user.role.UserRoleServiceGrpc;
 import id.web.saka.fountation.user.registration.UserRegistrationDTO;
 import id.web.saka.fountation.user.role.UserRoleDTO;
@@ -25,6 +26,35 @@ public class UserRoleGrpcClientImpl implements UserRoleClient {
 
     public UserRoleGrpcClientImpl(UserRoleGrpcMapper mapper) {
         this.mapper = mapper;
+    }
+
+    @Override
+    public Mono<UserRoleDTO> getRoleByUserIdAndCompanyId(Long companyId, Long userId) {
+        log.info("Fetching user role via gRPC: companyId={}, userId={}", companyId, userId);
+
+        UserRoleRequest request = UserRoleRequest.newBuilder()
+                .setCompanyId(companyId)
+                .setUserId(userId)
+                .build();
+
+        return Mono.create(sink -> userRoleServiceStub.getRoleByUserIdAndCompanyId(request, new StreamObserver<UserRoleProto>() {
+            @Override
+            public void onNext(UserRoleProto response) {
+                if (response.getId() == 0) {
+                    sink.success();
+                } else {
+                    sink.success(mapper.toDto(response));
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                sink.error(t);
+            }
+
+            @Override
+            public void onCompleted() {}
+        }));
     }
 
     @Override

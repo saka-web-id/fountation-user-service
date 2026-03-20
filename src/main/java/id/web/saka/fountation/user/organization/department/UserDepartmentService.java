@@ -5,12 +5,17 @@ import id.web.saka.fountation.organization.department.DepartmentDTO;
 import id.web.saka.fountation.organization.department.DepartmentMapper;
 import id.web.saka.fountation.organization.department.DepartmentRepository;
 import id.web.saka.fountation.user.*;
+import id.web.saka.fountation.user.role.client.UserRoleClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
-import reactor.core.CorePublisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.Duration;
+import java.util.List;
 
 @Service
 public class UserDepartmentService {
@@ -27,38 +32,76 @@ public class UserDepartmentService {
 
     private final UserMapper userMapper;
 
-    public UserDepartmentService(UserDepartmentRepository userDepartmentRepository, DepartmentRepository departmentRepository, DepartmentMapper departmentMapper, UserRepository userRepository, UserMapper userMapper) {
+    private final UserRoleClient userRoleClient;
+
+    private final ReactiveRedisTemplate<String, List<UserDTO>> redisTemplateUserList;
+
+    private final ReactiveRedisTemplate<String, List<DepartmentDTO>> redisTemplateDepartmentList;
+
+    public UserDepartmentService(UserDepartmentRepository userDepartmentRepository,
+                                 DepartmentRepository departmentRepository,
+                                 DepartmentMapper departmentMapper,
+                                 UserRepository userRepository,
+                                 UserMapper userMapper,
+                                 UserRoleClient userRoleClient,
+                                 @Qualifier("redisUserListTemplate") ReactiveRedisTemplate<String, List<UserDTO>> redisTemplateUserList,
+                                 @Qualifier("redisDepartmentListTemplate") ReactiveRedisTemplate<String, List<DepartmentDTO>> redisTemplateDepartmentList) {
         this.userDepartmentRepository = userDepartmentRepository;
         this.departmentRepository = departmentRepository;
         this.departmentMapper = departmentMapper;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.userRoleClient = userRoleClient;
+        this.redisTemplateUserList = redisTemplateUserList;
+        this.redisTemplateDepartmentList = redisTemplateDepartmentList;
     }
 
     public Flux<DepartmentDTO> getDepartmentsByCompanyId(Long companyId) {
+        String cacheKey = "company:departments:" + companyId;
 
-        log.info("Fetching departments for companyId: " + companyId);
-
-        return departmentRepository.findAllByCompanyId(companyId)
-                .map(departmentMapper::toDto).doOnNext(deptDto ->
-                        log.info("Fetched DepartmentDTO: " + deptDto)
+        return redisTemplateDepartmentList.opsForValue().get(cacheKey)
+                // No casting needed! 'data' is already recognized as List<DepartmentDTO>
+                .flatMapMany(Flux::fromIterable)
+                .switchIfEmpty(
+                        departmentRepository.findAllByCompanyId(companyId)
+                                .map(departmentMapper::toDto)
+                                .collectList()
+                                .flatMapMany(list ->
+                                        redisTemplateDepartmentList.opsForValue().set(cacheKey, list, Duration.ofMinutes(10))
+                                                .thenMany(Flux.fromIterable(list))
+                                )
                 );
     }
 
     public Mono<Department> saveDepartment(Department department) {
         log.info("Saving department: " + department.toString());
 
-        return departmentRepository.save(department);
+        return departmentRepository.save(department)
+                .flatMap(saved -> redisTemplateDepartmentList.delete("company:departments:" + saved.getCompanyId()).thenReturn(saved));
     }
 
-    public Flux<UserDTO> getUsers(Long companyId, Long departmentId) {
+    public Flux<UserDTO> getUsers(Long companyId, Long departmentId, Long adminUserId) {
+        String cacheKey = "company:department:users:" + companyId + ":" + departmentId;
 
-        log.info("Fetching users for companyId: " + companyId + " and departmentId: " + departmentId);
-
-        return userDepartmentRepository.findAllByCompanyIdAndDepartmentId(companyId, departmentId)
-                .flatMap(userDepartment -> userRepository.findById(userDepartment.getUserId())
-                        .map(userMapper::toDto)).doOnNext(userDto -> log.info("Fetched UserDTO: " + userDto.toString()));
-
+        return redisTemplateUserList.opsForValue().get(cacheKey)
+                .flatMapMany(Flux::fromIterable)
+                .switchIfEmpty(
+                        userRoleClient.getRoleByUserIdAndCompanyId(companyId, adminUserId)
+                                .flatMapMany(roleDTO -> {
+                                    if (roleDTO.roleId() == 1) { // SUPER_ADMIN
+                                        log.info("SUPER ADMIN detected. Fetching all users in department: {}", departmentId);
+                                        return userDepartmentRepository.findAllByDepartmentId(departmentId);
+                                    }
+                                    return userDepartmentRepository.findAllByCompanyIdAndDepartmentId(companyId, departmentId);
+                                })
+                                .flatMap(userDepartment -> userRepository.findById(userDepartment.getUserId()))
+                                .map(userMapper::toDto)
+                                .collectList()
+                                .flatMapMany(list ->
+                                        redisTemplateUserList.opsForValue().set(cacheKey, list, Duration.ofMinutes(10))
+                                                .thenMany(Flux.fromIterable(list))
+                                )
+                );
     }
 
     public Mono<DepartmentDTO> getDepartmentDetail(Long departmentId) {

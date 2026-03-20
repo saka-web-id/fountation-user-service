@@ -13,6 +13,8 @@ public interface UserDepartmentRepository extends ReactiveCrudRepository<UserDep
 
     Flux<UserDepartment> findAllByCompanyIdAndDepartmentId(Long companyId, Long departmentId);
 
+    Flux<UserDepartment> findAllByDepartmentId(Long departmentId);
+
     @Query("UPDATE users.user_department SET department_id = :departmentId WHERE user_id = :userId")
     Mono<Integer> updateDepartmentIdByUserId(Long departmentId, Long userId);
 

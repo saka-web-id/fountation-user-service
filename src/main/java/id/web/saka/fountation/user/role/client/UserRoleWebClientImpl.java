@@ -20,6 +20,16 @@ public class UserRoleWebClientImpl implements UserRoleClient {
         this.webClientAuthority = webClientAuthority;
     }
 
+    @Override
+    public Mono<UserRoleDTO> getRoleByUserIdAndCompanyId(Long companyId, Long userId) {
+        log.info("Fetching user role via WebClient: companyId={}, userId={}", companyId, userId);
+
+        return webClientAuthority.get()
+                .uri("/api/v0/authorization/user/role/detail/companyId/{companyId}/userId/{userId}", companyId, userId)
+                .retrieve()
+                .bodyToMono(UserRoleDTO.class);
+    }
+
     /**
      * @param companyId
      * @param userId

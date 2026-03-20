@@ -19,7 +19,7 @@ public class UserCompanyController {
     }
 
     @RequestMapping("/user/companies/list/companyId/{companyId}/userId/{userId}")
-    public Flux<CompanyDTO> getUserCompanies(@PathVariable Long companyId, @PathVariable Long userId) {
+    public Flux<CompanyDTO> getUserCompanies(@PathVariable Long companyId, @PathVariable Long userId, @AuthenticationPrincipal Jwt jwt) {
 
         return userCompanyService.getUserCompaniesByEmail(companyId, userId);
     }

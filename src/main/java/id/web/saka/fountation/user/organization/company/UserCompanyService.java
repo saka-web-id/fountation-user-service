@@ -5,15 +5,19 @@ import id.web.saka.fountation.organization.company.CompanyDTO;
 import id.web.saka.fountation.organization.company.CompanyMapper;
 import id.web.saka.fountation.organization.company.CompanyRepository;
 import id.web.saka.fountation.user.User;
-import id.web.saka.fountation.user.UserDTO;
 import id.web.saka.fountation.user.UserRepository;
 import id.web.saka.fountation.user.UserRequestDTO;
+import id.web.saka.fountation.user.role.client.UserRoleClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
-import reactor.core.CorePublisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.Duration;
+import java.util.List;
 
 @Service
 public class UserCompanyService {
@@ -22,14 +26,23 @@ public class UserCompanyService {
     private final UserRepository userRepository;
     private final UserCompanyRepository userCompanyRepository;
     private final CompanyRepository companyRepository;
+    private final UserRoleClient userRoleClient;
+    private final ReactiveRedisTemplate<String, List<CompanyDTO>> redisTemplate;
 
     private final CompanyMapper companyMapper;
 
-    public UserCompanyService(UserRepository userRepository, UserCompanyRepository userCompanyRepository, CompanyRepository companyRepository, CompanyMapper companyMapper) {
+    public UserCompanyService(UserRepository userRepository, 
+                              UserCompanyRepository userCompanyRepository, 
+                              CompanyRepository companyRepository, 
+                              CompanyMapper companyMapper,
+                              UserRoleClient userRoleClient,
+                              @Qualifier("redisCompanyListTemplate") ReactiveRedisTemplate<String, List<CompanyDTO>> redisTemplate) {
         this.userRepository = userRepository;
         this.userCompanyRepository = userCompanyRepository;
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
+        this.userRoleClient = userRoleClient;
+        this.redisTemplate = redisTemplate;
     }
 
     public Mono<CompanyDTO> getUserCompanyDefaultByUserId(Long userId) {
@@ -41,10 +54,28 @@ public class UserCompanyService {
     }
 
     public Flux<CompanyDTO> getUserCompaniesByEmail(Long companyId, Long userId) {
-        return userCompanyRepository.findAllByUserId(userId)
-                .flatMap(userCompany ->
-                        companyRepository.findById(userCompany.getCompanyId())
+        String cacheKey = "user:companies:userId:" + userId;
+
+        return redisTemplate.opsForValue().get(cacheKey)
+                // No more casting! 'data' is already recognized as List<CompanyDTO>
+                .flatMapMany(Flux::fromIterable)
+                .switchIfEmpty(
+                        userRoleClient.getRoleByUserIdAndCompanyId(companyId, userId)
+                                .flatMapMany(roleDTO -> {
+                                    log.info("getUserCompaniesByEmail|roleDTO:{}", roleDTO);
+
+                                    if (roleDTO.roleId() == 1) {
+                                        return companyRepository.findAll();
+                                    }
+                                    return userCompanyRepository.findAllByUserId(userId)
+                                            .flatMap(uc -> companyRepository.findById(uc.getCompanyId()));
+                                })
                                 .map(companyMapper::toDto)
+                                .collectList()
+                                .flatMapMany(list ->
+                                        redisTemplate.opsForValue().set(cacheKey, list, Duration.ofMinutes(10))
+                                                .thenMany(Flux.fromIterable(list))
+                                )
                 );
     }
 

@@ -8,6 +8,7 @@ import id.web.saka.fountation.user.organization.department.UserDepartmentService
 import id.web.saka.fountation.util.Env;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class UserService {
     private final MessageSource messageSource;
 
     public UserService(UserRepository userRepository, UserMapper userMapper,
-                       ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO, Env env,
+                       @Qualifier("redisUserDTOTemplate") ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO, Env env,
                        UserCompanyService userCompanyService, CompanyRolePermissionService companyRolePermissionService,
                        UserDepartmentService userDepartmentService, AccountService accountService,
                        MessageSource messageSource) {

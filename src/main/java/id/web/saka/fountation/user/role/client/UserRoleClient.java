@@ -12,4 +12,6 @@ public interface UserRoleClient {
 
     public Mono<UserRegistrationDTO> assignRoleToNewUser(UserRegistrationDTO userRegistrationDTO);
 
+    public Mono<UserRoleDTO> getRoleByUserIdAndCompanyId(Long companyId, Long userId);
+
 }

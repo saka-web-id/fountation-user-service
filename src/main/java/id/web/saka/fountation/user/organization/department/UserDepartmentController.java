@@ -69,7 +69,7 @@ public class UserDepartmentController {
     @GetMapping("/user/organization/department/users/companyId/{companyId}/userId/{userId}/valueDepartmentId/{departmentId}")
     public Flux<UserDTO> getUsers(@PathVariable Long companyId, @PathVariable Long userId, @PathVariable Long departmentId) {
 
-        return userDepartmentService.getUsers(companyId, departmentId);
+        return userDepartmentService.getUsers(companyId, departmentId, userId);
     }
 
 }

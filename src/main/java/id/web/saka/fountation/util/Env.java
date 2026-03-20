@@ -35,6 +35,14 @@ public class Env {
 
     /* SPRINT SECURITY ENVIRONMENT SETTING */
 
+    /* AUTH0 */
+    @Value("${spring.security.oauth2.client.registration.auth0.client-id}")
+    private String clientRegistrationAuth0ClientId;
+
+    @Value("${spring.security.oauth2.client.registration.auth0.client-secret}")
+    private String clientRegistrationAuth0ClientSecret;
+
+    /* INTERNAL CLIENT */
     @Value("${spring.security.oauth2.client.registration.internal-service.client-id}")
     private String clientRegistrationInternalServiceClientId;
 
@@ -112,6 +120,24 @@ public class Env {
 
     public void setAuth0ManagementApiAudience(String auth0ManagementApiAudience) {
         this.auth0ManagementApiAudience = auth0ManagementApiAudience;
+    }
+
+    public String getClientRegistrationAuth0ClientId() {
+        return clientRegistrationAuth0ClientId;
+    }
+
+    public void setClientRegistrationAuth0ClientId(String clientRegistrationAuth0ClientId) {
+        this.clientRegistrationAuth0ClientId = clientRegistrationAuth0ClientId;
+    }
+
+    public String getClientRegistrationAuth0ClientSecret() {
+        return clientRegistrationAuth0ClientSecret;
+    }
+
+
+
+    public void setClientRegistrationAuth0ClientSecret(String clientRegistrationAuth0ClientSecret) {
+        this.clientRegistrationAuth0ClientSecret = clientRegistrationAuth0ClientSecret;
     }
 
     public String getClientRegistrationInternalServiceClientId() {
