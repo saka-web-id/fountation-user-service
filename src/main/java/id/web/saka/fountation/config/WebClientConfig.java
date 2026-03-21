@@ -1,6 +1,7 @@
 package id.web.saka.fountation.config;
 
-import id.web.saka.fountation.util.Env;
+import id.web.saka.fountation.configbase.fountation.FountationProperties;
+import id.web.saka.fountation.configbase.spring.security.SpringSecurityProperties;
 import io.netty.channel.ChannelOption;
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -20,10 +21,13 @@ import java.util.Map;
 @Configuration
 public class WebClientConfig {
 
-    private final Env env;
+    private final FountationProperties fountationProperties;
 
-    public WebClientConfig(Env env) {
-        this.env = env;
+    private final SpringSecurityProperties springSecurityProperties;
+
+    public WebClientConfig(SpringSecurityProperties springSecurityProperties, FountationProperties fountationProperties) {
+        this.springSecurityProperties = springSecurityProperties;
+        this.fountationProperties = fountationProperties;
     }
 
     @Bean
@@ -66,7 +70,7 @@ public class WebClientConfig {
         // 3. Bangun WebClient
         return WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
-                .baseUrl(env.getFountationServiceAccountUrl())
+                .baseUrl(fountationProperties.getService().getAccount().getUrl())
                 .defaultHeader("Accept", "application/json")
                 .defaultHeader("Content-Type", "application/json")
                 .filter(authFilter)
@@ -95,7 +99,7 @@ public class WebClientConfig {
         // 3. Bangun WebClient
         return WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
-                .baseUrl(env.getFountationServiceAuthorizationUrl())
+                .baseUrl(fountationProperties.getService().getAuthorization().getUrl())
                 .defaultHeader("Accept", "application/json")
                 .defaultHeader("Content-Type", "application/json")
                 .filter(authFilter)
@@ -108,13 +112,13 @@ public class WebClientConfig {
                 .build();
 
         return webClient.post()
-                .uri(env.getClientRegistrationInternalServiceTokenUri())
+                .uri(springSecurityProperties.getOauth2().getClient().getProvider().get("auth0").getTokenUri())
                 .bodyValue(Map.of(
-                        "client_id", env.getClientRegistrationInternalServiceClientId(),
-                        "client_secret", env.getClientRegistrationInternalServiceClientSecret(),
-                        "audience", env.getFountationServiceSecurityJwtAudience(),
-                        "grant_type", env.getClientRegistrationInternalServiceGrantType(),
-                        "scope", env.getClientRegistrationInternalServiceScope()
+                        "client_id", springSecurityProperties.getOauth2().getClient().getRegistration().get("internal-service").getClientId(),  //spring.security.oauth2.client.registration.internal-service.client-id
+                        "client_secret", springSecurityProperties.getOauth2().getClient().getRegistration().get("internal-service").getClientSecret(), //spring.security.oauth2.client.registration.internal-service.client-secret
+                        "audience", fountationProperties.getService().getSecurity().getJwt().getAudience(), //fountation.service.security.jwt.audience
+                        "grant_type", springSecurityProperties.getOauth2().getClient().getRegistration().get("internal-service").getAuthorizationGrantType(), //spring.security.oauth2.client.registration.internal-service.authorization-grant-type
+                        "scope", springSecurityProperties.getOauth2().getClient().getRegistration().get("internal-service").getScope() //spring.security.oauth2.client.registration.internal-service.scope
                 ))
                 .retrieve()
                 .bodyToMono(Map.class)

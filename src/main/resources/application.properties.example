@@ -1,100 +1,11 @@
-fountation:
-    service:
-        account:
-            url: http://fountation-account-service:8080  #Remove eureka
-            clientType: grpc
-        authorization:
-            url: http://fountation-authorization-service:8080 #Remove eureka
-            clientType: grpc
-        ui:
-            url: https://192.168.1.51                #--> Docker
-            #url: http://www.myproject.local:5173   #--> Local
-            clientType: webClient
-        security:
-            jwt:
-                audience: https://myproject.local/api
-        redis:
-            store:
-                duration:
-                    minutes: 10
-logging:
-    level:
-        com:
-            nimbusds:
-                jose: DEBUG
-        org:
-            springframework:
-                security:
-                    oauth2:
-                        client: DEBUG
-                        jwt: DEBUG
-                        server:
-                            resource:
-                                authentication: DEBUG
-        reactor:
-            core:
-                publisher: DEBUG
-            netty: DEBUG
-server:
-    port: 8080
-    error:
-        include-binding-errors: always
-        include-message: always
 spring:
     application:
         name: fountation-user-service
-    main:
-        web-application-type: reactive
     r2dbc:
-        password: 11111111111
-        url: r2dbc:postgresql://XXXXXXXXXXX:11111111111/XXXXXXXXXXX
-        username: postgres
-    security:
-        oauth2:
-            client:
-                provider:
-                    auth0:
-                        authorization-uri: https://XXXXXXXXXXX/authorize?audience=https://XXXXXXXXXXX/api/v2/
-                        issuer-uri: https://XXXXXXXXXXX/
-                        jwk-set-uri: https://XXXXXXXXXXX/.well-known/jwks.json
-                        token-uri: https://XXXXXXXXXXX/oauth/token
-                        user-info-uri: https://XXXXXXXXXXX/userinfo
-                registration:
-                    auth0:
-                        authorization-grant-type: authorization_code
-                        client-id: XXXXXXXXXXX
-                        client-name: Auth0
-                        client-secret: XXXXXXXXXXX
-                        provider: auth0
-                        redirect-uri: http://XXXXXXXXXXXXXXXXXXXXXX
-                        scope: openid,profile,email
-                    internal-service:
-                        authorization-grant-type: client_credentials
-                        client-id: XXXXXXXXXXX
-                        client-name: Auth0
-                        client-secret: XXXXXXXXXXX
-                        provider: auth0
-                        scope: internal:service
-            resourceserver:
-                jwt:
-                    audiences:
-                        - https://XXXXXXXXXXX
-                        - https://XXXXXXXXXXX
-                    issuer-uri: https://XXXXXXXXXXX
-                    jwk-set-uri: https://XXXXXXXXXXX
-    data:
-        redis:
-            host: XX.XX.XX.XX
-            port: XXXX
-            database: XX
-            password: XXXXXXXXXXXXXXXX
-grpc:
-    server:
-        port: XXXXX
-    client:
-        fountation-authorization-service:
-            address: 'static://fountation-authorization-service:XXXX'
-            negotiation-type: plaintext
-        fountation-account-service:
-            address: 'static://fountation-account-service:XXXXXX'
-            negotiation-type: plaintext
+        url: r2dbc:postgresql://XXXXX:XXXX/XXXX
+        username: XXXX
+        password: XXXX!
+        pool:
+            initial-size: 10
+            max-size: 20
+            max-create-connection-time: 5s

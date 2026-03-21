@@ -2,10 +2,10 @@ package id.web.saka.fountation.user;
 
 import id.web.saka.fountation.account.AccountService;
 import id.web.saka.fountation.authorization.company.role.permission.CompanyRolePermissionService;
+import id.web.saka.fountation.configbase.fountation.FountationProperties;
 import id.web.saka.fountation.user.account.UserAccountDTO;
 import id.web.saka.fountation.user.organization.company.UserCompanyService;
 import id.web.saka.fountation.user.organization.department.UserDepartmentService;
-import id.web.saka.fountation.util.Env;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,27 +24,27 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO;
-    private final Env env;
     private final UserCompanyService userCompanyService;
     private final CompanyRolePermissionService companyRolePermissionService;
     private final UserDepartmentService userDepartmentService;
     private final AccountService accountService;
     private final MessageSource messageSource;
+    private final FountationProperties fountationProperties;
 
     public UserService(UserRepository userRepository, UserMapper userMapper,
-                       @Qualifier("redisUserDTOTemplate") ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO, Env env,
+                       @Qualifier("redisUserDTOTemplate") ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO,
                        UserCompanyService userCompanyService, CompanyRolePermissionService companyRolePermissionService,
                        UserDepartmentService userDepartmentService, AccountService accountService,
-                       MessageSource messageSource) {
+                       MessageSource messageSource, FountationProperties fountationProperties) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.redisTemplateUserDTO = redisTemplateUserDTO;
-        this.env = env;
         this.userCompanyService = userCompanyService;
         this.companyRolePermissionService = companyRolePermissionService;
         this.userDepartmentService = userDepartmentService;
         this.accountService = accountService;
         this.messageSource = messageSource;
+        this.fountationProperties = fountationProperties;
     }
 
     public Mono<UserDTO> getUserById(Long id) {
@@ -146,7 +146,11 @@ public class UserService {
         log.info("Redis cache user {} with dto {} ", key, dto.toString() );
 
         return redisTemplateUserDTO.opsForValue()
-                .set(key, dto, Duration.ofMinutes(env.getFountationServiceRedisStoreDurationInMinutes()))
+                .set(
+                        key,
+                        dto,
+                        Duration.ofMinutes(fountationProperties.getService().getRedis().getStore().getDuration().getMinutes())
+                )
                 .onErrorResume(err -> {
                     log.warn("Failed to cache in Redis: {}", err.getMessage());
                     return Mono.empty();

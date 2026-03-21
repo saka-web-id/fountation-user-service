@@ -1,10 +1,10 @@
 package id.web.saka.fountation.user.account;
 
+import id.web.saka.fountation.configbase.fountation.FountationProperties;
 import id.web.saka.fountation.user.UserMapper;
 import id.web.saka.fountation.user.UserService;
 import id.web.saka.fountation.user.organization.department.UserDepartmentService;
 import id.web.saka.fountation.user.role.UserRoleService;
-import id.web.saka.fountation.util.Env;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,7 +31,7 @@ public class UserAccountService {
 
     private final ReactiveRedisTemplate<String, UserAccountDTO> redisTemplateUserAccountDTO;
 
-    private final Env env;
+    private final FountationProperties fountationProperties;
 
 
     public UserAccountService(UserService userService,
@@ -39,14 +39,15 @@ public class UserAccountService {
                               UserAccountMapper userAccountMapper,
                               UserRoleService userRoleService,
                               UserDepartmentService userDepartmentService,
-                              @Qualifier("redisUserAccountTemplate") ReactiveRedisTemplate<String, UserAccountDTO> redisTemplateUserAccountDTO, Env env) {
+                              @Qualifier("redisUserAccountTemplate") ReactiveRedisTemplate<String, UserAccountDTO> redisTemplateUserAccountDTO,
+                              FountationProperties fountationProperties) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.userAccountMapper = userAccountMapper;
         this.userRoleService = userRoleService;
         this.userDepartmentService = userDepartmentService;
         this.redisTemplateUserAccountDTO = redisTemplateUserAccountDTO;
-        this.env = env;
+        this.fountationProperties = fountationProperties;
     }
 
     public Mono<UserAccountDTO> getUserAccountDTOByEmail(String email) {
@@ -121,7 +122,11 @@ public class UserAccountService {
         log.info("Redis cache user {} with dto {} ", key, dto.toString() );
 
         return redisTemplateUserAccountDTO.opsForValue()
-                .set(key, dto, Duration.ofMinutes(env.getFountationServiceRedisStoreDurationInMinutes()))
+                .set(
+                        key,
+                        dto,
+                        Duration.ofMinutes(fountationProperties.getService().getRedis().getStore().getDuration().getMinutes())
+                )
                 .onErrorResume(err -> {
                     log.warn("Failed to cache in Redis: {}", err.getMessage());
                     return Mono.empty();

@@ -1,12 +1,11 @@
 package id.web.saka.fountation.user;
 
+import id.web.saka.fountation.configbase.fountation.FountationProperties;
 import id.web.saka.fountation.user.account.UserAccountDTO;
 import id.web.saka.fountation.user.account.UserAccountService;
-import id.web.saka.fountation.util.Env;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +24,12 @@ public class UserController {
 
     private final UserAccountService userAccountService;
 
-    private final Env env;
+    private final FountationProperties fountationProperties;
 
-    public UserController(UserService userService, UserAccountService userAccountService, Env env) {
+    public UserController(UserService userService, UserAccountService userAccountService, FountationProperties fountationProperties) {
        this.userService = userService;
        this.userAccountService = userAccountService;
-       this.env = env;
+       this.fountationProperties = fountationProperties;
     }
 
     @GetMapping("/user/login")
@@ -38,9 +37,8 @@ public class UserController {
         log.info("Login successful, redirecting to Vue SPA...");
 
         // Redirect to Vue SPA
-        exchange.getResponse().setStatusCode(HttpStatus.FOUND); // 302 redirect
-        /*exchange.getResponse().getHeaders().setLocation(URI.create("http://www.myproject.local:5173/dashboard"));*/
-        exchange.getResponse().getHeaders().setLocation(URI.create(env.getFountationServiceUiUrl() + "/dashboard"));
+        exchange.getResponse().setStatusCode(HttpStatus.FOUND);
+        exchange.getResponse().getHeaders().setLocation(URI.create(fountationProperties.getService().getUi().getUrl() + "/dashboard"));
 
         //todo user history login
         return exchange.getResponse().setComplete();

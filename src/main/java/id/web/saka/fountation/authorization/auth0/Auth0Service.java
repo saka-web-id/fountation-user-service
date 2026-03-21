@@ -1,7 +1,7 @@
 package id.web.saka.fountation.authorization.auth0;
 
+import id.web.saka.fountation.configbase.spring.security.SpringSecurityProperties;
 import id.web.saka.fountation.user.UserDTO;
-import id.web.saka.fountation.util.Env;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatusCode;
@@ -19,26 +19,22 @@ public class Auth0Service {
     private static final Logger log = LoggerFactory.getLogger(Auth0Service.class);
 
     private final WebClient webClient;
-    private final Env env;
 
-    public Auth0Service(WebClient.Builder webClientBuilder, Env env) {
+    private final SpringSecurityProperties springSecurityProperties;
+
+    public Auth0Service(WebClient.Builder webClientBuilder, SpringSecurityProperties springSecurityProperties) {
         this.webClient = webClientBuilder.build();
-        this.env = env;
+        this.springSecurityProperties = springSecurityProperties;
     }
 
     public Mono<String> getManagementToken() {
-        Map<String, String> body = new HashMap<>();
-        body.put("client_id", env.getClientRegistrationInternalServiceClientId());
-        body.put("client_secret", env.getClientRegistrationInternalServiceClientSecret());
-        body.put("audience", env.getAuth0ManagementApiAudience());
-        body.put("grant_type", "client_credentials");
 
         return webClient.post()
-                .uri(env.getClientRegistrationInternalServiceTokenUri()) // https://.../oauth/token
+                .uri(springSecurityProperties.getOauth2().getClient().getProvider().get("auth0").getTokenUri())
                 .bodyValue(Map.of(
-                        "client_id", env.getClientRegistrationAuth0ClientId(),
-                        "client_secret", env.getClientRegistrationAuth0ClientSecret(),
-                        "audience", env.getAuth0ManagementApiAudience(),
+                        "client_id", springSecurityProperties.getOauth2().getClient().getRegistration().get("auth0").getClientId(),
+                        "client_secret", springSecurityProperties.getOauth2().getClient().getRegistration().get("auth0").getClientSecret(),
+                        "audience", springSecurityProperties.getOauth2().getClient().getProvider().get("auth0").getIssuerUri() + "api/v2/",
                         "grant_type", "client_credentials",
                         "scope", "create:users read:users"
                 ))
@@ -62,7 +58,7 @@ public class Auth0Service {
                     body.put("user_metadata", Map.of("phone", user.phone()));
 
                     return webClient.post()
-                            .uri(env.getAuth0ManagementApiAudience() + "users")
+                            .uri(springSecurityProperties.getOauth2().getClient().getProvider().get("auth0").getIssuerUri() + "users")
                             .headers(h -> h.setBearerAuth(token))
                             .contentType(MediaType.APPLICATION_JSON)
                             .bodyValue(body)

@@ -1,3 +1,4 @@
+/*
 package id.web.saka.fountation.util;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -6,7 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class Env {
 
-    /* FOUNTATION ENVIRONMENT SETTING */
+    */
+/* FOUNTATION ENVIRONMENT SETTING *//*
+
 
     @Value("${fountation.service.account.url}")
     private String fountationServiceAccountUrl;
@@ -33,16 +36,22 @@ public class Env {
     private String auth0ManagementApiAudience;
 
 
-    /* SPRINT SECURITY ENVIRONMENT SETTING */
+    */
+/* SPRINT SECURITY ENVIRONMENT SETTING *//*
 
-    /* AUTH0 */
+
+    */
+/* AUTH0 *//*
+
     @Value("${spring.security.oauth2.client.registration.auth0.client-id}")
     private String clientRegistrationAuth0ClientId;
 
     @Value("${spring.security.oauth2.client.registration.auth0.client-secret}")
     private String clientRegistrationAuth0ClientSecret;
 
-    /* INTERNAL CLIENT */
+    */
+/* INTERNAL CLIENT *//*
+
     @Value("${spring.security.oauth2.client.registration.internal-service.client-id}")
     private String clientRegistrationInternalServiceClientId;
 
@@ -180,3 +189,4 @@ public class Env {
         this.clientRegistrationInternalServiceTokenUri = clientRegistrationInternalServiceTokenUri;
     }
 }
+*/
