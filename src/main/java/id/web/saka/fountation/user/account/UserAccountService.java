@@ -1,5 +1,6 @@
 package id.web.saka.fountation.user.account;
 
+import id.web.saka.fountation.account.membership.plan.AccountMembershipPlanService;
 import id.web.saka.fountation.configbase.fountation.FountationProperties;
 import id.web.saka.fountation.user.UserMapper;
 import id.web.saka.fountation.user.UserService;
@@ -29,6 +30,8 @@ public class UserAccountService {
 
     private final UserDepartmentService userDepartmentService;
 
+    private final AccountMembershipPlanService accountMembershipPlanService;
+
     private final ReactiveRedisTemplate<String, UserAccountDTO> redisTemplateUserAccountDTO;
 
     private final FountationProperties fountationProperties;
@@ -40,7 +43,8 @@ public class UserAccountService {
                               UserRoleService userRoleService,
                               UserDepartmentService userDepartmentService,
                               @Qualifier("redisUserAccountTemplate") ReactiveRedisTemplate<String, UserAccountDTO> redisTemplateUserAccountDTO,
-                              FountationProperties fountationProperties) {
+                              FountationProperties fountationProperties,
+                              AccountMembershipPlanService accountMembershipPlanService) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.userAccountMapper = userAccountMapper;
@@ -48,6 +52,7 @@ public class UserAccountService {
         this.userDepartmentService = userDepartmentService;
         this.redisTemplateUserAccountDTO = redisTemplateUserAccountDTO;
         this.fountationProperties = fountationProperties;
+        this.accountMembershipPlanService = accountMembershipPlanService;
     }
 
     public Mono<UserAccountDTO> getUserAccountDTOByEmail(String email) {
@@ -98,7 +103,8 @@ public class UserAccountService {
                 .flatMap(savedUserDTO ->
                         Mono.when(
                                 userRoleService.updateUserRoles(companyId, userId, userAccountMapper.toUserRoleEntity(payload)),
-                                userDepartmentService.updateUserDepartment(userAccountMapper.toUserDepartmentEntity(payload))
+                                userDepartmentService.updateUserDepartment(userAccountMapper.toUserDepartmentEntity(payload)),
+                                accountMembershipPlanService.updateAccountMembershipPlan(companyId, userId, valueUserId, payload)
                         ).thenReturn(payload) // or map back to DTO if needed
                 )
                 .flatMap(savedUserDTO -> cacheUserAccountDTO(buildCacheKey(savedUserDTO.getId()), savedUserDTO));

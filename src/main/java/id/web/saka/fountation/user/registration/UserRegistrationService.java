@@ -1,10 +1,11 @@
 package id.web.saka.fountation.user.registration;
 
-import id.web.saka.fountation.account.AccountService;
 import id.web.saka.fountation.authorization.auth0.Auth0Service;
 import id.web.saka.fountation.organization.company.Company;
+import id.web.saka.fountation.organization.company.CompanyDTO;
 import id.web.saka.fountation.organization.company.CompanyMapper;
 import id.web.saka.fountation.organization.company.CompanyService;
+import id.web.saka.fountation.organization.department.DepartmentDTO;
 import id.web.saka.fountation.organization.department.DepartmentMapper;
 import id.web.saka.fountation.organization.department.DepartmentService.DepartmentService;
 import id.web.saka.fountation.user.User;
@@ -39,8 +40,6 @@ public class UserRegistrationService {
 
     private final UserRoleService userRoleService;
 
-    private final AccountService accountService;
-
     private final Auth0Service auth0Service;
 
     private final CompanyMapper companyMapper;
@@ -53,14 +52,16 @@ public class UserRegistrationService {
 
     private final TransactionalOperator txOperator;
 
+    private final UserRegistrationClient userRegistrationClient;
+
     public UserRegistrationService(CompanyService companyService,
                                    DepartmentService departmentService,
                                    UserService userService,
                                    UserCompanyService userCompanyService,
                                    UserDepartmentService userDepartmentService,
                                    UserRoleService userRoleService,
-                                   AccountService accountService,
                                    Auth0Service auth0Service,
+                                   UserRegistrationClient userRegistrationClient,
                                    CompanyMapper companyMapper, DepartmentMapper departmentMapper, UserMapper userMapper, MessageSource messageSource, TransactionalOperator txOperator) {
         this.companyService = companyService;
         this.departmentService = departmentService;
@@ -68,8 +69,8 @@ public class UserRegistrationService {
         this.userCompanyService = userCompanyService;
         this.userDepartmentService = userDepartmentService;
         this.userRoleService = userRoleService;
-        this.accountService = accountService;
         this.auth0Service = auth0Service;
+        this.userRegistrationClient = userRegistrationClient;
         this.companyMapper = companyMapper;
         this.departmentMapper = departmentMapper;
         this.userMapper = userMapper;
@@ -179,7 +180,7 @@ public class UserRegistrationService {
         log.info("finalizeRegistration| UserRegistrationContextDTO: {} ", ctx);
 
         // Fire and Forget Account Service so it doesn't block the DB commit
-        accountService.assignAccountToNewUser(
+        assignAccountToNewUser(
                         ctx.originalDto(),
                         ctx.savedUser(),
                         companyMapper.toDto(ctx.company()),
@@ -198,5 +199,13 @@ public class UserRegistrationService {
                 companyMapper.toDto(ctx.company()),
                 departmentMapper.toDto(ctx.department())
         ));
+    }
+
+    public Mono<UserRegistrationDTO> assignAccountToNewUser(UserRegistrationDTO dto, UserDTO userDTO, CompanyDTO companyDTO, DepartmentDTO departmentDTO) {
+        UserRegistrationDTO fullDto = new UserRegistrationDTO(userDTO, dto.account(), companyDTO, departmentDTO);
+
+        log.info("assignAccountToNewUser|UserRegistrationDTO: {} ", fullDto);
+
+        return userRegistrationClient.assignAccountToNewUser(fullDto);
     }
 }

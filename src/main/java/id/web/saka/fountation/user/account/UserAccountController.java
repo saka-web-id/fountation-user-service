@@ -20,7 +20,12 @@ public class UserAccountController {
     @GetMapping("/user/account/detail/companyId/{companyId}/userId/{userId}/valueUserId/{valueUserId}")
     public Mono<UserAccountDTO> getUserAccountDTOByUserId(@PathVariable Long companyId, @PathVariable Long userId, @PathVariable Long valueUserId) {
 
-        return userAccountService.getUserAccountDTOByUserId(valueUserId);
+        return userAccountService.getUserAccountDTOByUserId(valueUserId).doOnNext(dto -> {
+                    log.info("API Response for User {}: {}", valueUserId, dto);
+                })
+                .doOnError(e -> {
+                    log.error("API Error for User {}: {}", valueUserId, e.getMessage());
+                });
     }
 
     @PostMapping("/user/account/update/companyId/{companyId}/userId/{userId}/valueUserId/{valueUserId}")

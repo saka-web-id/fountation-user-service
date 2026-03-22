@@ -1,7 +1,7 @@
 package id.web.saka.fountation.util.mapper;
 
 import id.web.saka.fountation.account.AccountType;
-import id.web.saka.fountation.account.MembershipStatus;
+import id.web.saka.fountation.membership.MembershipStatus;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +21,17 @@ public class EnumMapper {
         return switch (status.toUpperCase()) {
             case "ACTIVE" -> id.web.saka.fountation.account.AccountStatus.AS_ACTIVE;
             case "INACTIVE" -> id.web.saka.fountation.account.AccountStatus.AS_INACTIVE;
-            case "DISABLE", "DISABLED" -> id.web.saka.fountation.account.AccountStatus.AS_DISABLE;
+            case "DISABLE", "DISABLED" -> id.web.saka.fountation.account.AccountStatus.AS_DISABLED;
             default -> id.web.saka.fountation.account.AccountStatus.UNRECOGNIZED;
         };
+    }
+
+    @Named("stringFromAccountStatus")
+    public String stringFromAccountStatus(id.web.saka.fountation.account.AccountStatus status) {
+        if (status == null || status == id.web.saka.fountation.account.AccountStatus.UNRECOGNIZED) {
+            return "INACTIVE"; // Safe default for the DTO/Frontend
+        }
+        return status.name().replace("AS_", "");
     }
 
 

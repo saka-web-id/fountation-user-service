@@ -4,10 +4,11 @@ import id.web.saka.fountation.user.UserDTO;
 import id.web.saka.fountation.user.organization.department.UserDepartment;
 import id.web.saka.fountation.user.role.UserRoleDTO;
 import id.web.saka.fountation.util.mapper.DateTimeMapper;
+import id.web.saka.fountation.util.mapper.EnumMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = { DateTimeMapper.class })
+@Mapper(componentModel = "spring", uses = { DateTimeMapper.class, EnumMapper.class })
 public interface UserAccountMapper {
 
     UserDTO toUserDto(UserAccountDTO dto);

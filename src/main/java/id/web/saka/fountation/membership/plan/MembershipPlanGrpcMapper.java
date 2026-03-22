@@ -1,6 +1,5 @@
-package id.web.saka.fountation.account.membership.plan;
+package id.web.saka.fountation.membership.plan;
 
-import id.web.saka.fountation.account.MembershipPlanProto;
 import id.web.saka.fountation.util.mapper.DateTimeMapper;
 import id.web.saka.fountation.util.mapper.EnumMapper;
 import id.web.saka.fountation.util.mapper.JsonMapper;
@@ -18,4 +17,5 @@ public interface MembershipPlanGrpcMapper {
     @Mapping(target = "name", source = "name", qualifiedByName = "enumToString")
     @Mapping(target = "features", source = "features", qualifiedByName = "stringToJson")
     MembershipPlanDTO toDTO(MembershipPlanProto proto);
+
 }

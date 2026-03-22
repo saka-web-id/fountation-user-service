@@ -3,7 +3,7 @@ package id.web.saka.fountation.user.account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import id.web.saka.fountation.account.membership.plan.AccountMembershipPlanDTO;
-import id.web.saka.fountation.authorization.company.role.permission.CompanyRolePermissionDTO;
+import id.web.saka.fountation.authorization.company.role.CompanyRoleDTO;
 import id.web.saka.fountation.organization.company.CompanyDTO;
 import id.web.saka.fountation.organization.department.DepartmentDTO;
 import id.web.saka.fountation.user.User;
@@ -17,7 +17,7 @@ public class UserAccountDTO {
         // empty constructor for Jackson
     }
 
-    public UserAccountDTO(User user, AccountMembershipPlanDTO account, CompanyRolePermissionDTO authority, CompanyDTO companyDTO, DepartmentDTO departmentDTO) {
+    public UserAccountDTO(User user, AccountMembershipPlanDTO account, CompanyRoleDTO authority, CompanyDTO companyDTO, DepartmentDTO departmentDTO) {
         this.id = user.getId();
         this.name = user.getName();
         this.phone = user.getPhone();
@@ -29,6 +29,7 @@ public class UserAccountDTO {
         this.accountStatus = account.accountStatus();
         this.membershipType = account.accountType(); // In AccountMembershipPlanDTO it is accountType
         this.membershipStatus =  account.membershipStatus();
+        this.membershipPlanId = account.membershipPlanId();
         this.authority = authority;
         this.company = companyDTO;
         this.department = departmentDTO;
@@ -69,9 +70,11 @@ public class UserAccountDTO {
     @JsonProperty("membershipStatus")
     private String membershipStatus;
 
-    @JsonIgnore
+    @JsonProperty("membershipPlanId")
+    private Long membershipPlanId;
+
     @JsonProperty("authority")
-    private CompanyRolePermissionDTO authority;
+    private CompanyRoleDTO authority;
 
     @JsonProperty("company")
     private CompanyDTO company;
@@ -179,11 +182,11 @@ public class UserAccountDTO {
         this.membershipStatus = membershipStatus;
     }
 
-    public CompanyRolePermissionDTO getAuthority() {
+    public CompanyRoleDTO getAuthority() {
         return authority;
     }
 
-    public void setAuthority(CompanyRolePermissionDTO authority) {
+    public void setAuthority(CompanyRoleDTO authority) {
         this.authority = authority;
     }
 
@@ -225,6 +228,14 @@ public class UserAccountDTO {
 
     public void setMembershipEndDate(ZonedDateTime membershipEndDate) {
         this.membershipEndDate = membershipEndDate;
+    }
+
+    public Long getMembershipPlanId() {
+        return membershipPlanId;
+    }
+
+    public void setMembershipPlanId(Long membershipPlanId) {
+        this.membershipPlanId = membershipPlanId;
     }
 
     @Override

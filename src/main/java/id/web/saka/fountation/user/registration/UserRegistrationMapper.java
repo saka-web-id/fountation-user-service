@@ -1,8 +1,6 @@
 package id.web.saka.fountation.user.registration;
 
-import id.web.saka.fountation.account.UserRegistrationRequest;
-import id.web.saka.fountation.account.UserRegistrationResponse;
-import id.web.saka.fountation.account.membership.plan.MembershipPlanGrpcMapper;
+import id.web.saka.fountation.membership.plan.MembershipPlanGrpcMapper;
 import id.web.saka.fountation.organization.company.CompanyGrpcMapper;
 import id.web.saka.fountation.organization.department.DepartmentGrpcMapper;
 import id.web.saka.fountation.user.UserGrpcMapper;

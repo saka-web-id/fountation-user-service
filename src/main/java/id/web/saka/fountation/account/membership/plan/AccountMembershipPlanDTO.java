@@ -1,6 +1,8 @@
 package id.web.saka.fountation.account.membership.plan;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import id.web.saka.fountation.membership.plan.MembershipPlanDTO;
+
 import java.time.ZonedDateTime;
 
 public record AccountMembershipPlanDTO(

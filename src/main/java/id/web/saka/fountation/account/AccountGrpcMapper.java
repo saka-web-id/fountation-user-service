@@ -1,9 +1,10 @@
 package id.web.saka.fountation.account;
 
 import id.web.saka.fountation.account.membership.plan.AccountMembershipPlanDTO;
-import id.web.saka.fountation.account.membership.plan.MembershipPlanGrpcMapper;
+import id.web.saka.fountation.membership.plan.MembershipPlanGrpcMapper;
 import id.web.saka.fountation.organization.company.CompanyGrpcMapper;
 import id.web.saka.fountation.organization.department.DepartmentGrpcMapper;
+import id.web.saka.fountation.account.membership.plan.AccountMembershipPlanResponse;
 import id.web.saka.fountation.user.UserGrpcMapper;
 import id.web.saka.fountation.util.mapper.DateTimeMapper;
 import id.web.saka.fountation.util.mapper.EnumMapper;

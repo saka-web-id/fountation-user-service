@@ -3,6 +3,8 @@ package id.web.saka.fountation.config;
 import id.web.saka.fountation.configbase.fountation.FountationProperties;
 import id.web.saka.fountation.configbase.spring.security.SpringSecurityProperties;
 import io.netty.channel.ChannelOption;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +22,8 @@ import java.util.Map;
 
 @Configuration
 public class WebClientConfig {
+
+    Logger logger = LoggerFactory.getLogger(WebClientConfig.class);
 
     private final FountationProperties fountationProperties;
 
@@ -50,6 +54,8 @@ public class WebClientConfig {
 
     @Bean
     public WebClient webClientAccount(HttpClient httpClient) {
+        logger.info("webClientAccount:" + fountationProperties.getService().getAccount().getUrl());
+
         // 1. Buat Cache untuk Token agar tidak membebani server Auth
         Mono<String> tokenCache = getAccessToken(httpClient)
                 .cache(
@@ -79,6 +85,9 @@ public class WebClientConfig {
 
     @Bean
     public WebClient webClientAuthorization(HttpClient httpClient) {
+        logger.info("WebClientAuthorization:" + fountationProperties.getService().getAuthorization().getUrl());
+
+
         // 1. Buat Cache untuk Token agar tidak membebani server Auth
         Mono<String> tokenCache = getAccessToken(httpClient)
                 .cache(

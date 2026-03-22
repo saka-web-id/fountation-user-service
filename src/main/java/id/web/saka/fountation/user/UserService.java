@@ -1,7 +1,7 @@
 package id.web.saka.fountation.user;
 
-import id.web.saka.fountation.account.AccountService;
-import id.web.saka.fountation.authorization.company.role.permission.CompanyRolePermissionService;
+import id.web.saka.fountation.account.membership.plan.AccountMembershipPlanService;
+import id.web.saka.fountation.authorization.company.role.CompanyRoleService;
 import id.web.saka.fountation.configbase.fountation.FountationProperties;
 import id.web.saka.fountation.user.account.UserAccountDTO;
 import id.web.saka.fountation.user.organization.company.UserCompanyService;
@@ -25,26 +25,31 @@ public class UserService {
     private final UserMapper userMapper;
     private final ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO;
     private final UserCompanyService userCompanyService;
-    private final CompanyRolePermissionService companyRolePermissionService;
+    /*private final CompanyRolePermissionService companyRolePermissionService;*/
+    private final CompanyRoleService companyRoleService;
     private final UserDepartmentService userDepartmentService;
-    private final AccountService accountService;
     private final MessageSource messageSource;
     private final FountationProperties fountationProperties;
+    private final AccountMembershipPlanService accountMembershipPlanService;
 
     public UserService(UserRepository userRepository, UserMapper userMapper,
                        @Qualifier("redisUserDTOTemplate") ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO,
-                       UserCompanyService userCompanyService, CompanyRolePermissionService companyRolePermissionService,
-                       UserDepartmentService userDepartmentService, AccountService accountService,
-                       MessageSource messageSource, FountationProperties fountationProperties) {
+                       UserCompanyService userCompanyService,
+                       /*CompanyRolePermissionService companyRolePermissionService,*/
+                       CompanyRoleService companyRoleService,
+                       UserDepartmentService userDepartmentService,
+                       MessageSource messageSource, FountationProperties fountationProperties,
+                       AccountMembershipPlanService accountMembershipPlanService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.redisTemplateUserDTO = redisTemplateUserDTO;
         this.userCompanyService = userCompanyService;
-        this.companyRolePermissionService = companyRolePermissionService;
+        /*this.companyRolePermissionService = companyRolePermissionService;*/
+        this.companyRoleService = companyRoleService;
         this.userDepartmentService = userDepartmentService;
-        this.accountService = accountService;
         this.messageSource = messageSource;
         this.fountationProperties = fountationProperties;
+        this.accountMembershipPlanService = accountMembershipPlanService;
     }
 
     public Mono<UserDTO> getUserById(Long id) {
@@ -111,10 +116,10 @@ public class UserService {
         return userMono
                 .flatMap(user ->
                         userCompanyService.getUserCompanyDefaultByUserId(user.getId())
-                                .doOnNext(userCompany -> log.info("Fetched UserCompany for email {}: {}", user.getEmail(), userCompany))
+                                .doOnNext(userCompany -> log.info("Fetched UserCompany for : {}", userCompany))
                                 .flatMap(userCompany ->
-                                        companyRolePermissionService.getAuthorityByCompanyIdAndUserId(userCompany.id(), user.getId())
-                                                .doOnNext(rolePermissionDTO -> log.info("Fetched RolePermission for email {}: {}", user.getEmail(), rolePermissionDTO))
+                                        companyRoleService.getAuthorityByCompanyIdAndUserId(userCompany.id(), user.getId())
+                                                .doOnNext(rolePermissionDTO -> log.info("Fetched RolePermission for : {}", rolePermissionDTO))
                                                 .flatMap(rolePermissionDTO -> {
                                                     if (rolePermissionDTO == null) {
                                                         return Mono.error(new RuntimeException(
@@ -126,7 +131,7 @@ public class UserService {
                                                             .getUserDepartmentDefaultByCompanyIdAndUserId(userCompany.id(), user.getId())
                                                             .doOnNext(departmentDTO -> log.info("Fetched Department for email {}: {}", user.getEmail(), departmentDTO))
                                                             .flatMap(departmentDTO ->
-                                                                    accountService.getAccountMembershipPlanDetailByUserId(userCompany.id(), user.getId(), user.getId())
+                                                                    accountMembershipPlanService.getAccountMembershipPlanDetailByUserId(userCompany.id(), user.getId(), user.getId())
                                                                             .doOnNext(accountDTO -> log.info("Fetched Account for email {}: {}", user.getEmail(), accountDTO))
                                                                             .map(accountDTO -> {
                                                                                 UserAccountDTO dto = new UserAccountDTO(
