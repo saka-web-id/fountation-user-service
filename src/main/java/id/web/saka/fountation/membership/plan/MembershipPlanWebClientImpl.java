@@ -25,11 +25,11 @@ public class MembershipPlanWebClientImpl implements MembershipPlanClient {
      */
     @Override
     public reactor.core.publisher.Flux<MembershipPlanDTO> getMembershipPlanListByCompanyId(Long companyId, Long userId, Long valueCompanyId) {
-        log.info("Fetching MembershipPlanDTO list via REST for valueCompanyId: {} in companyId: {}", valueCompanyId, companyId);
+        log.info("[getMembershipPlanListByCompanyId] Initiated request to fetch membership plan list via REST for valueCompanyId: {} in companyId: {}", valueCompanyId, companyId);
         return webClientAccount.get()
                 .uri("/api/v0/account/membership/plan/list/companyId/" + companyId + "/userId/" + userId + "/valueCompanyId/" + valueCompanyId)
                 .retrieve()
                 .bodyToFlux(MembershipPlanDTO.class)
-                .doOnNext(json -> log.info("REST Response: {}", json));
+                .doOnNext(json -> log.info("[getMembershipPlanListByCompanyId] Successfully retrieved membership plan via REST: {}", json));
     }
 }

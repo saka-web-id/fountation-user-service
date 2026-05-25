@@ -1,6 +1,7 @@
 package id.web.saka.fountation.user.registration;
 
 import io.grpc.stub.StreamObserver;
+import io.micrometer.context.ContextSnapshot;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +36,17 @@ public class UserRegistrationGrpcClientImpl implements UserRegistrationClient {
             userRegistrationServiceStub.registerUser(request, new StreamObserver<UserRegistrationResponse>() {
                 @Override
                 public void onNext(UserRegistrationResponse response) {
-                    sink.success(userRegistrationMapper.toDTO(response));
+                    try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                        sink.success(userRegistrationMapper.toDTO(response));
+                    }
                 }
 
                 @Override
                 public void onError(Throwable t) {
-                    log.error("gRPC error during user registration", t);
-                    sink.error(t);
+                    try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                        log.error("gRPC error during user registration", t);
+                        sink.error(t);
+                    }
                 }
 
                 @Override

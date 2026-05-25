@@ -18,7 +18,7 @@ public class CompanyRolePermissionService {
     public Mono<CompanyRolePermissionDTO> getAuthorityByCompanyIdAndUserId( Long companyId, Long userId) {
 
         return client.getCompanyRolePermissionByCompanyIdAndUserId(companyId, userId)
-                .doOnNext(json -> log.info("Raw JSON: {}", json));
+                .doOnNext(json -> log.info("[getAuthorityByCompanyIdAndUserId] Successfully retrieved company role permissions: {}", json));
     }
 
 }

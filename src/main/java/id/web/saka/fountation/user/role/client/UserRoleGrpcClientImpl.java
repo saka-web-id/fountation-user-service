@@ -9,6 +9,7 @@ import id.web.saka.fountation.authorization.user.role.UserRoleServiceGrpc;
 import id.web.saka.fountation.user.registration.UserRegistrationDTO;
 import id.web.saka.fountation.user.role.UserRoleDTO;
 import io.grpc.stub.StreamObserver;
+import io.micrometer.context.ContextSnapshot;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,16 +41,20 @@ public class UserRoleGrpcClientImpl implements UserRoleClient {
         return Mono.create(sink -> userRoleServiceStub.getRoleByUserIdAndCompanyId(request, new StreamObserver<UserRoleProto>() {
             @Override
             public void onNext(UserRoleProto response) {
-                if (response.getId() == 0) {
-                    sink.success();
-                } else {
-                    sink.success(mapper.toDto(response));
+                try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                    if (response.getId() == 0) {
+                        sink.success();
+                    } else {
+                        sink.success(mapper.toDto(response));
+                    }
                 }
             }
 
             @Override
             public void onError(Throwable t) {
-                sink.error(t);
+                try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                    sink.error(t);
+                }
             }
 
             @Override
@@ -70,12 +75,16 @@ public class UserRoleGrpcClientImpl implements UserRoleClient {
         return Mono.create(sink -> userRoleServiceStub.updateUserRoles(request, new StreamObserver<UserRoleProto>() {
             @Override
             public void onNext(UserRoleProto response) {
-                sink.success(mapper.toDto(response));
+                try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                    sink.success(mapper.toDto(response));
+                }
             }
 
             @Override
             public void onError(Throwable t) {
-                sink.error(t);
+                try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                    sink.error(t);
+                }
             }
 
             @Override
@@ -96,12 +105,16 @@ public class UserRoleGrpcClientImpl implements UserRoleClient {
         return Mono.create(sink -> userRoleServiceStub.addUserRole(request, new StreamObserver<UserRoleProto>() {
             @Override
             public void onNext(UserRoleProto response) {
-                sink.success(mapper.toDto(response));
+                try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                    sink.success(mapper.toDto(response));
+                }
             }
 
             @Override
             public void onError(Throwable t) {
-                sink.error(t);
+                try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                    sink.error(t);
+                }
             }
 
             @Override
@@ -122,16 +135,20 @@ public class UserRoleGrpcClientImpl implements UserRoleClient {
                     userRoleServiceStub.assignRoleToNewUser(request, new StreamObserver<UserRegistrationProto>() {
                         @Override
                         public void onNext(UserRegistrationProto response) {
-                            log.info("gRPC_ON_NEXT | Received response from Role Service for user: {}", userEmail);
-                            sink.success(mapper.toDto(response));
+                            try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                                log.info("gRPC_ON_NEXT | Received response from Role Service for user: {}", userEmail);
+                                sink.success(mapper.toDto(response));
+                            }
                         }
 
                         @Override
                         public void onError(Throwable t) {
-                            // This is the most important log for your 'Internal Error'
-                            log.error("gRPC_ERROR | Failed to assign role via gRPC for user: {}. Error: {} - {}",
-                                    userEmail, t.getClass().getName(), t.getMessage());
-                            sink.error(t);
+                            try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                                // This is the most important log for your 'Internal Error'
+                                log.error("gRPC_ERROR | Failed to assign role via gRPC for user: {}. Error: {} - {}",
+                                        userEmail, t.getClass().getName(), t.getMessage());
+                                sink.error(t);
+                            }
                         }
 
                         @Override

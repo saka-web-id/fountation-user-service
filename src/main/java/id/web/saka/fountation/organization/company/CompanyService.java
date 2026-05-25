@@ -40,7 +40,7 @@ public class CompanyService {
     }
 
     public Mono<CompanyDTO> getCompanyById (Long companyId) {
-        log.info("Service called with companyId: " + companyId);
+        log.info("[getCompanyById] Initiated request to fetch company by ID: {}", companyId);
 
         return companyRepository.findById(companyId)
                 .map(companyMapper::toDto);
@@ -49,7 +49,7 @@ public class CompanyService {
     public Mono<Boolean> isCompanyNameExists(Company company) {
         return companyRepository.searchCompanyByName(company.getName())
                 .flatMap(existingCompany -> {
-                    log.info("Company name already exists: {}", existingCompany.getName());
+                    log.info("[isCompanyNameExists] Validation failed: Company name already exists: {}", existingCompany.getName());
                     return Mono.just(true);
                 })
                 .defaultIfEmpty(false); // if no company found, return false
@@ -67,7 +67,7 @@ public class CompanyService {
 
     public Mono<Company> createCompanyForUser(Company company, String email) {
 
-        log.info("Creating company for user with email: " + email);
+        log.info("[createCompanyForUser] Initiated request to create company for user with email: {}", email);
 
         return userRepository.findByEmail(email)
                 .switchIfEmpty(Mono.error(
@@ -90,7 +90,7 @@ public class CompanyService {
     }
 
     public Flux<CompanyDTO> getCompaniesByCompanyIdAndUserId(Long companyId, Long userId, String email) {
-        log.info("Fetching companies for admin user with companId: {} | userId: {} ", companyId, userId);
+        log.info("[getCompaniesByCompanyIdAndUserId] Initiated request to fetch companies for companyId: {} and userId: {}", companyId, userId);
 
         return userRoleClient.getRoleByUserIdAndCompanyId(companyId, userId)
             .flatMapMany( userRoleDTO -> {

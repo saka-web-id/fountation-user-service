@@ -1,6 +1,7 @@
 package id.web.saka.fountation.account.membership.plan;
 
 import io.grpc.stub.StreamObserver;
+import io.micrometer.context.ContextSnapshot;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class AccountMembershipPlanGrpcClientImpl implements AccountMembershipPla
 
     @Override
     public Mono<AccountMembershipPlanDTO> getAccountMembershipPlanDetailByUserId(Long companyId, Long userId, Long valueUserId) {
-        log.info("Fetching AccountMembershipPlanDTO via gRPC for valueUserId: {} in companyId: {}", valueUserId, companyId);
+        log.info("[getAccountMembershipPlanDetailByUserId] Initiated request to fetch account membership plan detail via gRPC for valueUserId: {} in companyId: {}", valueUserId, companyId);
 
         AccountMembershipPlanRequest request = AccountMembershipPlanRequest.newBuilder()
                 .setCompanyId(companyId)
@@ -37,13 +38,19 @@ public class AccountMembershipPlanGrpcClientImpl implements AccountMembershipPla
             accountMembershipServiceStub.getAccountMembershipPlanDetailByUserId(request, new StreamObserver<AccountMembershipPlanResponse>() {
                 @Override
                 public void onNext(AccountMembershipPlanResponse response) {
-                    sink.success(accountMembershipPlanMapper.toDTO(response));
+                    try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                        AccountMembershipPlanDTO dto = accountMembershipPlanMapper.toDTO(response);
+                        log.info("[getAccountMembershipPlanDetailByUserId] Successfully retrieved account membership plan detail via gRPC for valueUserId: {} in companyId: {}", valueUserId, companyId);
+                        sink.success(dto);
+                    }
                 }
 
                 @Override
                 public void onError(Throwable t) {
-                    log.error("gRPC error during account membership plan retrieval", t);
-                    sink.error(t);
+                    try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                        log.error("[getAccountMembershipPlanDetailByUserId] Failed to retrieve account membership plan detail via gRPC for valueUserId: {} in companyId: {} due to error: {}", valueUserId, companyId, t.getMessage(), t);
+                        sink.error(t);
+                    }
                 }
 
                 @Override
@@ -56,7 +63,7 @@ public class AccountMembershipPlanGrpcClientImpl implements AccountMembershipPla
 
     @Override
     public Mono<AccountMembershipPlanDTO> updateAccountMembershipPlan(Long companyId, Long userId, Long valueUserId, id.web.saka.fountation.user.account.UserAccountDTO payload) {
-        log.info("Updating AccountMembershipPlan via gRPC for valueUserId: {} in companyId: {}", valueUserId, companyId);
+        log.info("[updateAccountMembershipPlan] Initiated request to update account membership plan via gRPC for valueUserId: {} in companyId: {}", valueUserId, companyId);
 
         UpdateAccountMembershipPlanRequest request = accountMembershipPlanMapper.toUpdateProto(
                 companyId, userId, valueUserId,
@@ -69,13 +76,19 @@ public class AccountMembershipPlanGrpcClientImpl implements AccountMembershipPla
             accountMembershipServiceStub.updateAccountMembershipPlan(request, new StreamObserver<AccountMembershipPlanResponse>() {
                 @Override
                 public void onNext(AccountMembershipPlanResponse response) {
-                    sink.success(accountMembershipPlanMapper.toDTO(response));
+                    try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                        AccountMembershipPlanDTO dto = accountMembershipPlanMapper.toDTO(response);
+                        log.info("[updateAccountMembershipPlan] Successfully updated account membership plan via gRPC for valueUserId: {} in companyId: {}", valueUserId, companyId);
+                        sink.success(dto);
+                    }
                 }
 
                 @Override
                 public void onError(Throwable t) {
-                    log.error("gRPC error during account membership plan update", t);
-                    sink.error(t);
+                    try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                        log.error("[updateAccountMembershipPlan] Failed to update account membership plan via gRPC for valueUserId: {} in companyId: {} due to error: {}", valueUserId, companyId, t.getMessage(), t);
+                        sink.error(t);
+                    }
                 }
 
                 @Override

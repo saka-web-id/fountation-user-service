@@ -5,6 +5,7 @@ import id.web.saka.fountation.authorization.company.role.permission.CompanyRoleP
 import id.web.saka.fountation.authorization.company.role.permission.CompanyRolePermissionServiceGrpc;
 import id.web.saka.fountation.authorization.company.role.permission.GetCompanyRolePermissionRequest;
 import id.web.saka.fountation.permission.PermissionDTO;
+import io.micrometer.context.ContextSnapshot;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class CompanyRolePermissionGrpcClientImpl implements CompanyRolePermissio
 
     @Override
     public Mono<CompanyRolePermissionDTO> getCompanyRolePermissionByCompanyIdAndUserId(Long companyId, Long userId) {
-        log.info("Fetching company role permissions via gRPC for companyId: {}, userId: {}", companyId, userId);
+        log.info("[CompanyRolePermissionGrpcClientImpl - getCompanyRolePermissionByCompanyIdAndUserId] Initiated request to fetch company role permissions via gRPC for companyId: {} and userId: {}", companyId, userId);
 
         GetCompanyRolePermissionRequest request = GetCompanyRolePermissionRequest.newBuilder()
                 .setCompanyId(companyId)
@@ -34,12 +35,19 @@ public class CompanyRolePermissionGrpcClientImpl implements CompanyRolePermissio
             stub.getCompanyRolePermission(request, new io.grpc.stub.StreamObserver<CompanyRolePermissionProto>() {
                 @Override
                 public void onNext(CompanyRolePermissionProto proto) {
-                    sink.success(mapToDto(proto));
+                    try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                        CompanyRolePermissionDTO dto = mapToDto(proto);
+                        log.info("[CompanyRolePermissionGrpcClientImpl - getCompanyRolePermissionByCompanyIdAndUserId] Successfully retrieved company role permissions via gRPC for companyId: {} and userId: {}", companyId, userId);
+                        sink.success(dto);
+                    }
                 }
 
                 @Override
                 public void onError(Throwable t) {
-                    sink.error(t);
+                    try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                        log.error("[CompanyRolePermissionGrpcClientImpl - getCompanyRolePermissionByCompanyIdAndUserId] Failed to retrieve company role permissions via gRPC for companyId: {} and userId: {} due to error: {}", companyId, userId, t.getMessage(), t);
+                        sink.error(t);
+                    }
                 }
 
                 @Override

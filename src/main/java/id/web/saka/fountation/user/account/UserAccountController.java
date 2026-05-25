@@ -21,10 +21,10 @@ public class UserAccountController {
     public Mono<UserAccountDTO> getUserAccountDTOByUserId(@PathVariable Long companyId, @PathVariable Long userId, @PathVariable Long valueUserId) {
 
         return userAccountService.getUserAccountDTOByUserId(valueUserId).doOnNext(dto -> {
-                    log.info("API Response for User {}: {}", valueUserId, dto);
+                    log.info("[getUserAccountDTOByUserId] Successfully retrieved user account for valueUserId: {}: {}", valueUserId, dto);
                 })
                 .doOnError(e -> {
-                    log.error("API Error for User {}: {}", valueUserId, e.getMessage());
+                    log.error("[getUserAccountDTOByUserId] Failed to retrieve user account for valueUserId: {} due to error: {}", valueUserId, e.getMessage());
                 });
     }
 
@@ -34,24 +34,24 @@ public class UserAccountController {
             @PathVariable Long companyId,
             @PathVariable Long userId,
             @PathVariable Long valueUserId) {
-        log.info("Updating UserAccount for valueUserId: " + valueUserId + " in companyId: " + companyId + " by userId: " + userId);
+        log.info("[updateUserAccount] Initiated request to update user account for valueUserId: {} in companyId: {} by userId: {}", valueUserId, companyId, userId);
 
         return payload
-                .doOnNext(dto -> log.info("Incoming updateUserAccount payload: {}", dto))
+                .doOnNext(dto -> log.info("[updateUserAccount] Received update payload for valueUserId: {}: {}", valueUserId, dto))
                 .flatMap(payloadDTO ->
                 userAccountService.updateUserAccount(companyId, userId, valueUserId, payloadDTO)
-        ).doOnError(error -> log.error("Error updating UserAccount: " + error.getMessage()));
+        ).doOnError(error -> log.error("[updateUserAccount] Failed to update user account for valueUserId: {} due to error: {}", valueUserId, error.getMessage()));
     }
 
     @PostMapping("/user/account/add/companyId/{companyId}/userId/{userId}")
     public Mono<UserAccountDTO> addUserAccount(@RequestBody Mono<UserAccountDTO> payload, @PathVariable Long companyId, @PathVariable Long userId) {
-        log.info("Adding UserAccount in companyId: " + companyId + " by userId: " + userId);
+        log.info("[addUserAccount] Initiated request to add user account in companyId: {} by userId: {}", companyId, userId);
 
         return payload
-                .doOnNext(dto -> log.info("Incoming addUserAccount payload: {}", dto))
+                .doOnNext(dto -> log.info("[addUserAccount] Received add payload in companyId: {}: {}", companyId, dto))
                 .flatMap(payloadDTO ->
                         userAccountService.addUserAccount(companyId, userId, payloadDTO)
-                ).doOnError(error -> log.error("Error updating UserAccount: " + error.getMessage()));
+                ).doOnError(error -> log.error("[addUserAccount] Failed to add user account in companyId: {} due to error: {}", companyId, error.getMessage()));
     }
 
 }

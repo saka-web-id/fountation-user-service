@@ -41,7 +41,7 @@ public class OrganizationController {
 
     @GetMapping("/user/organization/company/list/companyId/{companyId}/userId/{userId}/valueCompanyId/{valueCompanyId}")
     public Flux<CompanyDTO> getCompanyById(@AuthenticationPrincipal Jwt jwt, @PathVariable Long companyId, @PathVariable Long userId, @PathVariable Long valueCompanyId) {
-        log.info("Controller called with companyId: " + valueCompanyId);
+        log.info("[getCompanyById] Initiated request to fetch companies for companyId: {} and userId: {} with valueCompanyId: {}", companyId, userId, valueCompanyId);
 
         if(valueCompanyId == 0) {
             return companyService.getCompaniesByCompanyIdAndUserId(companyId, userId, jwt.getClaimAsString("https://example.com/email"));

@@ -41,11 +41,11 @@ public class Auth0Service {
                 .retrieve()
                 .bodyToMono(Map.class)
                 .map(response -> (String) response.get("access_token"))
-                .doOnError(e -> log.error("Failed to get Auth0 Management Token", e));
+                .doOnError(e -> log.error("[getManagementToken] Failed to retrieve Auth0 management token due to error: {}", e.getMessage(), e));
     }
 
     public Mono<String> registerUser(UserDTO user) {
-        log.info("registerUser: {}", user);
+        log.info("[registerUser] Initiated user registration in Auth0 for user: {}", user.email());
 
         return getManagementToken()
                 .flatMap(token -> {
@@ -65,13 +65,14 @@ public class Auth0Service {
                             .retrieve()
                             .onStatus(HttpStatusCode::is4xxClientError, clientResponse ->
                                     clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
-                                        log.error("AUTH0 SAYS: {}", errorBody); // This prints the EXACT reason
+                                        log.error("[registerUser] Auth0 returned an error during user registration: {}", errorBody); // This prints the EXACT reason
                                         return Mono.error(new RuntimeException("Auth0 Error: " + errorBody));
                                     })
                             )
                             .bodyToMono(Map.class)
                             .map(response -> (String) response.get("user_id"))
-                            .doOnError(e -> log.error("Failed to register user in Auth0", e));
+                            .doOnNext(userId -> log.info("[registerUser] Successfully registered user in Auth0 with ID: {}", userId))
+                            .doOnError(e -> log.error("[registerUser] Failed to register user in Auth0 due to error: {}", e.getMessage(), e));
                 });
     }
 }

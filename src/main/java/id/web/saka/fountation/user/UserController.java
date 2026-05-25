@@ -34,7 +34,7 @@ public class UserController {
 
     @GetMapping("/user/login")
     public Mono<Void> loginSuccess(ServerWebExchange exchange) {
-        log.info("Login successful, redirecting to Vue SPA...");
+        log.info("[loginSuccess] Successfully logged in, redirecting to Vue SPA dashboard");
 
         // Redirect to Vue SPA
         exchange.getResponse().setStatusCode(HttpStatus.FOUND);
@@ -46,7 +46,7 @@ public class UserController {
 
     @GetMapping({"/user/detail", "/user/detail/"}) //NOTE excluded from authorization filter
     public Mono<UserAccountDTO> getUser(@AuthenticationPrincipal Jwt jwt) {
-        log.info("Fetching user details for email: {}", jwt.getClaimAsString("https://example.com/email"));
+        log.info("[getUser] Initiated request to fetch user details for email: {}", jwt.getClaimAsString("https://example.com/email"));
 
         return userAccountService.getUserAccountDTOByEmail(jwt.getClaimAsString("https://example.com/email"));
     }
@@ -58,7 +58,7 @@ public class UserController {
 
     @PostMapping("/user/update/companyId/{companyId}/userId/{userId}")
     public Mono<UserDTO> updateUser(@RequestBody Mono<UserDTO> payload, @PathVariable Long companyId, @PathVariable Long userId) {
-        log.info("Updating User in companyId {} userId {} ", companyId, userId);
+        log.info("[updateUser] Initiated request to update user in companyId: {} and userId: {}", companyId, userId);
 
         return payload
                 .flatMap(userService::saveUser);
@@ -75,14 +75,14 @@ public class UserController {
     public Mono<String> health(@AuthenticationPrincipal Jwt jwt) {
         String token = jwt.getTokenValue();   // <-- full JWT access token
 
-        log.info("BEARER TOKEN = " + token);
-        log.info("preferred_username=" + jwt.getClaimAsString("preferred_username"));
-        log.info("name=" + jwt.getClaimAsString("https://example.com/name"));
-        log.info("email=" + jwt.getClaimAsString("https://example.com/email"));
-        log.info("nickname=" + jwt.getClaimAsString("https://example.com/nickname"));
+        log.info("[health] HEALTH CHECK: Bearer Token: {}", token);
+        log.info("[health] HEALTH CHECK: preferred_username: {}", jwt.getClaimAsString("preferred_username"));
+        log.info("[health] HEALTH CHECK: name: {}", jwt.getClaimAsString("https://example.com/name"));
+        log.info("[health] HEALTH CHECK: email: {}", jwt.getClaimAsString("https://example.com/email"));
+        log.info("[health] HEALTH CHECK: nickname: {}", jwt.getClaimAsString("https://example.com/nickname"));
 
         jwt.getClaims().forEach((k, v) ->
-                log.info(k + ": " + v));
+                log.info("[health] HEALTH CHECK: {}: {}", k, v));
 
         return Mono.just("User Service UP");
     }

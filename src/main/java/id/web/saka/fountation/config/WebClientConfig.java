@@ -54,7 +54,7 @@ public class WebClientConfig {
 
     @Bean
     public WebClient webClientAccount(HttpClient httpClient) {
-        logger.info("webClientAccount:" + fountationProperties.getService().getAccount().getUrl());
+        logger.info("[webClientAccount] Initializing webClientAccount with base URL: {}", fountationProperties.getService().getAccount().getUrl());
 
         // 1. Buat Cache untuk Token agar tidak membebani server Auth
         Mono<String> tokenCache = getAccessToken(httpClient)
@@ -85,7 +85,7 @@ public class WebClientConfig {
 
     @Bean
     public WebClient webClientAuthorization(HttpClient httpClient) {
-        logger.info("WebClientAuthorization:" + fountationProperties.getService().getAuthorization().getUrl());
+        logger.info("[webClientAuthorization] Initializing webClientAuthorization with base URL: {}", fountationProperties.getService().getAuthorization().getUrl());
 
 
         // 1. Buat Cache untuk Token agar tidak membebani server Auth

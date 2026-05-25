@@ -25,7 +25,6 @@ public class UserService {
     private final UserMapper userMapper;
     private final ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO;
     private final UserCompanyService userCompanyService;
-    /*private final CompanyRolePermissionService companyRolePermissionService;*/
     private final CompanyRoleService companyRoleService;
     private final UserDepartmentService userDepartmentService;
     private final MessageSource messageSource;
@@ -35,7 +34,6 @@ public class UserService {
     public UserService(UserRepository userRepository, UserMapper userMapper,
                        @Qualifier("redisUserDTOTemplate") ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO,
                        UserCompanyService userCompanyService,
-                       /*CompanyRolePermissionService companyRolePermissionService,*/
                        CompanyRoleService companyRoleService,
                        UserDepartmentService userDepartmentService,
                        MessageSource messageSource, FountationProperties fountationProperties,
@@ -44,7 +42,6 @@ public class UserService {
         this.userMapper = userMapper;
         this.redisTemplateUserDTO = redisTemplateUserDTO;
         this.userCompanyService = userCompanyService;
-        /*this.companyRolePermissionService = companyRolePermissionService;*/
         this.companyRoleService = companyRoleService;
         this.userDepartmentService = userDepartmentService;
         this.messageSource = messageSource;
@@ -116,10 +113,10 @@ public class UserService {
         return userMono
                 .flatMap(user ->
                         userCompanyService.getUserCompanyDefaultByUserId(user.getId())
-                                .doOnNext(userCompany -> log.info("Fetched UserCompany for : {}", userCompany))
+                                .doOnNext(userCompany -> log.info("[getUserAccountByUserMono] Successfully fetched UserCompany detail: {}", userCompany))
                                 .flatMap(userCompany ->
                                         companyRoleService.getAuthorityByCompanyIdAndUserId(userCompany.id(), user.getId())
-                                                .doOnNext(rolePermissionDTO -> log.info("Fetched RolePermission for : {}", rolePermissionDTO))
+                                                .doOnNext(rolePermissionDTO -> log.info("[getUserAccountByUserMono] Successfully fetched role permissions: {}", rolePermissionDTO))
                                                 .flatMap(rolePermissionDTO -> {
                                                     if (rolePermissionDTO == null) {
                                                         return Mono.error(new RuntimeException(
@@ -129,15 +126,15 @@ public class UserService {
                                                     // ✅ return the chain here
                                                     return userDepartmentService
                                                             .getUserDepartmentDefaultByCompanyIdAndUserId(userCompany.id(), user.getId())
-                                                            .doOnNext(departmentDTO -> log.info("Fetched Department for email {}: {}", user.getEmail(), departmentDTO))
+                                                            .doOnNext(departmentDTO -> log.info("[getUserAccountByUserMono] Successfully fetched department for email {}: {}", user.getEmail(), departmentDTO))
                                                             .flatMap(departmentDTO ->
                                                                     accountMembershipPlanService.getAccountMembershipPlanDetailByUserId(userCompany.id(), user.getId(), user.getId())
-                                                                            .doOnNext(accountDTO -> log.info("Fetched Account for email {}: {}", user.getEmail(), accountDTO))
+                                                                            .doOnNext(accountDTO -> log.info("[getUserAccountByUserMono] Successfully fetched account membership plan for email {}: {}", user.getEmail(), accountDTO))
                                                                             .map(accountDTO -> {
                                                                                 UserAccountDTO dto = new UserAccountDTO(
                                                                                         user, accountDTO, rolePermissionDTO, userCompany, departmentDTO
                                                                                 );
-                                                                                log.info("Built UserAccountDTO for email {}: {}", user.getEmail(), dto);
+                                                                                log.info("[getUserAccountByUserMono] Successfully built UserAccountDTO for email {}: {}", user.getEmail(), dto);
                                                                                 return dto;
                                                                             })
                                                             );
@@ -148,7 +145,7 @@ public class UserService {
     }
 
     private Mono<UserDTO> cacheUserDTO(String key, UserDTO dto) {
-        log.info("Redis cache user {} with dto {} ", key, dto.toString() );
+        log.info("[cacheUserDTO] Initiated request to cache UserDTO in Redis with key: {} and data: {}", key, dto);
 
         return redisTemplateUserDTO.opsForValue()
                 .set(
@@ -157,7 +154,7 @@ public class UserService {
                         Duration.ofMinutes(fountationProperties.getService().getRedis().getStore().getDuration().getMinutes())
                 )
                 .onErrorResume(err -> {
-                    log.warn("Failed to cache in Redis: {}", err.getMessage());
+                    log.warn("[cacheUserDTO] Failed to cache UserDTO in Redis due to error: {}", err.getMessage());
                     return Mono.empty();
                 })
                 .thenReturn(dto);

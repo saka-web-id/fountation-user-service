@@ -19,23 +19,23 @@ public class AccountMembershipPlanWebClientImpl implements AccountMembershipPlan
 
     @Override
     public Mono<AccountMembershipPlanDTO> getAccountMembershipPlanDetailByUserId(Long companyId, Long userId, Long valueUserId) {
-        log.info("Fetching AccountMembershipPlanDTO via REST for valueUserId: {} in companyId: {}", valueUserId, companyId);
+        log.info("[getAccountMembershipPlanDetailByUserId] Initiated request to fetch account membership plan detail via REST for valueUserId: {} in companyId: {}", valueUserId, companyId);
         return webClientAccount.get()
                 .uri("/api/v0/account/user/membership/plan/detail/companyId/" + companyId + "/userId/" + userId + "/valueUserId/" + valueUserId)
                 .retrieve()
                 .bodyToMono(AccountMembershipPlanDTO.class)
-                .doOnNext(json -> log.info("REST Response: {}", json));
+                .doOnNext(json -> log.info("[AccountMembershipPlanWebClientImpl - getAccountMembershipPlanDetailByUserId] Successfully retrieved account membership plan detail via REST: {}", json));
     }
 
     @Override
     public Mono<AccountMembershipPlanDTO> updateAccountMembershipPlan(Long companyId, Long userId, Long valueUserId, id.web.saka.fountation.user.account.UserAccountDTO payload) {
-        log.info("Updating AccountMembershipPlan via REST for valueUserId: {} in companyId: {}", valueUserId, companyId);
+        log.info("[AccountMembershipPlanWebClientImpl - updateAccountMembershipPlan] Initiated request to update account membership plan via REST for valueUserId: {} in companyId: {}", valueUserId, companyId);
         return webClientAccount.post()
                 .uri("/api/v0/account/membership/plan/update/companyId/" + companyId + "/userId/" + userId + "/valueUserId/" + valueUserId)
                 .bodyValue(payload)
                 .retrieve()
                 .bodyToMono(AccountMembershipPlanDTO.class)
-                .doOnNext(json -> log.info("REST Response: {}", json));
+                .doOnNext(json -> log.info("[AccountMembershipPlanWebClientImpl - updateAccountMembershipPlan] Successfully updated account membership plan via REST: {}", json));
     }
 
 }

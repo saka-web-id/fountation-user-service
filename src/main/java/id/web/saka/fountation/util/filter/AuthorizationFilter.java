@@ -38,11 +38,11 @@ public class AuthorizationFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String path = exchange.getRequest().getPath().value();
-        logger.info("filter|START|path={}", path);
+        logger.info("[filter] Initiated authorization filter for path: {}", path);
 
         if (EXCLUDED_PATHS.stream().anyMatch(path::startsWith)) {
-            logger.info("filter|SKIP authorization for path={}", path);
-            return chain.filter(exchange);
+            logger.info("[filter] Skipping authorization for excluded path: {}", path);
+            return chain.filter(exchange).contextCapture();
         }
 
         // Use regex to extract IDs instead of manual loop
@@ -53,7 +53,7 @@ public class AuthorizationFilter implements WebFilter {
         if (matcher.find()) {
             companyId = Long.valueOf(matcher.group(1));
             userId = Long.valueOf(matcher.group(2));
-            logger.info("Parsed companyId={}, userId={}", companyId, userId);
+            logger.info("[filter] Successfully parsed metadata - companyId: {}, userId: {}", companyId, userId);
         } else {
             userId = 0L;
             companyId = 0L;
@@ -68,7 +68,7 @@ public class AuthorizationFilter implements WebFilter {
 
                     return policyService.evaluate(jwt, userId, companyId, authRequest)
                             .flatMap(decision -> {
-                                logger.info("Authorization decision: isAllow={}", decision.isAllow());
+                                logger.info("[filter] Authorization decision for path {}: isAllow={}", path, decision.isAllow());
                                 if (decision.isAllow()) {
                                     return chain.filter(exchange);
                                 } else {
@@ -76,7 +76,8 @@ public class AuthorizationFilter implements WebFilter {
                                     return exchange.getResponse().setComplete();
                                 }
                             });
-                });
+                })
+                .contextCapture();
     }
 }
 

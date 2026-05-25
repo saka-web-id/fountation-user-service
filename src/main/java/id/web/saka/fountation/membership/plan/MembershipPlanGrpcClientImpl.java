@@ -2,6 +2,7 @@ package id.web.saka.fountation.membership.plan;
 
 import id.web.saka.fountation.account.membership.plan.AccountMembershipPlanGrpcClientImpl;
 import io.grpc.stub.StreamObserver;
+import io.micrometer.context.ContextSnapshot;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class MembershipPlanGrpcClientImpl implements MembershipPlanClient {
      */
     @Override
     public reactor.core.publisher.Flux<MembershipPlanDTO> getMembershipPlanListByCompanyId(Long companyId, Long userId, Long valueCompanyId) {
-        log.info("Fetching MembershipPlanDTO list via gRPC for valueCompanyId: {} in companyId: {}", valueCompanyId, companyId);
+        log.info("[getMembershipPlanListByCompanyId] Initiated request to fetch membership plan list via gRPC for valueCompanyId: {} in companyId: {}", valueCompanyId, companyId);
 
         MembershipPlanListRequest request = MembershipPlanListRequest.newBuilder()
                 .setCompanyId(companyId)
@@ -41,13 +42,18 @@ public class MembershipPlanGrpcClientImpl implements MembershipPlanClient {
             membershipPlanServiceStub.getMembershipPlanListByCompanyId(request, new StreamObserver<MembershipPlanListResponse>() {
                 @Override
                 public void onNext(MembershipPlanListResponse response) {
-                    response.getMembershipPlansList().forEach(proto -> sink.next(membershipPlanGrpcMapper.toDTO(proto)));
+                    try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                        log.info("[getMembershipPlanListByCompanyId] Successfully retrieved {} membership plans via gRPC for valueCompanyId: {} in companyId: {}", response.getMembershipPlansCount(), valueCompanyId, companyId);
+                        response.getMembershipPlansList().forEach(proto -> sink.next(membershipPlanGrpcMapper.toDTO(proto)));
+                    }
                 }
 
                 @Override
                 public void onError(Throwable t) {
-                    log.error("gRPC error during membership plan list retrieval", t);
-                    sink.error(t);
+                    try (ContextSnapshot.Scope scope = ContextSnapshot.setAllThreadLocalsFrom(sink.contextView())) {
+                        log.error("[getMembershipPlanListByCompanyId] Failed to retrieve membership plan list via gRPC for valueCompanyId: {} in companyId: {} due to error: {}", valueCompanyId, companyId, t.getMessage(), t);
+                        sink.error(t);
+                    }
                 }
 
                 @Override
