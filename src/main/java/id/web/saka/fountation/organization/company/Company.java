@@ -16,6 +16,9 @@ public class Company {
     @Column("id")
     private Long id;
 
+    @Column("code")
+    private String code;
+
     @Column("name")
     private String name;
 
@@ -66,6 +69,14 @@ public class Company {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getName() {
@@ -180,10 +191,11 @@ public class Company {
         this.updatedAt = updatedAt;
     }
 
-    @Override
-    public String toString() {
+    @java.lang.Override
+    public java.lang.String toString() {
         return "Company{" +
                 "id=" + id +
+                ", code='" + code + '\'' +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
@@ -193,7 +205,7 @@ public class Company {
                 ", logoUrl='" + logoUrl + '\'' +
                 ", taxId='" + taxId + '\'' +
                 ", registrationNumber='" + registrationNumber + '\'' +
-                ", status='" + status + '\'' +
+                ", status=" + status +
                 ", industry='" + industry + '\'' +
                 ", type='" + type + '\'' +
                 ", createdAt=" + createdAt +

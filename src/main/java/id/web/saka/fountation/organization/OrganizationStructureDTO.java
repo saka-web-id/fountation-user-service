@@ -7,6 +7,7 @@ import id.web.saka.fountation.organization.department.DepartmentDTO;
 import java.util.List;
 
 public record OrganizationStructureDTO(
+        @JsonProperty("companyCode") String companyCode,
         @JsonProperty("companyName") String companyName,
         @JsonProperty("companyAddress") String companyAddress,
         @JsonProperty("companyPhone") String companyPhone,
@@ -18,6 +19,7 @@ public record OrganizationStructureDTO(
     // Custom constructor to build directly from Company and DepartmentDTO list
     public OrganizationStructureDTO(Company company, List<DepartmentDTO> departments) {
         this(
+                company.getCode(),
                 company.getName(),
                 company.getAddress(),
                 company.getPhone(),

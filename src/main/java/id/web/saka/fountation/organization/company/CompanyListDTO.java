@@ -9,6 +9,7 @@ import java.time.ZonedDateTime;
 public record CompanyListDTO(
         @JsonProperty("companyId") Long id,
         @JsonProperty("companyName") String name,
+        @JsonProperty("companyCode") String code,
         @JsonIgnore
         @JsonProperty("companyAddress") String address,
         @JsonIgnore

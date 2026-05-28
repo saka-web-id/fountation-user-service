@@ -5,6 +5,7 @@ import id.web.saka.fountation.organization.company.Company;
 import id.web.saka.fountation.organization.department.Department;
 
 public record OrganizationDTO(
+        @JsonProperty("companyCode") String companyCode,
         @JsonProperty("companyName") String companyName,
         @JsonProperty("companyAddress") String companyAddress,
         @JsonProperty("companyPhone") String companyPhone,
@@ -17,6 +18,7 @@ public record OrganizationDTO(
     // Custom constructor to build directly from Company and Department
     public OrganizationDTO(Company company, Department department) {
         this(
+                company.getCode(),
                 company.getName(),
                 company.getAddress(),
                 company.getPhone(),

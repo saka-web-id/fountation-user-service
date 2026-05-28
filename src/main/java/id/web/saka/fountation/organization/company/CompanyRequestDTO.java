@@ -3,6 +3,7 @@ package id.web.saka.fountation.organization.company;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record CompanyRequestDTO (
+        @JsonProperty("companyCode") String code,
         @JsonProperty("companyName") String name,
         @JsonProperty("companyAddress") String address,
         @JsonProperty("companyPhone") String phone,
