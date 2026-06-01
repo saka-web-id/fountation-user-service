@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: fountation-user-service
+  config:
+    import: "optional:classpath:fountation-config.yaml"
+  r2dbc:
+    url: r2dbc:postgresql://XXXXXXXXXXXXXXXXXXXXXXXX:XXXXXXXXXXXXXXXXXX/fountation_user_db
+    username: XXXXXXXXXXXXXXXXX
+    password: XXXXXXXXXXXXXXXXXXXXXXXXXX
+    pool:
+      initial-size: 10
+      max-size: 20
+      max-create-connection-time: 5s
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      type: w3c
+    enabled: true
+  observations:
+    key-values:
+      application: fountation-user-service
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:-},%X{traceId:-%X{trace_id:-}},%X{spanId:-%X{span_id:-}}]"
