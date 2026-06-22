@@ -50,6 +50,11 @@
             <artifactId>fountation-config-service</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>id.web.saka.fountation.common</groupId>
+            <artifactId>fountation-common-messaging</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Spring Boot Starters -->
         <dependency>
@@ -119,6 +124,10 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
 
         <!-- Observability and Tracing -->
         <dependency>
@@ -135,6 +144,11 @@
             <artifactId>reactor-core-micrometer</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

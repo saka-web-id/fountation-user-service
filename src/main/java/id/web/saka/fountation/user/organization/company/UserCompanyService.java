@@ -28,12 +28,11 @@ public class UserCompanyService {
     private final CompanyRepository companyRepository;
     private final UserRoleClient userRoleClient;
     private final ReactiveRedisTemplate<String, List<CompanyDTO>> redisTemplate;
-
     private final CompanyMapper companyMapper;
 
-    public UserCompanyService(UserRepository userRepository, 
-                              UserCompanyRepository userCompanyRepository, 
-                              CompanyRepository companyRepository, 
+    public UserCompanyService(UserRepository userRepository,
+                              UserCompanyRepository userCompanyRepository,
+                              CompanyRepository companyRepository,
                               CompanyMapper companyMapper,
                               UserRoleClient userRoleClient,
                               @Qualifier("redisCompanyListTemplate") ReactiveRedisTemplate<String, List<CompanyDTO>> redisTemplate) {

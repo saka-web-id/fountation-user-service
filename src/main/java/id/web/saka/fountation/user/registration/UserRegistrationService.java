@@ -1,6 +1,7 @@
 package id.web.saka.fountation.user.registration;
 
 import id.web.saka.fountation.authorization.auth0.Auth0Service;
+import id.web.saka.fountation.common.messaging.outbox.OutboxService;
 import id.web.saka.fountation.organization.company.Company;
 import id.web.saka.fountation.organization.company.CompanyDTO;
 import id.web.saka.fountation.organization.company.CompanyMapper;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -54,6 +56,8 @@ public class UserRegistrationService {
 
     private final UserRegistrationClient userRegistrationClient;
 
+    private final OutboxService outboxService;
+
     public UserRegistrationService(CompanyService companyService,
                                    DepartmentService departmentService,
                                    UserService userService,
@@ -62,7 +66,7 @@ public class UserRegistrationService {
                                    UserRoleService userRoleService,
                                    Auth0Service auth0Service,
                                    UserRegistrationClient userRegistrationClient,
-                                   CompanyMapper companyMapper, DepartmentMapper departmentMapper, UserMapper userMapper, MessageSource messageSource, TransactionalOperator txOperator) {
+                                   CompanyMapper companyMapper, DepartmentMapper departmentMapper, UserMapper userMapper, MessageSource messageSource, TransactionalOperator txOperator, OutboxService outboxService) {
         this.companyService = companyService;
         this.departmentService = departmentService;
         this.userService = userService;
@@ -76,8 +80,10 @@ public class UserRegistrationService {
         this.userMapper = userMapper;
         this.messageSource = messageSource;
         this.txOperator = txOperator;
+        this.outboxService = outboxService;
     }
 
+    @Transactional
     public Mono<UserRegistrationDTO> registerUser(Mono<UserRegistrationDTO> payload) {
         return payload
                 .flatMap(dto -> {
@@ -179,6 +185,13 @@ public class UserRegistrationService {
     private Mono<UserRegistrationDTO> finalizeRegistration(UserRegistrationContextDTO ctx) {
         log.info("finalizeRegistration| UserRegistrationContextDTO: {} ", ctx);
 
+        UserRegistrationDTO resultDTO = new UserRegistrationDTO(
+                ctx.savedUser(),
+                ctx.originalDto().account(),
+                companyMapper.toDto(ctx.company()),
+                departmentMapper.toDto(ctx.department())
+        );
+
         // Fire and Forget Account Service so it doesn't block the DB commit
         assignAccountToNewUser(
                         ctx.originalDto(),
@@ -192,13 +205,9 @@ public class UserRegistrationService {
                         error -> log.error("Background Account FAILED: {}", error.getMessage())
                 );
 
-        // Return the DTO immediately to commit the transaction
-        return Mono.just(new UserRegistrationDTO(
-                ctx.savedUser(),
-                ctx.originalDto().account(),
-                companyMapper.toDto(ctx.company()),
-                departmentMapper.toDto(ctx.department())
-        ));
+        // Return the DTO after writing to outbox
+        return outboxService.writeOutbox("USER_REGISTRATION", "USER-" + ctx.savedUser().id(), "USER_REGISTERED", resultDTO)
+                .thenReturn(resultDTO);
     }
 
     public Mono<UserRegistrationDTO> assignAccountToNewUser(UserRegistrationDTO dto, UserDTO userDTO, CompanyDTO companyDTO, DepartmentDTO departmentDTO) {

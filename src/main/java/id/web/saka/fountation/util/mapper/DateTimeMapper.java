@@ -14,13 +14,13 @@ public class DateTimeMapper {
 
     private static final ZoneId DEFAULT_ZONE = ZoneId.of("Asia/Jakarta"); // GMT+7
 
-    // Instant → ZonedDateTime (GMT+7)
+    // Instant (UTC dari DB) → ZonedDateTime (GMT+7 untuk Jackson/Client)
     @Named("toOffset")
     public ZonedDateTime toOffset(Instant instant) {
         return instant == null ? null : instant.atZone(DEFAULT_ZONE);
     }
 
-    // ZonedDateTime (GMT+7) → Instant (UTC)
+    // ZonedDateTime (GMT+7 dari Client) → Instant (UTC untuk DB)
     @Named("toInstant")
     public Instant toInstant(ZonedDateTime zdt) {
         return zdt == null ? null : zdt.toInstant();

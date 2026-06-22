@@ -2,6 +2,7 @@ package id.web.saka.fountation.user;
 
 import id.web.saka.fountation.account.membership.plan.AccountMembershipPlanService;
 import id.web.saka.fountation.authorization.company.role.CompanyRoleService;
+import id.web.saka.fountation.common.messaging.outbox.OutboxService;
 import id.web.saka.fountation.configbase.fountation.FountationProperties;
 import id.web.saka.fountation.user.account.UserAccountDTO;
 import id.web.saka.fountation.user.organization.company.UserCompanyService;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -30,6 +32,7 @@ public class UserService {
     private final MessageSource messageSource;
     private final FountationProperties fountationProperties;
     private final AccountMembershipPlanService accountMembershipPlanService;
+    private final OutboxService outboxService;
 
     public UserService(UserRepository userRepository, UserMapper userMapper,
                        @Qualifier("redisUserDTOTemplate") ReactiveRedisTemplate<String, UserDTO> redisTemplateUserDTO,
@@ -37,7 +40,8 @@ public class UserService {
                        CompanyRoleService companyRoleService,
                        UserDepartmentService userDepartmentService,
                        MessageSource messageSource, FountationProperties fountationProperties,
-                       AccountMembershipPlanService accountMembershipPlanService) {
+                       AccountMembershipPlanService accountMembershipPlanService,
+                       OutboxService outboxService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.redisTemplateUserDTO = redisTemplateUserDTO;
@@ -47,6 +51,7 @@ public class UserService {
         this.messageSource = messageSource;
         this.fountationProperties = fountationProperties;
         this.accountMembershipPlanService = accountMembershipPlanService;
+        this.outboxService = outboxService;
     }
 
     public Mono<UserDTO> getUserById(Long id) {
@@ -75,6 +80,7 @@ public class UserService {
         return userRepository.findByEmail(email).map(User::getId);
     }
 
+    @Transactional
     public Mono<UserDTO> saveUser(UserDTO userDTO) {
         User user = userMapper.toEntity(userDTO);
         return userRepository.save(user)
@@ -84,10 +90,12 @@ public class UserService {
                     String keyEmail = "userDTO:email:" + dto.email();
                     return cacheUserDTO(keyId, dto)
                             .then(cacheUserDTO(keyEmail, dto))
+                            .then(outboxService.writeOutbox("USER", "USER-" + dto.id(), "USER_SAVED", dto))
                             .thenReturn(dto);
                 });
     }
 
+    @Transactional
     public Mono<? extends UserDTO> addUser(UserRequestDTO userRequestDTO) {
         return userRepository
                 .save(userMapper.requestToEntity(userRequestDTO))
@@ -97,7 +105,11 @@ public class UserService {
                                 userCompanyService.setCompanyForUser(userDTO.id(), userRequestDTO),
                                 userDepartmentService.setDepartmentForUser(userDTO.id(), userRequestDTO)
                         ).thenReturn(userDTO)
-                ).flatMap(savedUserDTO -> cacheUserDTO(buildCacheKey(savedUserDTO.id()), savedUserDTO));
+                ).flatMap(savedUserDTO -> 
+                        cacheUserDTO(buildCacheKey(savedUserDTO.id()), savedUserDTO)
+                                .flatMap(cachedDto -> outboxService.writeOutbox("USER", "USER-" + cachedDto.id(), "USER_ADDED", cachedDto))
+                                .thenReturn(savedUserDTO)
+                );
     }
 
     public Mono<UserAccountDTO> getUserAccountByUserDTOMono(Mono<UserDTO> userDTOMono) {

@@ -1,6 +1,5 @@
 package id.web.saka.fountation.organization.company;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.ZonedDateTime;
@@ -20,10 +19,8 @@ public record CompanyDTO (
         @JsonProperty("companyStatus") String status,
         @JsonProperty("companyIndustry") String industry,
         @JsonProperty("companyType") String type,
-        @JsonProperty("companyCreatedAt")
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ssXXX") ZonedDateTime createdAt,
-        @JsonProperty("companyUpdatedAt")
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ssXXX") ZonedDateTime updatedAt,
+        @JsonProperty("companyCreatedAt") ZonedDateTime createdAt,
+        @JsonProperty("companyUpdatedAt") ZonedDateTime updatedAt,
         @JsonProperty("companyIsDefault") boolean isDefault
 ) {
 

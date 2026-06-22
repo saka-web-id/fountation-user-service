@@ -1,5 +1,6 @@
 package id.web.saka.fountation.organization.company;
 
+import id.web.saka.fountation.common.messaging.outbox.OutboxService;
 import id.web.saka.fountation.user.UserRepository;
 import id.web.saka.fountation.user.organization.company.UserCompany;
 import id.web.saka.fountation.user.organization.company.UserCompanyRepository;
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
@@ -30,13 +32,16 @@ public class CompanyService {
 
     private final UserRoleClient userRoleClient;
 
-    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper, UserRepository userRepository, UserCompanyRepository userCompanyRepository, TransactionalOperator transactionalOperator, UserRoleClient userRoleClient) {
+    private final OutboxService outboxService;
+
+    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper, UserRepository userRepository, UserCompanyRepository userCompanyRepository, TransactionalOperator transactionalOperator, UserRoleClient userRoleClient, OutboxService outboxService) {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
         this.userRepository = userRepository;
         this.userCompanyRepository = userCompanyRepository;
         this.transactionalOperator = transactionalOperator;
         this.userRoleClient = userRoleClient;
+        this.outboxService = outboxService;
     }
 
     public Mono<CompanyDTO> getCompanyById (Long companyId) {
@@ -57,14 +62,16 @@ public class CompanyService {
 
     public Mono<Company> saveCompany(Company company) {
 
-        return companyRepository.save(company);
+        return companyRepository.save(company)
+                .flatMap(savedCompany -> outboxService.writeOutbox("COMPANY", "COMP-" + savedCompany.getId(), "COMPANY_SAVED", companyMapper.toDto(savedCompany))
+                        .thenReturn(savedCompany));
     }
 
     public Mono<Company> saveCompany(Mono<Company> company) {
-        return company.flatMap(companyRepository::save);
+        return company.flatMap(this::saveCompany);
     }
 
-
+    @Transactional
     public Mono<Company> createCompanyForUser(Company company, String email) {
 
         log.info("[createCompanyForUser] Initiated request to create company for user with email: {}", email);
@@ -83,6 +90,7 @@ public class CompanyService {
                                     );
 
                                     return userCompanyRepository.save(uc)
+                                            .then(outboxService.writeOutbox("COMPANY", "COMP-" + savedCompany.getId(), "COMPANY_CREATED", companyMapper.toDto(savedCompany)))
                                             .thenReturn(savedCompany);
                                 })
                 )
